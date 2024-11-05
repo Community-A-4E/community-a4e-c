@@ -13,6 +13,12 @@ join(res.keyCommands,{
     {combos = {{key = 'U'}}, down = iCommandPlaneShipTakeOff,                                                       name = _('Catapult Hook-Up'),                            category = {_('Communications')}},
     {combos = {{key = 'U', reformers = {'LCtrl'}}}, down = Keys.cat_power_toggle,                                   name = _('Catapult Power Mode - DEFAULT/AUTO'),          category = {_('Communications')}},
     {combos = {{key = 'S', reformers = {'LShift', 'LAlt'}}}, down = Keys.ToggleSlatsLock,                           name = _('Slats - LOCK/UNLOCK'),                         category = {_('Communications')}},
+    
+    {combos = {{key = '1', reformers = {'LShift'}}},	    down = Keys.shrike_seeker_change_1, value_down = 1,     name = _('Change Station 1 Shrike Seeker'),              category = {_('Communications'), _('Kneeboard'), _('Weapons')}},
+    {combos = {{key = '2', reformers = {'LShift'}}},	    down = Keys.shrike_seeker_change_2, value_down = 1,     name = _('Change Station 2 Shrike Seeker'),              category = {_('Communications'), _('Kneeboard'), _('Weapons')}},
+    {combos = {{key = '4', reformers = {'LShift'}}},	    down = Keys.shrike_seeker_change_4, value_down = 1,     name = _('Change Station 4 Shrike Seeker'),              category = {_('Communications'), _('Kneeboard'), _('Weapons')}},
+    {combos = {{key = '5', reformers = {'LShift'}}},	    down = Keys.shrike_seeker_change_5, value_down = 1,     name = _('Change Station 5 Shrike Seeker'),              category = {_('Communications'), _('Kneeboard'), _('Weapons')}},
+    
     {combos = {{key = '2', reformers = {'RShift','RAlt'}}},	down = Keys.ChangeCBU2AQuantity, value_down = 1,        name = _('CBU-2/A Release Quantity - 1/2/3'),            category = {_('Communications'), _('Kneeboard'), _('AN/ALE-29A Chaff Dispensing System')}},
     {combos = {{key = '3', reformers = {'RShift','RAlt'}}},	down = Keys.ChangeCBU2BAQuantity, value_down = 1,       name = _('CBU-2B/A Release Quantity - 1/2/3/4/6/SALVO'), category = {_('Communications'), _('Kneeboard'), _('AN/ALE-29A Chaff Dispensing System')}},
     {combos = {{key = '4', reformers = {'RShift','RAlt'}}},	down = Keys.ChangeCmsBursts, value_down = 1,            name = _('Countermeasures Bursts'),                      category = {_('Communications'), _('Kneeboard'), _('AN/ALE-29A Chaff Dispensing System')}},

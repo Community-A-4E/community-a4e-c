@@ -7,15 +7,20 @@ cbu_mult = 5
 dispenser_data =
 {
     --use shapename,         bomblet,          bomblet_count
-    ["{CBU-1/A}"]           = { bomblet = BLU_4B, bomblet_count = math.floor(509/cbu_mult), number_of_tubes = 19, tubes_per_pulse = 2, variant = "CBU-1/A" },
-    ["{CBU-2/A}"]           = { bomblet = BLU_3B, bomblet_count = math.floor(360/cbu_mult), number_of_tubes = 17, tubes_per_pulse = 1, variant = "CBU-2/A" },
-    ["{CBU-2B/A}"]          = { bomblet = BLU_3B, bomblet_count = math.floor(409/cbu_mult), number_of_tubes = 19, tubes_per_pulse = 2, variant = "CBU-2B/A" },
-    ["{CBU-1/A_TER_2_L}"]   = { bomblet = BLU_4B, bomblet_count = math.floor(509/cbu_mult), number_of_tubes = 19, tubes_per_pulse = 2, variant = "CBU-1/A" },
-    ["{CBU-2/A_TER_2_L}"]   = { bomblet = BLU_3B, bomblet_count = math.floor(360/cbu_mult), number_of_tubes = 17, tubes_per_pulse = 1, variant = "CBU-2/A" },
-    ["{CBU-2B/A_TER_2_L}"]  = { bomblet = BLU_3B, bomblet_count = math.floor(409/cbu_mult), number_of_tubes = 19, tubes_per_pulse = 2, variant = "CBU-2B/A" },
-    ["{CBU-1/A_TER_2_R}"]   = { bomblet = BLU_4B, bomblet_count = math.floor(509/cbu_mult), number_of_tubes = 19, tubes_per_pulse = 2, variant = "CBU-1/A" },
-    ["{CBU-2/A_TER_2_R}"]   = { bomblet = BLU_3B, bomblet_count = math.floor(360/cbu_mult), number_of_tubes = 17, tubes_per_pulse = 1, variant = "CBU-2/A" },
-    ["{CBU-2B/A_TER_2_R}"]  = { bomblet = BLU_3B, bomblet_count = math.floor(409/cbu_mult), number_of_tubes = 19, tubes_per_pulse = 2, variant = "CBU-2B/A" },
+    ["{C_A4E_CBU-1A}"]           = { bomblet = BLU_4B, bomblet_count = math.floor(509/cbu_mult), number_of_tubes = 19, tubes_per_pulse = 2, variant = "CBU-1/A" },
+    ["{C_A4E_CBU-2A}"]           = { bomblet = BLU_3B, bomblet_count = math.floor(360/cbu_mult), number_of_tubes = 17, tubes_per_pulse = 1, variant = "CBU-2/A" },
+    ["{C_A4E_CBU-2BA}"]          = { bomblet = BLU_3B, bomblet_count = math.floor(409/cbu_mult), number_of_tubes = 19, tubes_per_pulse = 2, variant = "CBU-2B/A" },
+    ["{C_A4E_CBU-1A_2x_TER_L}"]   = { bomblet = BLU_4B, bomblet_count = math.floor(509/cbu_mult), number_of_tubes = 19, tubes_per_pulse = 2, variant = "CBU-1/A" },
+    ["{C_A4E_CBU-2A_2x_TER_L}"]   = { bomblet = BLU_3B, bomblet_count = math.floor(360/cbu_mult), number_of_tubes = 17, tubes_per_pulse = 1, variant = "CBU-2/A" },
+    ["{C_A4E_CBU-2BA_2x_TER_L}"]  = { bomblet = BLU_3B, bomblet_count = math.floor(409/cbu_mult), number_of_tubes = 19, tubes_per_pulse = 2, variant = "CBU-2B/A" },
+    ["{C_A4E_CBU-1A_2x_TER_R}"]   = { bomblet = BLU_4B, bomblet_count = math.floor(509/cbu_mult), number_of_tubes = 19, tubes_per_pulse = 2, variant = "CBU-1/A" },
+    ["{C_A4E_CBU-2A_2x_TER_R}"]   = { bomblet = BLU_3B, bomblet_count = math.floor(360/cbu_mult), number_of_tubes = 17, tubes_per_pulse = 1, variant = "CBU-2/A" },
+    ["{C_A4E_CBU-2BA_2x_TER_R}"]  = { bomblet = BLU_3B, bomblet_count = math.floor(409/cbu_mult), number_of_tubes = 19, tubes_per_pulse = 2, variant = "CBU-2B/A" },
+}
+
+shrikes_clsids = {
+    ["{LAU_34_AGM_45A}"] = {},
+    ["{C_A4E_AGM-45B_LAU34}"] = {}
 }
 
 --CLSID to loadout name table for kneeboard
@@ -168,8 +173,8 @@ loadout_names = {
     ["{LAU-10 ZUNI_TER_3_C}"]                   = "ROCKETS - 3 * LAU-10 - ZUNI MK71 HE/FRAG - TER",
 
     --MISSILES--
-    ["{AGM_45A}"]                               = "MISSILE - AGM-45A SHRIKE ARM",
-    ["{3E6B632D-65EB-44D2-9501-1C2D04515404}"]  = "MISSILE - AGM-45B SHRIKE ARM",
+    ["{LAU_34_AGM_45A}"]                        = "MISSILE - AGM-45A SHRIKE ARM - ",
+    ["{C_A4E_AGM-45B_LAU34}"]                   = "MISSILE - AGM-45B SHRIKE ARM - ",
 
     --BOMBS--
     ["{AN_M30A1}"]                              = "BOMB - AN-M30A1 - 100 LB. GP HE 57 LB. TNT",

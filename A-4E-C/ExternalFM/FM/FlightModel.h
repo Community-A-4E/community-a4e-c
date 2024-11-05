@@ -14,14 +14,13 @@
 //================================ Includes ===============================//
 #include "BaseComponent.h"
 #include <iostream>
-#include "Vec3.h"
+#include <Common/Maths.h>
 #include "Table.h"
 #include "Input.h"
 #include "Airframe.h"
 #include "Engine2.h"
 #include "Interface.h"
 #include "AeroElement.h"
-#include "Maths.h"
 #include "Timer.h"
 #include "AircraftState.h"
 #include "MovingAverage.h"

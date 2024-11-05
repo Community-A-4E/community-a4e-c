@@ -14,12 +14,11 @@
 
 #include <corecrt_math_defines.h>
 
-#include "Maths.h"
+#include <Common/Maths.h>
+#include <Common/Devices.h>
 #include "Commands.h"
-#include "Devices.h"
 #include "cockpit_base_api.h"
-#include <ImguiDisplay.h>
-#include <imgui.h>
+//#include <LuaImGui.h>
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include "Units.h"
@@ -44,7 +43,7 @@ Scooter::Avionics::Avionics
 {
 	zeroInit();
 
-	ImguiDisplay::AddImguiItem( "Avionics", "General", [this]() { ImGuiDebugWindow(); } );
+	//LuaImGui::AddImGuiItem( "Avionics", "General", [this]() { ImGuiDebugWindow(); } );
 }
 
 Scooter::Avionics::~Avionics()
@@ -177,7 +176,7 @@ void Scooter::Avionics::SetAJB3Output( double dt ) const
 	static constexpr int flag_arg = 387;
 	float current_argument = ed_cockpit_get_draw_argument( flag_arg );
 	const float target = ! operating;
-	current_argument += ( target - current_argument ) * dt / 2.0;
+	current_argument += ( target - current_argument ) * float(dt) / 2.0f;
 	ed_cockpit_set_draw_argument( flag_arg, current_argument );
 }
 
@@ -204,7 +203,7 @@ void Scooter::Avionics::SetStandbyADIOutput( double dt ) const
 	static constexpr int flag_arg = 664;
 	float current_argument = ed_cockpit_get_draw_argument( flag_arg );
 	const float target = ! operating;
-	current_argument += ( target - current_argument ) * dt / 2.0;
+	current_argument += ( target - current_argument ) * float(dt) / 2.0f;
 	ed_cockpit_set_draw_argument( flag_arg, current_argument );
 
 }
@@ -217,7 +216,7 @@ void Scooter::Avionics::SetADIOutput( double dt ) const
 
 void Scooter::Avionics::ImGuiDebugWindow()
 {
-	if ( ImGui::TreeNode("AJB-3 (Pitch/Roll) Gyro") )
+	/*if ( ImGui::TreeNode("AJB-3 (Pitch/Roll) Gyro") )
 	{
 		m_gyro_ajb3.ImguiDebugWindow();
 		ImGui::TreePop();
@@ -227,6 +226,6 @@ void Scooter::Avionics::ImGuiDebugWindow()
 	{
 		m_standby_adi.ImguiDebugWindow();
 		ImGui::TreePop();
-	}
+	}*/
 	
 }

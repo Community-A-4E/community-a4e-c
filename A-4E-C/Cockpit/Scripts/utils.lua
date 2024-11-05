@@ -793,6 +793,7 @@ function require_avionics()
       MissionObjects = {
         getObjectBearing = stub,
         getObjectPosition = stub,
+        getMissionID = stub,
       },
     }
     return stubs

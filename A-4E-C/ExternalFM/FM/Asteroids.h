@@ -1,6 +1,5 @@
 #pragma once
-#include "Vec3.h"
-#include "Maths.h"
+#include <Common/Maths.h>
 #include "Interface.h"
 #include "Input.h"
 #include <vector>
@@ -340,7 +339,7 @@ public:
 			m_bullets[i].setParams( x, y, o );
 		}
 
-		for ( size_t i = 0; i < numAsteroids; i++ )
+		for ( int i = 0; i < numAsteroids; i++ )
 		{
 			m_asteroids[i].setInterface( inter );
 			m_asteroids[i].setParams( ( numBullets + 7 ) + i * 20 );

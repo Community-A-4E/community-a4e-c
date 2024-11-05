@@ -15,10 +15,10 @@
 #include <fstream>
 #include "FlightModel.h"
 #include "Data.h"
-#include "Maths.h"
-#include "Globals.h"
-#include "ImguiDisplay.h"
-#include "imgui.h"
+#include <Common/Maths.h>
+#include <Common/Globals.h>
+//#include <LuaImGui.h>
+#include "lua/lua.h"
 #include "Units.h"
 #include "Logger.h"
 //=========================================================================//
@@ -163,8 +163,8 @@ Scooter::FlightModel::FlightModel
 	m_elementsC.push_back(AeroControlElement(m_state, m_airframe, AeroElement::AILERON, CLalpha, CDalpha, Vec3( c_cpX, 0.0, 4.0014189490), m_wingSurfaceNormalR, 0.3500000000 + 0.21931));
 
 
-	int splineSize = splines.size() / 2;
-	int elementSize = m_elements.size() / 2;
+	int splineSize = int(splines.size() / 2);
+	int elementSize = int(m_elements.size() / 2);
 
 	for ( int i = 0; i < elementSize; i++ )
 	{
@@ -178,9 +178,9 @@ Scooter::FlightModel::FlightModel
 		vapourMapC[i + m_elementsC.size() / 2] = i + splineSize + elementSize;
 	}
 
-	ImguiDisplay::AddImguiItem( "Airframe", "Damage", [this]() {
+	/*LuaImGui::AddImGuiItem( "Airframe", "Damage", [this]() {
 		ImGuiDebugWindow();
-	} );
+	} );*/
 }
 
 Scooter::FlightModel::~FlightModel()
@@ -454,7 +454,7 @@ void Scooter::FlightModel::calculateElements()
 		{
 			damage = m_airframe.getRWingDamage();
 		}*/
-		damage = m_airframe.getDamageElement( wingElementToDamage[i] );
+		damage = float( m_airframe.getDamageElement( wingElementToDamage[i] ) );
 
 		m_elements[i].setLDFactor(1.0 * damage, 0.7 * damage);
 		m_elements[i].calculateElementPhysics();
@@ -478,7 +478,7 @@ void Scooter::FlightModel::calculateElements()
 		{
 			damage = m_airframe.getRWingDamage();
 		}*/
-		damage = m_airframe.getDamageElement( wingElementToDamageC[i] );
+		damage = float( m_airframe.getDamageElement( wingElementToDamageC[i] ) );
 
 		m_elementsC[i].setLDFactor(1.0 * damage, 0.7 * damage);
 		m_elementsC[i].calculateElementPhysics();
@@ -579,8 +579,8 @@ void Scooter::FlightModel::checkForOverstress( double dt )
 		if ( left_wing_break_time > wing_break_time )
 		{
 			left_wing_break_time = 0.0;
-			m_airframe.setDamageDelta( Airframe::Damage::WING_L_IN, random() );
-			m_airframe.setDamageDelta( Airframe::Damage::WING_L_CENTER, 1.0 );
+			m_airframe.setDamageDelta( Airframe::Damage::WING_L_IN, float(random()) );
+			m_airframe.setDamageDelta( Airframe::Damage::WING_L_CENTER, 1.0f );
 		}
 	}
 	else
@@ -596,8 +596,8 @@ void Scooter::FlightModel::checkForOverstress( double dt )
 		if ( right_wing_break_time > wing_break_time )
 		{
 			right_wing_break_time = 0.0;
-			m_airframe.setDamageDelta( Airframe::Damage::WING_R_IN, random() );
-			m_airframe.setDamageDelta( Airframe::Damage::WING_R_CENTER, 1.0 );
+			m_airframe.setDamageDelta( Airframe::Damage::WING_R_IN, float(random()) );
+			m_airframe.setDamageDelta( Airframe::Damage::WING_R_CENTER, 1.0f );
 		}
 	}
 	else
@@ -753,8 +753,8 @@ void Scooter::FlightModel::csvData(std::vector<double>& data)
 	
 }
 
-void Scooter::FlightModel::ImGuiDebugWindow()
-{
-	ImGui::Text( "Alpha: %lf", m_state.getAOA() / 1.0_deg );
-	ImGui::Text( "Beta: %lf", m_state.getBeta() / 1.0_deg );
-}
+//void Scooter::FlightModel::ImGuiDebugWindow()
+//{
+//	ImGui::Text( "Alpha: %lf", m_state.getAOA() / 1.0_deg );
+//	ImGui::Text( "Beta: %lf", m_state.getBeta() / 1.0_deg );
+//}

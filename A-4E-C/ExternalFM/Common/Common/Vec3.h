@@ -171,7 +171,7 @@ struct Vec3f
 {
 	Vec3f() {}
 	Vec3f( const Vec3& v ) :
-		x( v.x ), y( v.y ), z( v.z )
+		x( float(v.x) ), y( float( v.y) ), z( float( v.z ) )
 	{}
 
 	float x = 0.0;

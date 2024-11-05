@@ -16,13 +16,15 @@ public:
 		if ( abs(input) > 1.0 )
 			return (int)input;
 
-		int frequency = input == 0.0 ? INT_MAX : 1 + (double)(1.0 / abs(input));
+		int frequency = INT_MAX;
+		if ( input != 0.0 )
+			frequency = int( 1.0 / abs( input ) );
 
 		if ( frequency < m_timer || m_timer == 0 )
 		{
 			m_timer = frequency;
 			double sign = copysign( 1.0, input );
-			m_sign = sign;
+			m_sign = int(sign);
 		}
 
 		m_timer--;

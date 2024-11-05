@@ -14,8 +14,7 @@
 #include <iostream>
 #include <fstream>
 #include <algorithm>
-#include "Maths.h"
-#include "Vec3.h"
+#include <Common/Maths.h>
 #include "Table.h"
 
 //classes
@@ -135,7 +134,7 @@ namespace Scooter
 		const double vapourPoint = 15000 + 250 * (abs(m_cp.z) / (c_wingSpan / 2.0));
 
 		//                     lerp the opacity
-		m_opacity = clamp((force - vapourPoint) / 4000.0, 0.0, 0.8);
+		m_opacity = float(clamp((force - vapourPoint) / 4000.0, 0.0, 0.8));
 
 	}
 

@@ -1,5 +1,5 @@
 #pragma once
-#include "Maths.h"
+#include <Common/Maths.h>
 class SmoothVary
 {
 public:

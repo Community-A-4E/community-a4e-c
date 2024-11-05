@@ -6,8 +6,9 @@ local AFMenabled = true
 bin = {}
 
 if AFMenabled == true then
-	bin = {'A-4E-C'} 
+    bin = { 'Scooter' } --
 end
+
 
 
 local self_ID="A-4E-C"

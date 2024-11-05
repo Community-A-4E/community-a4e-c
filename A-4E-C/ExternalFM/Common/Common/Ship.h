@@ -10,7 +10,7 @@
 //		DESCRIPTION	:	Ship object for radar.
 //
 //================================ Includes ===============================//
-#include "Vec3.h"
+#include <Common/Vec3.h>
 #include <stdint.h>
 
 constexpr static double c_radarGain = 2.0e0;

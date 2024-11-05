@@ -15,7 +15,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <memory.h>
-#include "Globals.h"
+#include <Common/Globals.h>
 #include "Scooter.h"
 //=========================================================================//
 

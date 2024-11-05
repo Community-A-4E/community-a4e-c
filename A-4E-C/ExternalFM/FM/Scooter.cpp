@@ -15,7 +15,7 @@
 #include <Math.h>
 #include <stdio.h>
 #include <string>
-#include "Vec3.h"
+#include <Common/Vec3.h>
 #include "Input.h"
 #include "FlightModel.h"
 #include "Airframe.h"
@@ -23,21 +23,20 @@
 #include "Interface.h"
 #include "AircraftState.h"
 #include "FuelSystem2.h"
-#include "Maths.h"
+#include <Common/Maths.h>
 #include "LuaVM.h"
 #include "LERX.h"
 #include "ILS.h"
 #include "Commands.h"
 #include "Radar.h"
-#include "Globals.h"
+#include <Common/Globals.h>
 #include "Logger.h"
 #include "Asteroids.h"
 #include "MouseControl.h"
 #include "ModifierEmitter.h"
 #include "Damage.h"
 #include "Scooter.h"
-#include "ImguiDisplay.h"
-#include <imgui.h>
+#include <LuaImGui.h>
 
 //============================= Statics ===================================//
 static Scooter::AircraftState* s_state = nullptr;
@@ -56,8 +55,6 @@ static std::vector<LERX> s_splines;
 
 static Scooter::Radar* s_radar = nullptr;
 static MouseControl* s_mouseControl = nullptr;
-
-static ImguiDisplay* s_display = nullptr;
 
 static HWND s_window = nullptr;
 static bool s_focus = false;
@@ -200,10 +197,8 @@ void checkCompatibility(const char* path)
 
 void init(const char* config)
 {
-	ImguiDisplay::Create();
-
-
-	ImguiDisplay::AddImguiItem( "Avionics", "Test", []()
+	LuaImGui::Create( ImGui::SetCurrentContext, ImGui::SetAllocatorFunctions, ImPlot::SetCurrentContext );
+	LuaImGui::AddItem( "Menu Name", "C++ Test", []()
 		{
 			ImGui::Text( "Hello World" );
 	} );
@@ -215,8 +210,6 @@ void init(const char* config)
 	sprintf_s( configFile, 200, "%s/Config/config.lua", config );
 	s_luaVM->dofile( configFile );
 	s_luaVM->getSplines( "splines", s_splines );
-
-	
 
 	s_luaVM->getGlobalNumber( "external_tank_offset", s_extTankOffset);
 	s_luaVM->getGlobalNumber( "fuselage_tank_offset", s_fuseTankOffset );
@@ -239,9 +232,6 @@ void init(const char* config)
 	s_asteroids = new Asteroids( s_interface );
 	s_mouseControl = new MouseControl;
 
-	
-
-
 	s_window = GetActiveWindow();
 	printf( "Have window: %p\n", s_window );
 	
@@ -262,7 +252,7 @@ void init(const char* config)
 
 void cleanup()
 {
-	ImguiDisplay::Destroy();
+	LuaImGui::Destroy();
 
 	delete s_luaVM;
 	delete s_state;
@@ -352,8 +342,8 @@ void ed_fm_add_local_moment(double & x,double &y,double &z)
 
 void ed_fm_simulate(double dt)
 {
-	if ( ! g_safeToRun )
-		return;
+	//if ( ! g_safeToRun )
+		//return;
 
 	Logger::time( dt );
 
@@ -954,25 +944,25 @@ void ed_fm_set_draw_args (EdDrawArgument * drawargs,size_t size)
 		drawargs[616].f = drawargs[5].f;
 	}
 
-	drawargs[LEFT_AILERON].f = s_airframe->getAileronLeft();
-	drawargs[RIGHT_AILERON].f = s_airframe->getAileronRight();
+	drawargs[LEFT_AILERON].f = float(s_airframe->getAileronLeft());
+	drawargs[RIGHT_AILERON].f = float(s_airframe->getAileronRight());
 
-	drawargs[LEFT_ELEVATOR].f = s_airframe->getElevator();
-	drawargs[RIGHT_ELEVATOR].f = s_airframe->getElevator();
+	drawargs[LEFT_ELEVATOR].f = float(s_airframe->getElevator());
+	drawargs[RIGHT_ELEVATOR].f = float(s_airframe->getElevator());
 
-	drawargs[RUDDER].f = -s_airframe->getRudder();
+	drawargs[RUDDER].f = -float(s_airframe->getRudder());
 
-	drawargs[LEFT_FLAP].f = s_airframe->getFlapsPosition();
-	drawargs[RIGHT_FLAP].f = s_airframe->getFlapsPosition();
+	drawargs[LEFT_FLAP].f = float(s_airframe->getFlapsPosition());
+	drawargs[RIGHT_FLAP].f = float(s_airframe->getFlapsPosition());
 
-	drawargs[LEFT_SLAT].f = s_airframe->getSlatLPosition();
-	drawargs[RIGHT_SLAT].f = s_airframe->getSlatRPosition();
+	drawargs[LEFT_SLAT].f = float(s_airframe->getSlatLPosition());
+	drawargs[RIGHT_SLAT].f = float(s_airframe->getSlatRPosition());
 
-	drawargs[AIRBRAKE].f = s_airframe->getSpeedBrakePosition();
+	drawargs[AIRBRAKE].f = float(s_airframe->getSpeedBrakePosition());
 
 	//drawargs[HOOK].f = 1.0;//s_airframe->getHookPosition();
 
-	drawargs[STABILIZER_TRIM].f = s_airframe->getStabilizerAnim();
+	drawargs[STABILIZER_TRIM].f = float( s_airframe->getStabilizerAnim() );
 
 	//Fan 325 RPM
 	//drawargs[325].f = 1.0;
@@ -1100,8 +1090,8 @@ bool ed_fm_pop_simulation_event(ed_fm_simulation_event& out)
 		out.event_type = ED_FM_EVENT_CARRIER_CATAPULT;
 		out.event_params[0] = 1;
 		out.event_params[1] = 3.0f;
-		out.event_params[2] = speed;
-		out.event_params[3] = thrust;
+		out.event_params[2] = float(speed);
+		out.event_params[3] = float(thrust);
 		s_airframe->catapultState() = Scooter::Airframe::ON_CAT_WAITING;
 		return true;
 	}
@@ -1280,8 +1270,8 @@ void ed_fm_suspension_feedback(int idx, const ed_fm_suspension_info* info)
 
 	if ( idx == 1 )
 	{
-		s_airframe->SetLeftWheelGroundSpeed( info->wheel_speed_X );
-		s_airframe->SetCompressionLeft( info->struct_compression );
+		s_airframe->SetLeftWheelGroundSpeed( float(info->wheel_speed_X) );
+		s_airframe->SetCompressionLeft( float(info->struct_compression) );
 		/*printf( "wheel speed: %lf, force: %lf,%lf,%lf, point: %lf, %lf, %lf\n",
 			info->wheel_speed_X,
 			info->acting_force[0],
@@ -1296,8 +1286,8 @@ void ed_fm_suspension_feedback(int idx, const ed_fm_suspension_info* info)
 
 	if ( idx == 2 )
 	{
-		s_airframe->SetRightWheelGroundSpeed( info->wheel_speed_X );
-		s_airframe->SetCompressionRight( info->struct_compression );
+		s_airframe->SetRightWheelGroundSpeed( float(info->wheel_speed_X) );
+		s_airframe->SetCompressionRight( float(info->struct_compression) );
 	}
 
 	if ( idx > 2 )
@@ -1361,7 +1351,7 @@ bool ed_fm_LERX_vortex_update( unsigned idx, LERX_vortex& out )
 		out.opacity = s_splines[idx].getOpacity();//clamp((s_state->getAOA() - 0.07) / 0.174533, 0.0, 0.8);
 		out.explosion_start = 10.0;
 		out.spline = s_splines[idx].getArrayPointer();
-		out.spline_points_count = s_splines[idx].size();
+		out.spline_points_count = int(s_splines[idx].size());
 		out.spline_point_size_in_bytes = LERX_vortex_spline_point_size;
 		out.version = 0;
 		return true;

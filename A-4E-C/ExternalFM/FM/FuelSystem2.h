@@ -1,7 +1,7 @@
 #pragma once
 #include "BaseComponent.h"
 #include "Engine2.h"
-#include "Maths.h"
+#include <Common/Maths.h>
 #include "Data.h"
 #include <assert.h>
 

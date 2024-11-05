@@ -11,7 +11,7 @@
 //
 //================================ Includes ===============================//
 #include <math.h>
-#include "Vec3.h"
+#include <Common/Vec3.h>
 #include <algorithm>
 //=========================================================================//
 
@@ -42,7 +42,8 @@ static inline double toRad(double degrees)
 	return degrees * PI / 180.0;
 }
 
-static inline double clamp( double value, double min, double max )
+template<std::floating_point T>
+static inline T clamp( T value, T min, T max )
 {
 	return std::max( std::min( value, max ), min );
 }

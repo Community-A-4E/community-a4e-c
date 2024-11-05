@@ -13,18 +13,17 @@
 #include "../include/Cockpit/ccParametersAPI.h"
 #include "../include/FM/wHumanCustomPhysicsAPI.h"
 #include <vector>
-#include "Vec3.h"
+#include <Common/Maths.h>
 #include "LERX.h"
 
 extern "C"
 {
-#define LUA_BUILD_AS_DLL
-#include "../include/lua/lua.h"
-#include "../include/lua/lauxlib.h"
-#include "../include/lua/lualib.h"
+#include "lua/lua.h"
+#include "lua/lauxlib.h"
+#include "lua/lualib.h"
 }
 
-#pragma comment(lib, "../libs/lua.lib")
+#pragma comment(lib, "lua.lib")
 
 class LuaVM
 {

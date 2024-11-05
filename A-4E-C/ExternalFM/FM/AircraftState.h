@@ -16,8 +16,7 @@
 //================================ Includes ===============================//
 #include "BaseComponent.h"
 #include <math.h>
-#include "Vec3.h"
-#include "Maths.h"
+#include <Common/Maths.h>
 #include <Eigen/Geometry>
 //=========================================================================//
 

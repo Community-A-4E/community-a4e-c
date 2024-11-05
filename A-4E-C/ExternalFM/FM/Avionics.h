@@ -13,7 +13,7 @@
 //						is the the yaw damper and the CP741/A bombing computer.
 //
 //================================ Includes ===============================//
-#include "Maths.h"
+#include <Common/Maths.h>
 #include "BaseComponent.h"
 #include "Input.h"
 #include "AircraftState.h"

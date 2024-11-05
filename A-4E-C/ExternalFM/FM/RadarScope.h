@@ -1,10 +1,10 @@
 #pragma once
-#include "Maths.h"
+#include <Common/Maths.h>
 #include "Interface.h"
 
 #define SIDE_LENGTH 50
 #define SIDE_HEIGHT 35
-#define SIDE_RATIO ((double)SIDE_LENGTH/(double)SIDE_HEIGHT)
+#define SIDE_RATIO (double(SIDE_LENGTH)/double(SIDE_HEIGHT))
 #define MAX_BLOBS (SIDE_LENGTH * SIDE_HEIGHT)
 
 #define SCREEN_GAIN 1.0

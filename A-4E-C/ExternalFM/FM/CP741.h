@@ -18,7 +18,7 @@
 #include "BaseComponent.h"
 #include "AircraftState.h"
 #include "MovingAverage.h"
-#include "Vec3.h"
+#include <Common/Vec3.h>
 //=========================================================================//
 
 namespace Scooter

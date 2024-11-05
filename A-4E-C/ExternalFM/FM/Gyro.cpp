@@ -2,9 +2,8 @@
 #include <stdio.h>
 #define _USE_MATH_DEFINES
 #include <math.h>
-#include <cockpit_base_api.h>
-#include <imgui.h>
-#include <Units.h>
+#include "cockpit_base_api.h"
+#include "Units.h"
 
 using namespace Scooter;
 
@@ -459,117 +458,117 @@ void Gyro::Solve( double dt )
     m_state.q3 += dt * ( rate.q3d * integrity );
 }
 
-void Gyro::ImguiDebugWindow()
-{
-    double pitch = 0.0;
-    double roll = 0.0;
-    GetPitchRoll( pitch, roll );
-    ImGui::Text( "Pitch: %lf", pitch );
-    ImGui::Text( "Roll: %lf", roll );
-
-
-    ImGui::Text( "Gyro Error: %lf", GyroError( m_erection_direction ) / 1.0_deg );
-    ImGui::Text( "Gyro Real Error: %lf", GyroError( Vec3{ 0.0, 0.0, 1.0 } ) / 1.0_deg );
-
-    Quat to_body = GetToBody();
-    Quat from_body = to_body.inverse();
-
-    Vec3 up = { 0.0, 0.0, 1.0 };
-    Vec3 up_body = to_body * up;
-    Vec3 up_lab = from_body * up;
-
-    ImGui::Text( "Erection Direction: %.04lf,%.04lf,%.04lf", m_erection_direction.x(), m_erection_direction.y(), m_erection_direction.z() );
-    ImGui::Text( "Up (Gyro) Body: %.04lf,%.04lf,%.04lf", up_body.x(), up_body.y(), up_body.z() );
-    ImGui::Text( "Up Lab: %.04lf,%.04lf,%.04lf", up_lab.x(), up_lab.y(), up_lab.z() );
-
-
-    Quat q = m_world_orientation * GetToBody();
-    Vec3 up_local = q * Vec3{ 0.0, 0.0, 1.0 };
-
-    ImGui::Text( "Up (Aircraft) Body: %.02lf,%.02lf,%.02lf", up_local.x(), up_local.y(), up_local.z() );
-
-
-    ImGui::SliderFloat( "Set Spin Velocity", &m_gyro_debug_w, 0.0, 48000.0 );
-    ImGui::SliderFloat( "Set Gyro Tickle Velocity", &m_gyro_tickle_debug_w, 0.0, 720.0 );
-
-
-    const double tickle_rate = static_cast<double>( m_gyro_tickle_debug_w ) * M_PI / 180.0;
-
-    if ( m_motor_on )
-    {
-        if ( ImGui::Button( "Turn Motor Off" ) )
-        {
-            m_motor_on = false;
-        }
-    }
-    else
-    {
-        if ( ImGui::Button( "Turn Motor On" ) )
-        {
-            m_motor_on = true;
-        }
-    }
-
-    if ( m_fast_erect )
-    {
-        if ( ImGui::Button( "Fast Erect Stop" ) )
-        {
-            m_fast_erect = false;
-        }
-    }
-    else
-    {
-        if ( ImGui::Button( "Fast Erect Start" ) )
-        {
-            m_fast_erect = true;
-        }
-    }
-
-    if ( ImGui::Button( "Set wx" ) )
-    {
-
-        SetBodyOmegaX( tickle_rate );
-    }
-
-    if ( ImGui::Button( "Set wy" ) )
-    {
-        SetBodyOmegaY( tickle_rate );
-    }
-
-    if ( ImGui::Button( "Set wz" ) )
-    {
-        const double angle = static_cast<double>( m_gyro_debug_w ) * M_PI / 180.0;
-        SetBodyOmegaZ( angle );
-    }
-
-    ImGui::Text( "Operating Omega: %lf", m_operating_omega );
-    ImGui::InputDouble( "Gimbal Friction", &m_gimbal_friction, 0.00001, 0.01, "%.8f" );
-    ImGui::InputDouble( "Gimbal Static Friction", &m_gimbal_static_friction, 0.00001, 0.01, "%.8f" );
-    ImGui::InputDouble( "Gimbal Erection Rate", &m_erection_rate, 0.00001, 0.01, "%.8f" );
-    ImGui::InputDouble( "Gimbal Damping", &m_damping, 0.00001, 0.01, "%.8f" );
-    ImGui::InputDouble( "Max Erection Torque", &m_max_erection_torque, 0.00001, 0.01, "%.8f" );
-    ImGui::InputDouble( "Slow Erection Factor", &m_slow_erection_factor, 0.00001, 0.01, "%.8f" );
-    ImGui::InputDouble( "Erection Friction", &m_erection_friction, 0.00001, 0.01, "%.8f" );
-    ImGui::InputDouble( "Random Torque", &m_random_T, 0.00001, 0.01, "%.8f" );
-
-
-    if ( ImGui::TreeNode("Debug Torque") )
-    {
-        ImGui::InputDouble( "Debug Torque X", &m_debug_torque.x(), 0.00001, 0.01, "%.8f" );
-        ImGui::InputDouble( "Debug Torque Y", &m_debug_torque.y(), 0.00001, 0.01, "%.8f" );
-        ImGui::InputDouble( "Debug Torque Z", &m_debug_torque.z(), 0.00001, 0.01, "%.8f" );
-        ImGui::TreePop();
-    }
-   
-
-
-    ImGui::InputDouble( "Spin Up Time (seconds)", &m_spin_up_time, 1.0, 10.0, "%.0f" );
-    ImGui::InputDouble( "Spin Down Time (seconds)", &m_spin_down_time, 1.0, 10.0, "%.0f" );
-
-    ImGui::Text( "Gimbal Torque:  %.05lf,%.05lf,%.05lf", GetTorque().x(), GetTorque().y(), GetTorque().z() );
-    ImGui::Text( "Erection Torque:  %.05lf,%.05lf,%.05lf",m_erection_T.x(), m_erection_T.y(), m_erection_T.z() );
-    ImGui::Text( "Random Torque Direction:  %.05lf,%.05lf,%.05lf",m_random_T_direction.x(), m_random_T_direction.y(), m_random_T_direction.z() );
-
-    Vec3 gyro_omega = GetRealOmega();
-    ImGui::Text( "Gimbal Omega:  %.05lf,%.05lf,%.0lf", gyro_omega.x(), gyro_omega.y(), gyro_omega.z() );
-}
+//void Gyro::ImguiDebugWindow()
+//{
+//    double pitch = 0.0;
+//    double roll = 0.0;
+//    GetPitchRoll( pitch, roll );
+//    ImGui::Text( "Pitch: %lf", pitch );
+//    ImGui::Text( "Roll: %lf", roll );
+//
+//
+//    ImGui::Text( "Gyro Error: %lf", GyroError( m_erection_direction ) / 1.0_deg );
+//    ImGui::Text( "Gyro Real Error: %lf", GyroError( Vec3{ 0.0, 0.0, 1.0 } ) / 1.0_deg );
+//
+//    Quat to_body = GetToBody();
+//    Quat from_body = to_body.inverse();
+//
+//    Vec3 up = { 0.0, 0.0, 1.0 };
+//    Vec3 up_body = to_body * up;
+//    Vec3 up_lab = from_body * up;
+//
+//    ImGui::Text( "Erection Direction: %.04lf,%.04lf,%.04lf", m_erection_direction.x(), m_erection_direction.y(), m_erection_direction.z() );
+//    ImGui::Text( "Up (Gyro) Body: %.04lf,%.04lf,%.04lf", up_body.x(), up_body.y(), up_body.z() );
+//    ImGui::Text( "Up Lab: %.04lf,%.04lf,%.04lf", up_lab.x(), up_lab.y(), up_lab.z() );
+//
+//
+//    Quat q = m_world_orientation * GetToBody();
+//    Vec3 up_local = q * Vec3{ 0.0, 0.0, 1.0 };
+//
+//    ImGui::Text( "Up (Aircraft) Body: %.02lf,%.02lf,%.02lf", up_local.x(), up_local.y(), up_local.z() );
+//
+//
+//    ImGui::SliderFloat( "Set Spin Velocity", &m_gyro_debug_w, 0.0, 48000.0 );
+//    ImGui::SliderFloat( "Set Gyro Tickle Velocity", &m_gyro_tickle_debug_w, 0.0, 720.0 );
+//
+//
+//    const double tickle_rate = static_cast<double>( m_gyro_tickle_debug_w ) * M_PI / 180.0;
+//
+//    if ( m_motor_on )
+//    {
+//        if ( ImGui::Button( "Turn Motor Off" ) )
+//        {
+//            m_motor_on = false;
+//        }
+//    }
+//    else
+//    {
+//        if ( ImGui::Button( "Turn Motor On" ) )
+//        {
+//            m_motor_on = true;
+//        }
+//    }
+//
+//    if ( m_fast_erect )
+//    {
+//        if ( ImGui::Button( "Fast Erect Stop" ) )
+//        {
+//            m_fast_erect = false;
+//        }
+//    }
+//    else
+//    {
+//        if ( ImGui::Button( "Fast Erect Start" ) )
+//        {
+//            m_fast_erect = true;
+//        }
+//    }
+//
+//    if ( ImGui::Button( "Set wx" ) )
+//    {
+//
+//        SetBodyOmegaX( tickle_rate );
+//    }
+//
+//    if ( ImGui::Button( "Set wy" ) )
+//    {
+//        SetBodyOmegaY( tickle_rate );
+//    }
+//
+//    if ( ImGui::Button( "Set wz" ) )
+//    {
+//        const double angle = static_cast<double>( m_gyro_debug_w ) * M_PI / 180.0;
+//        SetBodyOmegaZ( angle );
+//    }
+//
+//    ImGui::Text( "Operating Omega: %lf", m_operating_omega );
+//    ImGui::InputDouble( "Gimbal Friction", &m_gimbal_friction, 0.00001, 0.01, "%.8f" );
+//    ImGui::InputDouble( "Gimbal Static Friction", &m_gimbal_static_friction, 0.00001, 0.01, "%.8f" );
+//    ImGui::InputDouble( "Gimbal Erection Rate", &m_erection_rate, 0.00001, 0.01, "%.8f" );
+//    ImGui::InputDouble( "Gimbal Damping", &m_damping, 0.00001, 0.01, "%.8f" );
+//    ImGui::InputDouble( "Max Erection Torque", &m_max_erection_torque, 0.00001, 0.01, "%.8f" );
+//    ImGui::InputDouble( "Slow Erection Factor", &m_slow_erection_factor, 0.00001, 0.01, "%.8f" );
+//    ImGui::InputDouble( "Erection Friction", &m_erection_friction, 0.00001, 0.01, "%.8f" );
+//    ImGui::InputDouble( "Random Torque", &m_random_T, 0.00001, 0.01, "%.8f" );
+//
+//
+//    if ( ImGui::TreeNode("Debug Torque") )
+//    {
+//        ImGui::InputDouble( "Debug Torque X", &m_debug_torque.x(), 0.00001, 0.01, "%.8f" );
+//        ImGui::InputDouble( "Debug Torque Y", &m_debug_torque.y(), 0.00001, 0.01, "%.8f" );
+//        ImGui::InputDouble( "Debug Torque Z", &m_debug_torque.z(), 0.00001, 0.01, "%.8f" );
+//        ImGui::TreePop();
+//    }
+//   
+//
+//
+//    ImGui::InputDouble( "Spin Up Time (seconds)", &m_spin_up_time, 1.0, 10.0, "%.0f" );
+//    ImGui::InputDouble( "Spin Down Time (seconds)", &m_spin_down_time, 1.0, 10.0, "%.0f" );
+//
+//    ImGui::Text( "Gimbal Torque:  %.05lf,%.05lf,%.05lf", GetTorque().x(), GetTorque().y(), GetTorque().z() );
+//    ImGui::Text( "Erection Torque:  %.05lf,%.05lf,%.05lf",m_erection_T.x(), m_erection_T.y(), m_erection_T.z() );
+//    ImGui::Text( "Random Torque Direction:  %.05lf,%.05lf,%.05lf",m_random_T_direction.x(), m_random_T_direction.y(), m_random_T_direction.z() );
+//
+//    Vec3 gyro_omega = GetRealOmega();
+//    ImGui::Text( "Gimbal Omega:  %.05lf,%.05lf,%.0lf", gyro_omega.x(), gyro_omega.y(), gyro_omega.z() );
+//}

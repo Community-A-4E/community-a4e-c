@@ -10,6 +10,7 @@ dofile(LockOn_Options.script_path.."devices.lua")
 dofile(LockOn_Options.script_path.."Systems/electric_system_api.lua")
 dofile(LockOn_Options.script_path.."command_defs.lua")
 dofile(LockOn_Options.script_path.."utils.lua")
+dofile(LockOn_Options.script_path.."Systems/rhaw_radars.lua") -- Import the Radars
 
 local SHRIKE = GetSelf()
 local update_time_step = 0.02  --20 time per second
@@ -31,6 +32,12 @@ local shrike_lock = false
 local target_expire_time = 3.0
 local shrike_lock_volume = 0
 -- local shrike_sidewinder_volume = 0.5
+
+-- Current Selected Shrike
+local shrike_seeker_band_min = get_param_handle("SHRIKE_BAND_MIN")
+local shrike_seeker_band_max = get_param_handle("SHRIKE_BAND_MAX")
+
+local shrike_band = nil
 
 shrike_armed_param = get_param_handle("SHRIKE_ARMED")
 shrike_sidewinder_volume = get_param_handle("SHRIKE_SIDEWINDER_VOLUME")
@@ -70,15 +77,16 @@ function post_initialize()
 end
 
 function update()
-    -- TODO: Check for AFT MON AC BUS and MONITORED DC BUS
-    if get_elec_aft_mon_ac_ok() and get_elec_mon_dc_ok() then
+
+    if shrike_seeker_band_min:get() > 0 and shrike_seeker_band_max:get() > 0 then
+
+        shrike_band = {shrike_seeker_band_min:get() * 1.e9, shrike_seeker_band_max:get() * 1.e9}
+    else
+        shrike_band = nil
+    end
     
-        for i = 1, maxContacts do
-            -- debug_print(i.." - Signal: "..tostring(contacts[i].signal_h:get()).." Power: "..tostring(contacts[i].power_h:get()).." General Type: "..tostring(contacts[i].general_type_h:get()).." Azimuth: "..tostring(math.rad(contacts[i].azimuth_h:get())).." Elevation: "..tostring(contacts[i].elevation_h:get()).." Unit Type: "..tostring(contacts[i].unit_type_h:get()).." Priority: "..tostring(contacts[i].priority_h:get()).." Time: "..tostring(contacts[i].time_h:get()).." Source: "..tostring(contacts[i].source_h:get()))
-            -- debug_print(i.." Raw Azimuth: "..tostring(contacts[i].azimuth_h:get()).." Heading: "..tostring(math.deg(contacts[i].azimuth_h:get())))
-            -- debug_print(i.." Raw Elevation: "..tostring(contacts[i].elevation_h:get()).." Elevation: "..tostring(math.deg(contacts[i].elevation_h:get())))
-        end
-        
+    -- TODO: Check for AFT MON AC BUS and MONITORED DC BUS
+    if get_elec_aft_mon_ac_ok() and get_elec_mon_dc_ok() and shrike_band ~= nil then
         -- get aircraft current heading
         aircraft_heading_deg    = math.deg(sensor_data.getMagneticHeading())
         aircraft_pitch_deg      = math.deg(sensor_data.getPitch())
@@ -88,14 +96,18 @@ function update()
         for i, contact in ipairs(contacts) do
             if contact.power_h:get() > 0 and contact.time_h:get() < 0.05 and (contact.general_type_h:get() == 2 or contact.general_type_h:get() == 0) then
                 local id = contact.source_h:get()
-                -- check if data already exists
-                if shrike_targets[id] then
-                    -- only update target data if data is new
-                    if shrike_targets[id].raw_azimuth ~= contact.azimuth_h:get() then
+                local target_type = contact.unit_type_h:get()
+
+                if CheckTargetBand(target_type) then
+                    -- check if data already exists
+                    if shrike_targets[id] then
+                        -- only update target data if data is new
+                        if shrike_targets[id].raw_azimuth ~= contact.azimuth_h:get() then
+                            updateTargetData(id, contact, current_time)
+                        end
+                    else -- create new target
                         updateTargetData(id, contact, current_time)
                     end
-                else -- create new target
-                    updateTargetData(id, contact, current_time)
                 end
             end
         end
@@ -119,6 +131,36 @@ function update()
 end
 
 function SetCommand(command, value)
+end
+
+
+-- Checks the intersection of two bands
+-- in the format {a_min, a_max}, {b_min, b_max}
+function CheckBandIntersection(a, b)
+    return math.max(a[1], b[1]) <= math.min(a[2],b[2])
+end
+
+function CheckTargetBand( target_type )
+    local unit = units[target_type]
+    
+    if unit == nil then
+        return false
+    end
+
+    if #unit.frequencies <= 0 then
+        return false
+    end
+
+    print_message_to_user(unit.DisplayName.." : "..tostring(unit.frequencies[1][1]).." -> "..tostring(unit.frequencies[1][2]))
+
+    for i,v in ipairs(unit.frequencies) do
+        if CheckBandIntersection(v,shrike_band) then
+            print_message_to_user("Found")
+            return true
+        end
+    end
+
+    return false
 end
 
 -- this function parses the raw data format into the target table

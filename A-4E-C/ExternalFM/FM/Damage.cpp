@@ -1,14 +1,13 @@
 #include "Damage.h"
-#include <imgui.h>
-#include <ImguiDisplay.h>
+//#include <LuaImGui.h>
 
 std::unique_ptr<Scooter::DamageProcessor> Scooter::DamageProcessor::m_damage_processor = nullptr;
 
 Scooter::DamageProcessor::DamageProcessor( Interface& inter ) : m_interface( inter )
 {
-    ImguiDisplay::AddImguiItem( "Airframe", "Damage", [this]() {
+    /*LuaImGui::AddImGuiItem( "Airframe", "Damage", [this]() {
         ImGuiDebugWindow();
-    } );
+    } );*/
 }
 
 
@@ -178,7 +177,7 @@ void Scooter::DamageObject::Damage( double integrity )
 
 void Scooter::DamageProcessor::ImGuiDebugWindow()
 {
-    if ( ImGui::TreeNode( "Damage Cells" ) )
+    /*if ( ImGui::TreeNode( "Damage Cells" ) )
     {
         for ( auto& [cell, objects] : m_damage_objects )
         {
@@ -245,7 +244,7 @@ void Scooter::DamageProcessor::ImGuiDebugWindow()
             }
             ImGui::EndTable();
         }
-    }
+    }*/
 }
 
 

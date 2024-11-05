@@ -1,6 +1,6 @@
 #pragma once
 #include <vector>
-#include <include/FM/wHumanCustomPhysicsAPI.h>
+#include <FM/wHumanCustomPhysicsAPI.h>
 class LERX
 {
 public:
@@ -10,12 +10,12 @@ public:
 
 	}
 
-	inline void setOpacity( double opacity )
+	inline void setOpacity( float opacity )
 	{
 		m_opacity = opacity;
 	}
 	
-	inline double getOpacity() const
+	inline float getOpacity() const
 	{
 		return m_opacity;
 	}
@@ -32,5 +32,5 @@ public:
 
 private:
 	std::vector<LERX_vortex_spline_point> m_points;
-	double m_opacity = 0.0;
+	float m_opacity = 0.0;
 };
