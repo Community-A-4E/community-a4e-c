@@ -16,7 +16,7 @@
 
 #include <Common/Maths.h>
 #include <Common/Devices.h>
-#include "Commands.h"
+#include <Common/Commands.h>
 #include "cockpit_base_api.h"
 //#include <LuaImGui.h>
 #define _USE_MATH_DEFINES

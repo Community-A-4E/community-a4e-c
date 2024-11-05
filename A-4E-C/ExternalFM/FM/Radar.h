@@ -1,7 +1,7 @@
 #pragma once
 #include <random>
 #include <Common/Devices.h>
-#include "Commands.h"
+#include <Common/Commands.h>
 #include "RadarScope.h"
 #include "AircraftState.h"
 #include "Units.h"
