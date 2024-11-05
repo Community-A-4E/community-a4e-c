@@ -91,20 +91,37 @@ target_link_libraries(Scooter
     PRIVATE
     ${SCOOTER_LIBS}
 )
+
 MESSAGE(INFO " ${SCOOTER_LIBS}")
 
-# target_include_directories(Scooter PRIVATE
-# "${CMAKE_SOURCE_DIR}/ext/implot"
-# "${CMAKE_SOURCE_DIR}/ext/imgui/"
-# "${CMAKE_SOURCE_DIR}/ext/imgui/backends"
-# "${CMAKE_SOURCE_DIR}/ext/DCS-EFM-ImGui/Include"
-# "${CMAKE_SOURCE_DIR}/ext/dcs-lua/include"
-# )
+### Add lua auto-generation as a dependable target
+set(lua_autogen_dep
+        "${CMAKE_SOURCE_DIR}/Cockpit/Scripts/devices.lua"
+        "${CMAKE_SOURCE_DIR}/Cockpit/Scripts/command_defs.lua"
+)
+
+set(lua_autogen_list
+        "${CMAKE_SOURCE_DIR}/ExternalFM/Common/Common/Devices.h"
+        "${CMAKE_SOURCE_DIR}/ExternalFM/Common/Common/Commands.h"
+)
+
+set(lua_gen_command "${CMAKE_SOURCE_DIR}/build-tools/generate_headers.bat")
+
+add_custom_command(
+        OUTPUT ${lua_autogen_list}
+        DEPENDS ${lua_autogen_dep}
+        COMMAND ${lua_gen_command} ${CMAKE_SOURCE_DIR}
+)
+
+add_custom_target(generate_headers DEPENDS ${lua_autogen_list})
+add_dependencies(Scooter generate_headers)
+
 target_include_directories(Scooter PRIVATE
     "${CMAKE_SOURCE_DIR}/ExternalFM/ext/eigen-master/include"
     "${CMAKE_SOURCE_DIR}/Cockpit/Scripts/LuaImGui/ext/dcs-lua/include"
     "${CMAKE_SOURCE_DIR}/ExternalFM/include"
 )
+
 
 add_custom_command( TARGET Scooter POST_BUILD
     COMMAND "${CMAKE_COMMAND}"
