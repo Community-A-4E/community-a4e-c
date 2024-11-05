@@ -3,8 +3,10 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+.vscode/
 out/
 *.dll
+A-4E-C/Docs/*.pdf
 
 # User-specific files
 *.rsuser
