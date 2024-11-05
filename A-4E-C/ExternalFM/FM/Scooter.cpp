@@ -27,7 +27,7 @@
 #include "LuaVM.h"
 #include "LERX.h"
 #include "ILS.h"
-#include "Commands.h"
+#include <Common/Commands.h>
 #include "Radar.h"
 #include <Common/Globals.h>
 #include "Logger.h"
