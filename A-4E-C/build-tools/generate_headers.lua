@@ -1,5 +1,6 @@
 project_root = arg[1]
 package.path = package.path .. ';' .. project_root .. "\\build-tools\\?.lua"
+package.cpath = package.cpath .. ';' .. project_root .. "\\build-tools\\?.dll"
 
 function GenerateHeader(file_path, template, ...)
     local arg = {...}
@@ -93,16 +94,12 @@ function GenerateHashes(project_root, output_dir)
 // ================================================================================== //
 // SEE build-tools/generate_headers.lua for the origin
 #pragma once
-#include <Windows.h>
 
-static const WCHAR* files[] = {
+static const char* files[] = {
 %s
 };
 
-static const BYTE hashes[][%d] = {
-%s
-};
-
+static const unsigned char hash[%d] = { %s };
 ]]
 
 
@@ -112,32 +109,34 @@ static const BYTE hashes[][%d] = {
         "entry.lua",
         "A-4E-C.lua",
         "Cockpit/Scripts/EFM_Data_Bus.lua",
-        "Entry/Suspension.lua"        
+        "Entry/Suspension.lua",
+        "Weapons/A4E_Weapons.lua"
     }
 
-    local size
-    local hashes = {}
-  
+    local s = ""
+
     for i, v in ipairs(files) do
-        local file = io.open(project_root .. '\\' .. v, 'r')
-        local hash = md5.sumhexa(file:read())
-        file:close()
-
-        local array = ToArray(hash)
-        size = #array
-
-        array = table.concat(array, ',')
-        table.insert(hashes, string.format("    { %s }", array))
+        local path = project_root .. '\\' .. v
+        local f = ""
+        for line in io.lines(path) do
+            s = s .. line
+            f = f .. line
+        end
     end
 
+    local hash = md5.hash(s)
+
+    print( "Important File Hash -> " .. hash)
+    local array = ToArray(hash)
+    local size = #array
+
     for i, v in ipairs(files) do
-        files[i] = string.format("    L\"%s\"", v)
+        files[i] = string.format("    \"%s\"", v)
     end
     
+    array = table.concat(array, ',')
     files = table.concat(files, ',\n')
-    
-    hashes = table.concat(hashes, ',\n')
-    GenerateHeader(output_dir .. "Hashes.h", template, files, size, hashes)
+    GenerateHeader(output_dir .. "Hashes.h", template, files, size, array)
 end
 
 output_dir = project_root.."\\ExternalFM\\Common\\Common\\"
@@ -145,5 +144,5 @@ output_dir = project_root.."\\ExternalFM\\Common\\Common\\"
 
 GenerateCommandDefs(project_root, output_dir)
 GenerateDevices(project_root, output_dir)
-GenerateHashes(project_root, project_root .. "\\ExternalFM\\FM\\")
+GenerateHashes(project_root, output_dir)
 

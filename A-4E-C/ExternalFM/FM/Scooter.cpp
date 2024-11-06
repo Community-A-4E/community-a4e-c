@@ -11,6 +11,7 @@
 //
 //================================ Includes ===============================//
 #include "stdafx.h"
+#include <Verify.h>
 #include "Scooter.h"
 #include <Math.h>
 #include <stdio.h>
@@ -208,6 +209,15 @@ void init(const char* config)
 			ImGui::Text( "Hello World" );
 	} );
 
+	g_safeToRun = Scooter::Verify(config);
+
+	if ( g_safeToRun )
+		LuaImGui::Log("Hash Verified");
+	else
+		LuaImGui::Log("Hash Not Verified");
+
+
+
 	srand( 741 );
 	s_luaVM = new LuaVM;
 
@@ -347,8 +357,8 @@ void ed_fm_add_local_moment(double & x,double &y,double &z)
 
 void ed_fm_simulate(double dt)
 {
-	//if ( ! g_safeToRun )
-		//return;
+	if ( ! g_safeToRun )
+		return;
 
 	Logger::time( dt );
 
@@ -1321,13 +1331,9 @@ void ed_fm_set_plugin_data_install_path ( const char* path )
 	LOG_BREAK();
 	LOG( "Begin Log, %s\n", srcvers );
 	LOG( "Initialising Components...\n" );
-	WLOG( L"Some Test, %s", L"String" );
 
 	init(path);
-	WLOG( L"Some Test2, %s", L"String" );
-
-	g_safeToRun = isSafeContext();
-	LOG( "Safe: %d", g_safeToRun );
+	LOG( "Safe: %d\n", g_safeToRun );
 
 	checkCompatibility( path );
 }

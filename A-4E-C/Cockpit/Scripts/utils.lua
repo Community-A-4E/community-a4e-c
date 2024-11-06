@@ -794,6 +794,8 @@ function require_avionics()
   if success and result ~= false then
     return result
   else
+    print_message_to_user("ScooterAvionics failed to load: "..result)  
+
     -- These stub out the functions that are required by ScooterAvionics.dll
     -- This is so that if someone rebuilds the open-source part of the code
     -- they can still use the aircraft without errors.

@@ -25,8 +25,6 @@ extern ED_FM_API int g_safeToRun;
 extern bool g_logging;
 extern bool g_disableRadio;
 
-extern int isSafeContext();
-
 //#define DEBUG_CONSOLE
 
 //#define DISPLAY_IMGUI
