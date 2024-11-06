@@ -1772,8 +1772,9 @@ function bru_41(element,count,side) -- build up to a 6x MER loadout of the speci
     data.attribute          = rack_variant.wstype
     data.Picture            = bomb_variant.pic
     if bomb_variant.PictureBlendColor then
-        data.PictureBlendColor  = "0xffffffff"
+        data.PictureBlendColor = "0xffffffff"
     end
+    data.settings           = bomb_variant.settings
     data.Count              = count
     data.displayName        = tostring(count).." x "..bomb_variant.name.." (MER)"
     data.wsTypeOfWeapon     = bomb_variant.wstype

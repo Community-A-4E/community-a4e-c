@@ -2,7 +2,7 @@
 // THIS FILE IS AUTO-GENERATED
 // ALL CHANGES WILL BE LOST
 // ================================================================================== //
-// SEE build-tools/generate_headers.lua for the origin
+// SEE Cockpit/Scripts/devices.lua for the origin
 #pragma once
 #include <Windows.h>
 

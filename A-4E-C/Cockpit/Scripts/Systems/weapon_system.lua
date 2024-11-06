@@ -1,7 +1,7 @@
 local WeaponSystem     = GetSelf()
 dofile(LockOn_Options.script_path.."ConfigurePackage.lua")
 
-require("devices_defs")
+require(common_scripts .. "devices_defs")
 require("Systems.stores_config")
 require("command_defs")
 require("Systems.electric_system_api")
@@ -10,6 +10,8 @@ require("utils")
 require("sound_params")
 require("EFM_Data_Bus")
 require("Systems.mission")
+
+local units = require('Mission.units')
 
 require("ImGui")
 
@@ -222,23 +224,20 @@ function CreateSeekerTable()
 
 end
 
-bar_enabled = true
 function ImGuiPylons(i)
     local station_info = WeaponSystem:get_station_info(i-1)
     ImGui:Text("CLSID: "..station_info.CLSID)
     ImGui:Text(string.format("Count: %d", station_info.count))
     ImGui:Text(string.format("Weapon = %s", ImGui.Serialize(station_info.weapon)))
 
-    ImGui:Header("Shrike Seeker", function() 
-        local seeker = shrike_seekers_armed[i]
-        local seeker_info = shrike_seeker_type[seeker]
-        ImGui:Text(string.format("%s -> {%f, %f}", seeker_info.name, seeker_info.freq[1], seeker_info.freq[2]))
-    end)
+    local seeker = shrike_seekers_armed[i]
+    local seeker_info = shrike_seeker_type[seeker]
+    ImGui:Text(string.format("%s -> {%f, %f}", seeker_info.name, seeker_info.freq[1], seeker_info.freq[2]))
 end
 
 ImGui.AddItem("Systems", "Weapon System", function() 
     
-    ImGui:Text(string.format("Bar Enabled: %s", tostring(bar_enabled)))
+    ImGui:Text(ImGui.Serialize(unit_config))
     
     ImGui:Header("Keys", function() 
         local s = ImGui.Serialize(Keys)
@@ -381,17 +380,25 @@ loadout_quantity_by_station = {
 
 function post_initialize()
 
-
+    
     load_tempmission_file()
     local own_mission_id = avionics.MissionObjects.getMissionID()
-    print_message_to_user("Own Mission ID: "..tostring(own_mission_id))
+    ImGui.Log("Mission ID: "..own_mission_id)
+    local unit_config = units:get_plane(own_mission_id)
 
-    local loadout = get_aircraft_mission_data("unitId")
-
-    for i,v in pairs(loadout[1]) do
-        print_message_to_user(tostring(i).." -> "..tostring(v))
+    if unit_config then
+        if unit_config.payload then
+            if unit_config.payload.pylons then
+                for i, v in pairs(unit_config.payload.pylons) do
+                    ImGui.Log(ImGui.Serialize(v))
+                    if v.settings and v.settings.NFP_rfgu_type ~= nil then
+                        
+                        shrike_seekers_armed[i] = v.settings.NFP_rfgu_type
+                    end
+                end
+            end
+        end
     end
-
     
     update_kneeboard_loadout()
 
@@ -568,9 +575,6 @@ function ChangeShrikeSeeker(station)
     -- if sensor_data.getWOW_LeftMainLandingGear() <= 0 then
     --     return
     -- end
-
-    bar_enabled = not bar_enabled
-    ImGui:MenuBar(bar_enabled)
 
     local seeker = shrike_seekers_armed[station]
 

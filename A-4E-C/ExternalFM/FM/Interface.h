@@ -249,7 +249,7 @@ public:
 		}
 		else
 		{
-			LOG( "Pointer could not be found from string: %s\n", buffer )
+			LOG( "Pointer could not be found from string: %s\n", buffer );
 		}
 
 		return NULL;

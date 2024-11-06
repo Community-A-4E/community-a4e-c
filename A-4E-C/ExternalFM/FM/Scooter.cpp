@@ -81,6 +81,11 @@ static double s_extTankOffset = 0.0;
 
 //=========================================================================//
 
+void ImGuiLog( const char* c )
+{
+	LuaImGui::Log( log_buffer );
+}
+
 //Courtesy of SilentEagle
 static inline int decodeClick( float& value )
 {
@@ -1316,10 +1321,13 @@ void ed_fm_set_plugin_data_install_path ( const char* path )
 	LOG_BREAK();
 	LOG( "Begin Log, %s\n", srcvers );
 	LOG( "Initialising Components...\n" );
+	WLOG( L"Some Test, %s", L"String" );
 
 	init(path);
+	WLOG( L"Some Test2, %s", L"String" );
 
 	g_safeToRun = isSafeContext();
+	LOG( "Safe: %d", g_safeToRun );
 
 	checkCompatibility( path );
 }

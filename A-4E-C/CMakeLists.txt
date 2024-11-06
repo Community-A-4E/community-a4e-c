@@ -11,8 +11,6 @@ cmake_minimum_required (VERSION 3.25)
 #   set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<IF:$<AND:$<C_COMPILER_ID:MSVC>,$<CXX_COMPILER_ID:MSVC>>,$<$<CONFIG:Debug,RelWithDebInfo>:EditAndContinue>,$<$<CONFIG:Debug,RelWithDebInfo>:ProgramDatabase>>")
 # endif()
 
-project(Scooter DESCRIPTION "A-4E C++ Project")
-
 file(GLOB_RECURSE source_list "${CMAKE_CURRENT_SOURCE_DIR}/ExternalFM/FM/*.c" "${CMAKE_CURRENT_SOURCE_DIR}/ExternalFM/FM/*.cpp" )
 file(GLOB_RECURSE headers_list "${CMAKE_CURRENT_SOURCE_DIR}/ExternalFM/FM/*.h" "${CMAKE_CURRENT_SOURCE_DIR}/ExternalFM/FM/*.hpp" )
 
@@ -59,16 +57,18 @@ endif()
 #     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin")
 
 target_compile_definitions(Scooter PRIVATE ED_FM_EXPORTS ED_FM_TEMPLATE_EXPORTS UNICODE _SILENCE_CXX23_DENORM_DEPRECATION_WARNING)
+set_target_properties(Scooter PROPERTIES MSVC_RUNTIME_LIBRARY "MultiThreadedDLL")
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/ExternalFM/Common")
 
-add_subdirectory("${CMAKE_SOURCE_DIR}/ExternalFM/Common")
+set(LUA_IMGUI_BIN_PATH "${CMAKE_CURRENT_SOURCE_DIR}/bin")
 
-add_subdirectory("${CMAKE_SOURCE_DIR}/Cockpit/Scripts/LuaImGui" "${CMAKE_BINARY_DIR}/Cockpit/Scripts/LuaImGui")
-add_subdirectory("${CMAKE_SOURCE_DIR}/ExternalFM/Avionics" "${CMAKE_BINARY_DIR}/ExternalFM/Avionics")
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/Cockpit/Scripts/LuaImGui" "${CMAKE_CURRENT_BINARY_DIR}/Cockpit/Scripts/LuaImGui")
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/ExternalFM/Avionics" "${CMAKE_CURRENT_BINARY_DIR}/ExternalFM/Avionics")
 
 # target_link_directories( Scooter PRIVATE  )
 set(SCOOTER_LIBS
-    "${CMAKE_SOURCE_DIR}/ExternalFM/libs/CockpitBase.lib"
-    "${CMAKE_SOURCE_DIR}/Cockpit/Scripts/LuaImGui/ext/dcs-lua/lua.lib"
+    "${CMAKE_CURRENT_SOURCE_DIR}/ExternalFM/libs/CockpitBase.lib"
+    "${CMAKE_CURRENT_SOURCE_DIR}/Cockpit/Scripts/LuaImGui/ext/dcs-lua/lua.lib"
     Common
     ScooterAvionics
     LuaImGui
@@ -94,18 +94,18 @@ target_link_libraries(Scooter
 
 MESSAGE(INFO " ${SCOOTER_LIBS}")
 
-### Add lua auto-generation as a dependable target
+# ## Add lua auto-generation as a dependable target
 set(lua_autogen_dep
-        "${CMAKE_SOURCE_DIR}/Cockpit/Scripts/devices.lua"
-        "${CMAKE_SOURCE_DIR}/Cockpit/Scripts/command_defs.lua"
+    "${CMAKE_CURRENT_SOURCE_DIR}/Cockpit/Scripts/devices.lua"
+    "${CMAKE_CURRENT_SOURCE_DIR}/Cockpit/Scripts/command_defs.lua"
 )
 
 set(lua_autogen_list
-        "${CMAKE_SOURCE_DIR}/ExternalFM/Common/Common/Devices.h"
-        "${CMAKE_SOURCE_DIR}/ExternalFM/Common/Common/Commands.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/ExternalFM/Common/Common/Devices.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/ExternalFM/Common/Common/Commands.h"
 )
 
-set(lua_gen_command "${CMAKE_SOURCE_DIR}/build-tools/generate_headers.bat")
+set(lua_gen_command "${CMAKE_CURRENT_SOURCE_DIR}/build-tools/generate_headers.bat")
 
 add_custom_command(
         OUTPUT ${lua_autogen_list}
@@ -117,14 +117,14 @@ add_custom_target(generate_headers DEPENDS ${lua_autogen_list})
 add_dependencies(Scooter generate_headers)
 
 target_include_directories(Scooter PRIVATE
-    "${CMAKE_SOURCE_DIR}/ExternalFM/ext/eigen-master/include"
-    "${CMAKE_SOURCE_DIR}/Cockpit/Scripts/LuaImGui/ext/dcs-lua/include"
-    "${CMAKE_SOURCE_DIR}/ExternalFM/include"
+    "${CMAKE_CURRENT_SOURCE_DIR}/ExternalFM/ext/eigen-master/include"
+    "${CMAKE_CURRENT_SOURCE_DIR}/Cockpit/Scripts/LuaImGui/ext/dcs-lua/include"
+    "${CMAKE_CURRENT_SOURCE_DIR}/ExternalFM/include"
 )
 
 
-add_custom_command( TARGET Scooter POST_BUILD
+add_custom_command(TARGET Scooter POST_BUILD
     COMMAND "${CMAKE_COMMAND}"
-    -E copy "$<TARGET_FILE:Scooter>" "${CMAKE_SOURCE_DIR}/bin/$<TARGET_FILE_NAME:Scooter>" 
+    -E copy "$<TARGET_FILE:Scooter>" "${CMAKE_CURRENT_SOURCE_DIR}/bin/$<TARGET_FILE_NAME:Scooter>"
     COMMENT "Copying LuaImGui to bin"
 )

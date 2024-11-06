@@ -32,7 +32,7 @@ enum FileCodes
 
 static int getA4Root( WCHAR* buffer, DWORD length );
 static int getHash(LPCWSTR filename, BYTE* buffer );
-static int verifyHash( BYTE* hash1, BYTE* hash2 );
+static int verifyHash( const BYTE* hash1, const BYTE* hash2 );
 static void logHash( BYTE* hash );
 
 int isSafeContext()
@@ -225,7 +225,7 @@ int getHash( LPCWSTR filename, BYTE* hashBuffer )
 	return safe;
 }
 
-int verifyHash( BYTE* hash1, BYTE* hash2 )
+int verifyHash( const BYTE* hash1, const BYTE* hash2 )
 {
 	for ( int i = 0; i < HASH_LEN; i++ )
 	{

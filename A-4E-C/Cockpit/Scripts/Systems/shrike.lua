@@ -4,24 +4,22 @@
 -- This module will handle the logic for the seeker head and 
 -- deploying the AGM-45 Shrike
 ----------------------------------------------------------------
+dofile(LockOn_Options.script_path .. "ConfigurePackage.lua")
+require(common_scripts .. "devices_defs")
+require("devices")
+require("Systems.electric_system_api")
+require("command_defs")
+require("utils")
+require("Systems.rhaw_radars") -- Import the Radars
 
-dofile(LockOn_Options.common_script_path.."devices_defs.lua")
-dofile(LockOn_Options.script_path.."devices.lua")
-dofile(LockOn_Options.script_path.."Systems/electric_system_api.lua")
-dofile(LockOn_Options.script_path.."command_defs.lua")
-dofile(LockOn_Options.script_path.."utils.lua")
-dofile(LockOn_Options.script_path.."Systems/rhaw_radars.lua") -- Import the Radars
+require("ImGui")
 
 local SHRIKE = GetSelf()
 local update_time_step = 0.02  --20 time per second
 make_default_activity(update_time_step)
 device_timer_dt     = 0.02  	--0.2  	
 
-local sensor_data = get_base_data()
-
-function debug_print(message)
-    -- print_message_to_user(message)
-end
+local sensor_data            = get_base_data()
 
 SHRIKE_HORZ_FOV = 6
 SHRIKE_VERT_FOV = 6
@@ -64,6 +62,18 @@ end
 -- create table with shrike targets, tracked by source id
 local shrike_targets = {}
 
+ImGui.AddItem("Systems", "Shrike", function()
+
+    if shrike_band == nil then
+        ImGui:Text("Shrike Band: nil")
+    else
+        ImGui:Text(string.format("Shrike Band (GHz): { %f -> %f }", shrike_band[1]/1.0e9, shrike_band[2]/1.0e9))
+    end
+
+
+    ImGui:Text(ImGui.Serialize(shrike_targets))
+end)
+
 function post_initialize()
     local RWR = GetDevice(devices.RWR)
     shrike_armed_param:set(0)
@@ -77,6 +87,8 @@ function post_initialize()
 end
 
 function update()
+
+    ImGui.Refresh()
 
     if shrike_seeker_band_min:get() > 0 and shrike_seeker_band_max:get() > 0 then
 
@@ -98,15 +110,17 @@ function update()
                 local id = contact.source_h:get()
                 local target_type = contact.unit_type_h:get()
 
-                if CheckTargetBand(target_type) then
+                local freqs = TargetBands(target_type)
+
+                if CheckTargetBand(freqs) then
                     -- check if data already exists
                     if shrike_targets[id] then
                         -- only update target data if data is new
                         if shrike_targets[id].raw_azimuth ~= contact.azimuth_h:get() then
-                            updateTargetData(id, contact, current_time)
+                            updateTargetData(id, contact, current_time, freqs)
                         end
                     else -- create new target
-                        updateTargetData(id, contact, current_time)
+                        updateTargetData(id, contact, current_time, freqs)
                     end
                 end
             end
@@ -137,25 +151,32 @@ end
 -- Checks the intersection of two bands
 -- in the format {a_min, a_max}, {b_min, b_max}
 function CheckBandIntersection(a, b)
-    return math.max(a[1], b[1]) <= math.min(a[2],b[2])
+    return math.max(a[1], b[1]) <= math.min(a[2], b[2])
 end
 
-function CheckTargetBand( target_type )
+function TargetBands(target_type)
     local unit = units[target_type]
-    
+
     if unit == nil then
+        return nil
+    end
+
+    if unit.frequencies == nil or #unit.frequencies <= 0 then
+        return nil
+    end
+
+    return unit.frequencies
+
+end
+
+function CheckTargetBand( bands )
+
+    if bands == nil then
         return false
     end
 
-    if #unit.frequencies <= 0 then
-        return false
-    end
-
-    print_message_to_user(unit.DisplayName.." : "..tostring(unit.frequencies[1][1]).." -> "..tostring(unit.frequencies[1][2]))
-
-    for i,v in ipairs(unit.frequencies) do
+    for i,v in ipairs(bands) do
         if CheckBandIntersection(v,shrike_band) then
-            print_message_to_user("Found")
             return true
         end
     end
@@ -164,16 +185,15 @@ function CheckTargetBand( target_type )
 end
 
 -- this function parses the raw data format into the target table
-function updateTargetData(id, contact, current_time)
-    target_data = {
+function updateTargetData(id, contact, current_time, bands)
+    shrike_targets[id] = {
         ['raw_azimuth']     = contact.azimuth_h:get(),
         ['raw_elevation']   = contact.elevation_h:get(),
         ['heading']         = getTargetHeading(math.deg(contact.azimuth_h:get()), aircraft_heading_deg),
         ['elevation']       = getTargetElevation(math.deg(contact.elevation_h:get()), aircraft_pitch_deg),
-        ['time_stored']     = current_time
+        ['time_stored']   = current_time,
+        ['bands'] = bands
     }
-    -- debug_print(contact.source_h:get().."Heading: "..target_data['heading'])
-    shrike_targets[id] = target_data
 end
 
 function checkShrikeLock(target)

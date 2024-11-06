@@ -1,3 +1,6 @@
+project_root = arg[1]
+package.path = package.path .. ';' .. project_root .. "\\build-tools\\?.lua"
+
 function GenerateHeader(file_path, template, ...)
     local arg = {...}
     local s = string.format(template, table.unpack(arg))
@@ -72,11 +75,75 @@ enum Devices
     GenerateHeader(output_dir .. "Devices.h", template, device_list)
 end
 
+function ToArray(hash)
+    local array = {}
 
-project_root = arg[1]
+    for i = 1, #hash, 2 do
+        table.insert(array, '0x'..hash:sub(i, i + 1))
+    end
+    
+    return array
+end
+
+function GenerateHashes(project_root, output_dir)
+    local template = [[
+// ================================================================================== //
+// THIS FILE IS AUTO-GENERATED
+// ALL CHANGES WILL BE LOST
+// ================================================================================== //
+// SEE build-tools/generate_headers.lua for the origin
+#pragma once
+#include <Windows.h>
+
+static const WCHAR* files[] = {
+%s
+};
+
+static const BYTE hashes[][%d] = {
+%s
+};
+
+]]
+
+
+    local md5 = require('md5')
+    
+    local files = {
+        "entry.lua",
+        "A-4E-C.lua",
+        "Cockpit/Scripts/EFM_Data_Bus.lua",
+        "Entry/Suspension.lua"        
+    }
+
+    local size
+    local hashes = {}
+  
+    for i, v in ipairs(files) do
+        local file = io.open(project_root .. '\\' .. v, 'r')
+        local hash = md5.sumhexa(file:read())
+        file:close()
+
+        local array = ToArray(hash)
+        size = #array
+
+        array = table.concat(array, ',')
+        table.insert(hashes, string.format("    { %s }", array))
+    end
+
+    for i, v in ipairs(files) do
+        files[i] = string.format("    L\"%s\"", v)
+    end
+    
+    files = table.concat(files, ',\n')
+    
+    hashes = table.concat(hashes, ',\n')
+    GenerateHeader(output_dir .. "Hashes.h", template, files, size, hashes)
+end
+
 output_dir = project_root.."\\ExternalFM\\Common\\Common\\"
 
 
 GenerateCommandDefs(project_root, output_dir)
 GenerateDevices(project_root, output_dir)
+GenerateHashes(project_root, project_root .. "\\ExternalFM\\FM\\")
 
