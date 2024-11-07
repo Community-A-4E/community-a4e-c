@@ -23,6 +23,7 @@ A-4E-C/efm_log.txt
 *.obj
 *.tlog
 *.pdb
+*.ilk
 
 #Binary Related Folders
 A-4E-C/Shapes/
