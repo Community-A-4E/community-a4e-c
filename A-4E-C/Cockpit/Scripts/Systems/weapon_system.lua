@@ -384,7 +384,9 @@ function post_initialize()
     load_tempmission_file()
     local own_mission_id = avionics.MissionObjects.getMissionID()
     ImGui.Log("Mission ID: "..own_mission_id)
-    local unit_config = units:get_plane(own_mission_id)
+    local unit_config = units:get_plane(own_mission_id) 
+    avionics.Weapons.SetConfig(unit_config)
+    ImGui.Log(avionics.MissionObjects.VerifyHacks())
 
     if unit_config then
         if unit_config.payload then

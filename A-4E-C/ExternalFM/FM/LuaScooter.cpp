@@ -1,4 +1,3 @@
-#include "LuaScooter.h"
 #include "Scooter.h"
 
 extern "C"

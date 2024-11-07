@@ -5,8 +5,8 @@
 
 .vscode/
 out/
-*.dll
 A-4E-C/Docs/*.pdf
+A-4E-C/build-tools/md5.dll
 
 # User-specific files
 *.rsuser
