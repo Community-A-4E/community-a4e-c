@@ -15,6 +15,29 @@
 //================================ Includes ===============================//
 #include <Common/ED_FM_API.h>
 #include "../include/FM/wHumanCustomPhysicsAPI.h"
+
+#include <Math.h>
+#include <Common/Maths.h>
+#include <optional>
+
+#include <vector>
+// State Classes
+#include "LERX.h"
+#include "AircraftState.h"
+#include "Input.h"
+#include "FlightModel.h"
+#include "Airframe.h"
+#include "Avionics.h"
+#include "Logger.h"
+#include "Asteroids.h"
+#include "MouseControl.h"
+#include "ModifierEmitter.h"
+#include "Radar.h"
+#include "ILS.h"
+#include "FuelSystem2.h"
+
+#include "Interface.h"
+
 //=========================================================================//
 
 extern "C" 
@@ -269,3 +292,48 @@ extern "C"
 	ED_FM_API void ed_fm_set_immortal( bool value );
 	ED_FM_API void ed_fm_unlimited_fuel( bool value );
 };
+
+inline double rawAOAToUnits( double rawAOA )
+{
+	return c_gradAOA* toDegrees(rawAOA) + c_constAOA;
+}
+
+
+namespace Scooter
+{
+
+	class ParameterInterface;
+
+	struct State
+	{
+		// Manual
+		std::vector<LERX> splines;
+		double wingTankOffset = 0.0;
+		double fuseTankOffset = 0.0;
+		double extTankOffset = 0.0;
+		
+		ParameterInterface& parameter_interface;
+
+		// Default
+		AircraftState state;
+		Input input;
+		Engine2 engine{state};
+		Airframe airframe{state, input, engine};
+		Avionics avionics{input, state, parameter_interface};
+		FlightModel fm{state, input, airframe, engine, parameter_interface, splines};
+		FuelSystem2 fuelSystem{engine, state};
+		ILS ils{parameter_interface};
+		Asteroids asteroids{&parameter_interface};
+
+
+		Radar radar{parameter_interface, state};
+		MouseControl mouseControl;
+
+		HWND window = nullptr;
+		bool focus = false;
+
+		unsigned char* testBuffer = nullptr;
+	};
+}
+
+extern std::optional<Scooter::State> s_state;

@@ -23,7 +23,7 @@ namespace Scooter
 	class Tacan
 	{
 	public:
-		Tacan( Interface& inter );
+		Tacan( ParameterInterface& inter );
 		~Tacan();
 
 		void setup( void* radio, void* electricalSystem, void* intercom );
@@ -40,7 +40,7 @@ namespace Scooter
 		bool m_on = -1;
 
 		cockpit_param_api m_api;
-		Interface& m_interface;
+		ParameterInterface& m_interface;
 		PFN_SET_ELEC_POWER fnc_setElecPower = NULL;
 	};
 

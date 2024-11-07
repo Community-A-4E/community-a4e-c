@@ -4,7 +4,7 @@
 class Sidewinder
 {
 public:
-	Sidewinder( Scooter::Interface& inter ) : m_interface( inter ) {}
+	Sidewinder( Scooter::ParameterInterface& inter ) : m_interface( inter ) {}
 
 	void init();
 	void update();
@@ -12,7 +12,7 @@ public:
 private:
 	void* m_weaponSystem = nullptr;
 	void* m_seeker = nullptr;
-	Scooter::Interface& m_interface;
+	Scooter::ParameterInterface& m_interface;
 };
 
 void Sidewinder::init()

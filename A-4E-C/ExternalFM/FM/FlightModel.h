@@ -44,7 +44,7 @@ public:
 		Input& controls, 
 		Airframe& airframe, 
 		Engine2& engine, 
-		Interface& inter,
+		ParameterInterface& inter,
 		std::vector<LERX>& splines
 	);
 	~FlightModel();
@@ -296,7 +296,7 @@ private:
 	bool slatLShakePrev;
 	bool slatRShake;
 	bool slatRShakePrev;
-	Interface& m_interface;
+	ParameterInterface& m_interface;
 };
 
 void FlightModel::setCOM(const Vec3& com)

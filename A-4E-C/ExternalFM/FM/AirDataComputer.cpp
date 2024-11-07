@@ -6,7 +6,7 @@
 
 Scooter::AirDataComputer::AirDataComputer
 (
-	Interface& inter,
+	ParameterInterface& inter,
 	AircraftState& state
 ) :
 	m_interface( inter ),

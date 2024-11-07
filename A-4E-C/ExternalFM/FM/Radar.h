@@ -33,7 +33,7 @@ namespace Scooter
 class Radar : public BaseComponent
 {
 public:
-	Radar( Interface& inter, AircraftState& state );
+	Radar( ParameterInterface& inter, AircraftState& state );
 
 	virtual void zeroInit();
 	virtual void coldInit();
@@ -151,7 +151,7 @@ private:
 
 	RadarScope m_scope;
 	AircraftState& m_aircraftState;
-	Interface& m_interface;
+	ParameterInterface& m_interface;
 
 	void* m_terrain = nullptr;
 

@@ -43,7 +43,7 @@ Scooter::FlightModel::FlightModel
 	Input& controls,
 	Airframe& airframe,
 	Engine2& engine,
-	Interface& inter,
+	ParameterInterface& inter,
 	std::vector<LERX>& splines
 ):
 	m_state(state),

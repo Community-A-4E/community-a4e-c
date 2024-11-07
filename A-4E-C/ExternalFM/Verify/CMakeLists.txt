@@ -26,3 +26,4 @@ target_include_directories(Verify
 )
 
 target_link_libraries(Verify PRIVATE Common)
+add_dependencies(Verify generate_headers)

@@ -29,7 +29,7 @@ namespace Scooter
 class Avionics : public BaseComponent
 {
 public:
-	Avionics(Input& input, AircraftState& state, Interface& inter);
+	Avionics(Input& input, AircraftState& state, ParameterInterface& inter);
 	~Avionics();
 	virtual void zeroInit();
 	virtual void coldInit();
@@ -61,7 +61,7 @@ private:
 
 	Input& m_input;
 	AircraftState& m_state;
-	Interface& m_interface;
+	ParameterInterface& m_interface;
 
 	CP741 m_bombingComputer;
 	AirDataComputer m_adc;

@@ -67,11 +67,29 @@ ImGui.AddItem("Systems", "Shrike", function()
     if shrike_band == nil then
         ImGui:Text("Shrike Band: nil")
     else
-        ImGui:Text(string.format("Shrike Band (GHz): { %f -> %f }", shrike_band[1]/1.0e9, shrike_band[2]/1.0e9))
+        ImGui:Text(string.format("Shrike Band (GHz): { %f -> %f }", shrike_band[1] / 1.0e9, shrike_band[2] / 1.0e9))
     end
+    
+    ImGui:Tree("Contacts", function()
 
 
-    ImGui:Text(ImGui.Serialize(shrike_targets))
+        local contacts_tab = {
+            { "Time", "Power"}
+        }
+
+        for i, v in ipairs(contacts) do
+            local t = v.time_h:get()
+            local p = v.power_h:get()
+            table.insert(contacts_tab, {t,p})
+        end
+        
+        ImGui:Table(contacts_tab)
+
+    end)
+
+    ImGui:Tree("Shrike Target", function() 
+        ImGui:Text(ImGui.Serialize(shrike_targets))
+    end)
 end)
 
 function post_initialize()
@@ -86,16 +104,26 @@ function post_initialize()
     snd_shrike_lock     = sndhost:create_sound("Aircrafts/A-4E-C/agm-45a-shrike-lock")
 end
 
+function remove_incorrect_incompatible_contacts()
+    for i,v in ipairs(shrike_targets) do
+        if not CheckTargetBand(v.bands) then
+            shrike_targets[i] = nil
+        end
+    end
+end
+
 function update()
 
     ImGui.Refresh()
 
     if shrike_seeker_band_min:get() > 0 and shrike_seeker_band_max:get() > 0 then
-
-        shrike_band = {shrike_seeker_band_min:get() * 1.e9, shrike_seeker_band_max:get() * 1.e9}
+        shrike_band = { shrike_seeker_band_min:get() * 1.e9, shrike_seeker_band_max:get() * 1.e9 }
     else
         shrike_band = nil
     end
+    
+    -- If the seeker has changed (selected another missile), then remove the incompatible contacts
+    remove_incorrect_incompatible_contacts()
     
     -- TODO: Check for AFT MON AC BUS and MONITORED DC BUS
     if get_elec_aft_mon_ac_ok() and get_elec_mon_dc_ok() and shrike_band ~= nil then

@@ -5,7 +5,6 @@
 
 int hash_md5( lua_State* L )
 {
-    assert( 0 );
     if ( ! lua_isstring(L, 1) )
     {
         lua_pushnil(L);

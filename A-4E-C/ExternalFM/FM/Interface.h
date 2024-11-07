@@ -39,16 +39,16 @@ extern "C"
 namespace Scooter
 {//namespace begin
 
-class Interface
+class ParameterInterface
 {
 public:
-	Interface( cockpit_param_api api ):
+	ParameterInterface( cockpit_param_api api ):
 	    m_api(api)
 	{
 		Init();
 	}
 
-	Interface()
+	ParameterInterface()
 	{
 		m_api = ed_get_cockpit_param_api();
 		Init();

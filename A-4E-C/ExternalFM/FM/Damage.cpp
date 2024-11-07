@@ -3,7 +3,7 @@
 
 std::unique_ptr<Scooter::DamageProcessor> Scooter::DamageProcessor::m_damage_processor = nullptr;
 
-Scooter::DamageProcessor::DamageProcessor( Interface& inter ) : m_interface( inter )
+Scooter::DamageProcessor::DamageProcessor( ParameterInterface& inter ) : m_interface( inter )
 {
     /*LuaImGui::AddImGuiItem( "Airframe", "Damage", [this]() {
         ImGuiDebugWindow();

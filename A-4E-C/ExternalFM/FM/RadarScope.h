@@ -23,7 +23,7 @@ public:
 		ON_20,
 	};
 
-	RadarScope( Interface& inter );
+	RadarScope( ParameterInterface& inter );
 	~RadarScope();
 
 	inline void addBlobOpacity( size_t index, double value, double brilliance );
@@ -45,7 +45,7 @@ public:
 	void update( double dt );
 
 public:
-	Interface& m_interface;
+	ParameterInterface& m_interface;
 
 	void** m_xParams;
 	void** m_yParams;

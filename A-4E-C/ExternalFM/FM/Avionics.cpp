@@ -31,7 +31,7 @@ Scooter::Avionics::Avionics
 (
 	Input& input,
 	AircraftState& state,
-	Interface& inter
+	ParameterInterface& inter
 ) :
 	m_input(input),
 	m_state(state),

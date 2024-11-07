@@ -9,7 +9,7 @@ namespace Scooter
 class AirDataComputer
 {
 public:
-	AirDataComputer(Interface& inter, AircraftState& state);
+	AirDataComputer(ParameterInterface& inter, AircraftState& state);
 	void update(double dt);
 
 	double GetTASAcceleration() { return m_tas_acceleration; }
@@ -23,7 +23,7 @@ private:
 	void calculateTASXZComponents();
 	void calculateBaroAlt();
 
-	Interface& m_interface;
+	ParameterInterface& m_interface;
 	AircraftState& m_state;
 
 	double m_tas_acceleration = 0.0;
