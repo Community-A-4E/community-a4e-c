@@ -193,13 +193,13 @@ elements["PNT_891"] = default_2_position_tumb("Gunsight Day-Night Switch", devic
 elements["PNT_892"] = default_movable_axis("Gunsight Elevation Control", devices.GUNSIGHT, device_commands.GunsightKnob, 892, 1.0, 0.05, false, false)
 
 -- ARN-52V TACAN
-elements["PNT_900"] = multiposition_switch_limited("AN/ARN-52 TACAN Mode Switch", devices.NAV, device_commands.tacan_mode, 900, 4, 0.1, false, nil, KNOBCLICK_RIGHT_MID)
+elements["PNT_900"] = multiposition_switch_limited("AN/ARN-52 TACAN Mode Switch", devices.TACAN, device_commands.tacan_mode, 900, 4, 0.1, false, nil, KNOBCLICK_RIGHT_MID)
 elements["PNT_900"].animated = {true, true}
 elements["PNT_900"].animation_speed = {4, 4} -- multiply these numbers by the base 1.0 second animation speed to get final speed. 4 means animates in 0.25 seconds.
-elements["PNT_901"] = multiposition_switch_limited("TACAN Channel 10s", devices.NAV, device_commands.tacan_ch_major, 901, 13, 0.05, false, nil, KNOBCLICK_RIGHT_MID)
-elements["PNT_902"] = multiposition_switch_limited("TACAN Channel 1s", devices.NAV, device_commands.tacan_ch_minor, 902, 10, 0.1, false,nil, KNOBCLICK_RIGHT_MID)
+elements["PNT_901"] = multiposition_switch_limited("TACAN Channel 10s", devices.TACAN, device_commands.tacan_ch_major, 901, 13, 0.05, false, nil, KNOBCLICK_RIGHT_MID)
+elements["PNT_902"] = multiposition_switch_limited("TACAN Channel 1s", devices.TACAN, device_commands.tacan_ch_minor, 902, 10, 0.1, false,nil, KNOBCLICK_RIGHT_MID)
 --elements["PNT_902"] = default_button_tumb("TACAN Channel Minor", devices.NAV, device_commands.tacan_ch_minor_dec, device_commands.tacan_ch_minor_inc, 902)
-elements["PNT_903"] = default_axis_limited("TACAN Volume", devices.NAV, device_commands.tacan_volume, 903, 0.0, 0.3, false, false, {-1,1} )
+elements["PNT_903"] = default_axis_limited("TACAN Volume", devices.TACAN, device_commands.tacan_volume, 903, 0.0, 0.3, false, false, {-1,1} )
 
 -- DOPPLER NAVIGATION COMPUTER #50 (ASN-41 / APN-153)
 elements["PNT_170"] = multiposition_switch_limited("AN/APN-153 Doppler Navigation Radar Mode Switch", devices.NAV, device_commands.doppler_select,170,5,0.1,false,nil, KNOBCLICK_RIGHT_FWD)

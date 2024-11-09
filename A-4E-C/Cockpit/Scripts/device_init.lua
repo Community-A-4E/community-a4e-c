@@ -91,6 +91,7 @@ creators[devices.MCL]             = {"avLuaDevice", LockOn_Options.script_path..
 creators[devices.ADI_AJB3A]       = {"avLuaDevice", LockOn_Options.script_path.."Systems/adi_ajb3a.lua"}
 creators[devices.NVG_CONTROLS]       = {"avLuaDevice", LockOn_Options.script_path.."HELMET/NVG_Controls.lua"}
 creators[devices.SEAT]            = {"avLuaDevice"           ,LockOn_Options.script_path.."Systems/seat.lua"}
+creators[devices.TACAN]            = {"avLuaDevice"           ,LockOn_Options.script_path.."Nav/tacan.lua"}
 --creators[devices.RWR_APR25]       = {"avLuaDevice"           ,LockOn_Options.script_path.."APR-25_RWR/rwr_apr-25.lua"}
 
 -- creators[devices.TEST]        = {"avLuaDevice"                        ,LockOn_Options.script_path.."test_device.lua"}
