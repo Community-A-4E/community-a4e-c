@@ -376,12 +376,12 @@ function update_tacan()
     if closest_beacon.bearing then
         --local bearing = true_bearing_deg_from_xz(curx, curz, atcn.position.x, atcn.position.z)
         local bearing = true_bearing_viall_from_xz(curx, curz, closest_beacon.position.x, closest_beacon.position.z)
-        --local declination = get_declination() -- relative bearing so no declination
+        local declination = get_declination() -- relative bearing so no declination
         -- grid X/Y isn't aligned with true north, so find average adjustment between current position and beacon source
         local adj = get_true_deviation_from_grid((closest_beacon.position.x + curx) / 2,
             (closest_beacon.position.z + curz) / 2)
 
-        arn52_target_bearing = math.rad((bearing - adj))
+        arn52_target_bearing = math.rad((bearing - declination - adj))
     end
 
     configure_morse_playback(closest_beacon.callsign)

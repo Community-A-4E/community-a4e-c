@@ -289,7 +289,7 @@ function fetch_current_ils()
 
         local object_data = objects[1]
 
-        local position = avionics.MissionObjects.getObjectPosition(object_data.id, object_data.name)
+        local position = avionics.MissionObjects.getObjectPosition(object_data.id, object_data.name, 3) -- 3 -> type ship
 
         if position then
 
@@ -297,7 +297,7 @@ function fetch_current_ils()
             local y = position.y
             local z = position.z
 
-            local heading = avionics.MissionObjects.getObjectBearing(object_data.id, object_data.name)
+            local heading = avionics.MissionObjects.getObjectBearing(object_data.id, object_data.name, 3) -- 3 -> type ship
 
             local z_dir = bearing_to_vec2d(heading - 90)
             local x_dir = bearing_to_vec2d(heading)
