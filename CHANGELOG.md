@@ -5,10 +5,10 @@ Please list the changes you've made in this file. We should try to follow the gu
 ## Version 2.3 - 14 May 2025
 
 #### Added
-- Shrike seeker head selection compatibility and sound response. There are some limitations that require pilot attention. After you rearm and before takeoff, a new set of new bindings (LSHIFT+1, 2, 4, 5) allow you to define the desired seeker head reponse for each station. Dynamic spawn A-4E-C units with AGM-45s in their loadout assume a MK 50 seeker.
+- AGM-45 Shrike seeker head selection compatibility and sound response. There are some limitations that require pilot attention. After you rearm and before takeoff, a new set of new bindings (LSHIFT+1, 2, 4, 5) allow you to define the desired seeker head reponse for each station. Dynamic spawn A-4E-C units with AGM-45s in their loadout assume a MK 50 seeker.
 - AN/APR-25 RHWS audio responses for SA-8, SA-10, SA-11, SA-13, and SA-19 search and tracking radars. Like the SA-3, these units give no audible launch indication.
 - AN/ARA-63 MCL (ICLS) compatibility with Veinticinco de Mayo and U.S. Bonne Homme Richard carrier mods.
-- A-4E-C version number is recorded in DCS.log.
+- A-4E-C (Scooter) version number is recorded in DCS.log.
 
 #### Changed
 - AN/ARN-25 Automated Direction Finder (ADF) antenna rotation speed increased.
@@ -16,15 +16,15 @@ Please list the changes you've made in this file. We should try to follow the gu
 - Instant Action Carrier Start should provide a clearer taxi path to the Stennis catapult.
 - Exterior light animation improvements.
 - External 3D model UV unwrap improvements for canopy, speedbrake, tailhook hinge, wheel well launch hooks, and refueling probe.
+- Kneeboard manual updated with new information, and corrected a few typos.
 
 #### Fixed
 - Enabling TACAN and MCL/ICLS radios no longer cause crashes. Fixed TACAN bearing pointing North when off.
-- The ECM Panel REC light enables if the AN/APR-25 RHWS is contacted by an SA-3 radar.
 - MER and TER work with DCS bomb fusing.
 - Non-axis throttle inputs properly disengage the APC.
+- The ECM Panel REC warning light turns on if the AN/APR-25 RHWS is contacted by an SA-3 radar.
 - AWRS STEP SINGLE and STEP SALVO bindings are no longer swapped.
 - Raising flaps complies with Supercarrier crew "awaiting wing fold" requests.
-- Corrected a few typos in kneeboard manual.
 - AI takeoff behavior on the Supercarrier (thanks Nearblind).
 
 ## Version 2.2 - 23 Oct 2023
