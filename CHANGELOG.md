@@ -26,7 +26,7 @@ Please list the changes you've made in this file. We should try to follow the gu
 - Non-axis throttle inputs properly disengage the APC.
 - AWRS STEP SINGLE and STEP SALVO bindings are no longer swapped.
 - Raising flaps complies with Supercarrier crew "awaiting wing fold" requests.
-- Corected a few typos in kneeboard manual.
+- Corrected a few typos in kneeboard manual.
 - AI takeoff behavior on the Supercarrier (thanks Nearblind).
 
 ## Version 2.2 - 23 Oct 2023
