@@ -6,6 +6,8 @@ extern "C"
 #include "lauxlib.h"
 }
 
+#include "stdafx.h"
+
 
 
 namespace LuaScooter
@@ -59,6 +61,7 @@ extern "C" int __declspec(dllexport) luaopen_Scooter( lua_State* L )
         STATE_GETTER( "GetFFBEnabled" , s_state->input.getFFBEnabled() ),
         STATE_GETTER( "GetSkiddingLeft" , s_state->airframe.IsSkiddingLeft() ),
         STATE_GETTER( "GetSkiddingRight" , s_state->airframe.IsSkiddingRight() ),
+        STATE_GETTER( "Version" , srcvers ),
         //STATE_GETTER( "" , s_state->interface.getElecPrimaryAC() && (s_state->interface.getMasterTest() || s_state->fuelSystem.getFuelTransferCaution()) ),
         //STATE_GETTER( "" , s_state->interface.getElecPrimaryAC() && (s_state->interface.getMasterTest() || s_state->fuelSystem.getFuelBoostCaution()) ),
 

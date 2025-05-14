@@ -17,6 +17,7 @@ local update_time_step = 0.05
 make_default_activity(update_time_step)--update will be called 20 times per second
 
 startup_print("avionics: load")
+Scooter = require('Scooter')
 
 local once_per_second_refresh = 1/update_time_step
 local once_per_second = once_per_second_refresh
@@ -350,7 +351,7 @@ function post_initialize()
     load_tempmission_file()
     alt_setting = get_qnh() * MM_TO_INCHES
 
-    log.write( "A-4E-C", log.INFO, "Version 2.1.1 Initialized...")
+    log.write( "A-4E-C", log.INFO, string.format("%s Initialized...", Scooter.Version()))
 
     auto_catapult_power = get_aircraft_property("Auto_Catapult_Power")
     --efm_data_bus.fm_setCatMode(auto_catapult_power)

@@ -11,7 +11,7 @@
 // Windows Header Files:
 #include <windows.h>
 
-static const char srcvers[] = "A-4E-C Version 2.3";
+static const char srcvers[] = "Scooter Version 2.3";
 
 #endif
 // TODO: reference additional headers your program requires here

@@ -123,6 +123,8 @@ dev:listen_command(Keys.APCHotStdCold)
 --Throttle Commands
 dev:listen_command(Keys.throttle_inc)
 dev:listen_command(Keys.throttle_dec)
+dev:listen_command(iCommandThrottleIncrease)
+dev:listen_command(iCommandThrottleDecrease)
 
 -- AFCS States
 AFCS_STATE_OFF = 0
@@ -195,6 +197,9 @@ local apc_state = "apc-off"
 local speedHold = -100
 
 ]]
+
+local iCommandThrottleIncrease = 1032 
+local iCommandThrottleDecrease = 1033
 
 --APC States
 APC_STATE_OFF = 0
@@ -470,6 +475,8 @@ local command_table = {
     [Keys.APCHotStdCold] = APCHotStdCold,
     [Keys.throttle_dec] = apc_disengage,
     [Keys.throttle_inc] = apc_disengage,
+    [iCommandThrottleIncrease] = apc_disengage,
+    [iCommandThrottleDecrease] = apc_disengage,
 }
 
 

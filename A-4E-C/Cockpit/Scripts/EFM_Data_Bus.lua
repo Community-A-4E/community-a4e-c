@@ -465,7 +465,7 @@ function get_efm_sensor_data_overrides()
     if EFM_enabled then
         data.getEngineLeftRPM = Scooter.GetRPMPercent
         data.getEngineLeftFuelConsumption = Scooter.GetFuelFlow
-        data.getThrottleLeftPosition = Scooter.GetThrottleNorm
+        data.getThrottleLeftPosition = fm_getThrottle
         data.getTrueAirSpeed = fm_getAirspeed
         data.getAngleOfSlide = Scooter.GetBeta
         data.getAngleOfAttack = Scooter.GetAlpha
