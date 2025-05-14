@@ -709,8 +709,8 @@ A_4E_C =  {
             {Transition = {"Stage", "Extend"},   Sequence = {{C = {{"ChangeDriveTo", "HydraulicGravityAssisted"}, {"VelType", 3}, {"Arg", 85, "from", 0.815, "to", 0.881, "in", 0.2}}}}},
         },
         FoldableWings = {
-            {Transition = {"Retract", "Extend"}, Sequence = {{C = {{"Arg", 85, "to", 0.0, "in", 5.0}}}}, Flags = {"Reversible"}},
-            {Transition = {"Extend", "Retract"}, Sequence = {{C = {{"Arg", 85, "to", 1.0, "in", 5.0}}}}, Flags = {"Reversible", "StepsBackwards"}},
+            {Transition = {"Retract", "Extend"}, Sequence = {{C = {{"Arg", 8, "to", 0.0, "in", 5.0}}}}, Flags = {"Reversible"}},
+            {Transition = {"Extend", "Retract"}, Sequence = {{C = {{"Arg", 8, "to", 1.0, "in", 5.0}}}}, Flags = {"Reversible", "StepsBackwards"}},
         },
     },
 ---------------------------------------------------------------------------------------------------------------------------------------------
