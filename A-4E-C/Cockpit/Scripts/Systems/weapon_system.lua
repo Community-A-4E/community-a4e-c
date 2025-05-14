@@ -583,9 +583,9 @@ end
 
 function ChangeShrikeSeeker(station)
 
-    -- if sensor_data.getWOW_LeftMainLandingGear() <= 0 then
-    --     return
-    -- end
+    if sensor_data.getWOW_LeftMainLandingGear() <= 0 then
+        return
+    end
 
     local seeker = shrike_seekers_armed[station]
 
