@@ -5,9 +5,8 @@ Please list the changes you've made in this file. We should try to follow the gu
 ## Version 2.3 - 14 May 2025
 
 #### Added
-- Shrike seeker head selection compatibility and sound response. There are some limitations that require pilot attention. After you rearm and before takeoff, a new set of new bindings (LSHIFT+1, 2, 4, 5) allow you to define the seeker head reponse. Dynamic spawn A-4E-C units with AGM-45s in their loadout assume a MK 50 seeker.
+- Shrike seeker head selection compatibility and sound response. There are some limitations that require pilot attention. After you rearm and before takeoff, a new set of new bindings (LSHIFT+1, 2, 4, 5) allow you to define the desired seeker head reponse for each station. Dynamic spawn A-4E-C units with AGM-45s in their loadout assume a MK 50 seeker.
 - AN/APR-25 RHWS audio responses for SA-8, SA-10, SA-11, SA-13, and SA-19 search and tracking radars. Like the SA-3, these units give no audible launch indication.
-- BDU-50LD and BDU-50HD added to loadout options.
 - AN/ARA-63 MCL (ICLS) compatibility with Veinticinco de Mayo and U.S. Bonne Homme Richard carrier mods.
 - A-4E-C version number is recorded in DCS.log.
 
@@ -15,7 +14,6 @@ Please list the changes you've made in this file. We should try to follow the gu
 - AN/ARN-25 Automated Direction Finder (ADF) antenna rotation speed increased.
 - CBU 1/A, 2/A, and 2/BA launchers now use the DCS standard weapons introduced with the F-4E.
 - Instant Action Carrier Start should provide a clearer taxi path to the Stennis catapult.
-- ACMI pod can be assigned to pylon 3 in loadout.
 - Exterior light animation improvements.
 - External 3D model UV unwrap improvements for canopy, speedbrake, tailhook hinge, wheel well launch hooks, and refueling probe.
 
