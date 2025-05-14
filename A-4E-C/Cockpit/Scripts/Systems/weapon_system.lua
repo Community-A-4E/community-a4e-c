@@ -185,7 +185,11 @@ local shrike_seeker_type = {
         freq = {0.8, 1},
     },
     {
-        name = "MK-49",
+        name = "MK-49 Mod 0",
+        freq = {6, 10},
+    },
+    {
+        name = "MK-49 Mod 1",
         freq = {6, 10},
     },
     {
@@ -389,7 +393,7 @@ function post_initialize()
     --print_message_to_user(tostring(own_mission_id))
     --avionics.Weapons.SetConfig(unit_config)
     ImGui.Log(avionics.MissionObjects.VerifyHacks())
-
+    
     if unit_config then
         if unit_config.payload then
             if unit_config.payload.pylons then
@@ -397,7 +401,10 @@ function post_initialize()
                     ImGui.Log(ImGui.Serialize(v))
                     if v.settings and v.settings.NFP_rfgu_type ~= nil then
                         
-                        shrike_seekers_armed[i] = v.settings.NFP_rfgu_type
+                        local seeker_type = v.settings.NFP_rfgu_type
+                        if seeker_type < #shrike_seeker_type then
+                            shrike_seekers_armed[i] = v.settings.NFP_rfgu_type
+                        end
                     end
                 end
             end
@@ -405,11 +412,11 @@ function post_initialize()
     end
     
     update_kneeboard_loadout()
-
+    
     --print_message_to_user(find_lua_device_ptr(WeaponSystem))
 	this_weapon_ptr:set(find_lua_device_ptr(WeaponSystem))
     startup_print("weapon_system: postinit start")
-
+    
     sndhost = create_sound_host("COCKPIT_ARMS","HEADPHONES",0,0,0)
     labs_tone = sndhost:create_sound("Aircrafts/A-4E-C/bombtone") -- refers to sdef file, and sdef file content refers to sound file, see DCSWorld/Sounds/sdef/_example.sdef
     aim9seek = sndhost:create_sound("Aircrafts/A-4E-C/a-4e_aim9_lo")

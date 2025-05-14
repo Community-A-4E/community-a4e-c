@@ -62,6 +62,21 @@ end
 -- create table with shrike targets, tracked by source id
 local shrike_targets = {}
 
+function BandsText(bands)
+
+    if bands == nil then
+        return "{}"
+    end
+
+    local s = {}
+
+    for i,v in ipairs(bands) do
+        table.insert(s, string.format("{%f,%f}", v[1] / 1.0e9, v[2] / 1.0e9))
+    end
+
+    return table.concat(s, ", ")
+end
+
 ImGui.AddItem("Systems", "Shrike", function()
 
     if shrike_band == nil then
@@ -72,15 +87,15 @@ ImGui.AddItem("Systems", "Shrike", function()
     
     ImGui:Tree("Contacts", function()
 
-
         local contacts_tab = {
-            { "Time", "Power"}
+            { "Time", "Power", "Bands (GHz)"}
         }
 
         for i, v in ipairs(contacts) do
             local t = v.time_h:get()
             local p = v.power_h:get()
-            table.insert(contacts_tab, {t,p})
+            local bands = TargetBands(v.unit_type_h:get())
+            table.insert(contacts_tab, {t,p,BandsText(bands)})
         end
         
         ImGui:Table(contacts_tab)
@@ -134,10 +149,11 @@ function update()
         
         -- TODO: Delete invalid targets after 3 seconds
         for i, contact in ipairs(contacts) do
-            if contact.power_h:get() > 0 and contact.time_h:get() < 0.05 and (contact.general_type_h:get() == 2 or contact.general_type_h:get() == 0) then
+            --and (contact.general_type_h:get() == 2 or contact.general_type_h:get() == 0)
+            if contact.power_h:get() > 0 and contact.time_h:get() < 0.05 and contact.time_h:get() > 0 then
                 local id = contact.source_h:get()
                 local target_type = contact.unit_type_h:get()
-
+                
                 local freqs = TargetBands(target_type)
 
                 if CheckTargetBand(freqs) then

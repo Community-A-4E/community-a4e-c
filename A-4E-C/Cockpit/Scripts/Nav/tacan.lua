@@ -331,8 +331,6 @@ function update_tacan()
     local max_tacan_range = 225
 
     if tacan_state == TACAN_STATE_OFF then 
-        arn52_bearing = 0
-        arn52_bearing = 0
         arn52_range = nil
         cancel_tacan()
         return
