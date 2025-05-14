@@ -1,4 +1,4 @@
--- Dumped from DCS using a lua export script
+-- Dumped using export script
 units = {
   ["1L13 EWR"] = {
     DisplayName = "EWR 1L13",
@@ -210,6 +210,12 @@ units = {
     radars = { "AN/APQ-159" },
     type = "F-5E-3"
   },
+  ["F-5E-3_FC"] = {
+    DisplayName = "F-5E FC",
+    frequencies = {},
+    radars = { "AN/APQ-159" },
+    type = "F-5E-3_FC"
+  },
   ["F/A-18A"] = {
     DisplayName = "F/A-18A",
     frequencies = {},
@@ -265,20 +271,20 @@ units = {
     type = "HEMTT_C-RAM_Phalanx"
   },
   ["HQ-7_LN_P"] = {
-    DisplayName = "HQ-7 LN (Player)",
-    frequencies = {},
+    DisplayName = "HQ-7 SHORAD TELAR (Player)",
+    frequencies = { { 50000000, 54000000 }, { 2000000000, 2200000000 } },
     radars = { "HQ-7 TR" },
     type = "HQ-7_LN_P"
   },
   ["HQ-7_LN_SP"] = {
-    DisplayName = "HQ-7 Self-Propelled LN",
-    frequencies = {},
+    DisplayName = "HQ-7B SHORAD TELAR",
+    frequencies = { { 50000000, 54000000 }, { 2000000000, 2200000000 } },
     radars = { "HQ-7 TR" },
     type = "HQ-7_LN_SP"
   },
   ["HQ-7_STR_SP"] = {
-    DisplayName = "HQ-7 Self-Propelled STR",
-    frequencies = { { 6000000000, 10000000000 } },
+    DisplayName = "HQ-7B SHORAD SR",
+    frequencies = { { 50000000, 54000000 }, { 2000000000, 2200000000 } },
     radars = { "HQ-7 SR" },
     type = "HQ-7_STR_SP"
   },
@@ -326,7 +332,7 @@ units = {
   },
   ["Kub 1S91 str"] = {
     DisplayName = 'SAM SA-6 Kub "Straight Flush" STR',
-    frequencies = { { 4000000000, 8000000000 } },
+    frequencies = { { 500000000, 1000000000 } },
     radars = { "Kub 1S91 str" },
     type = "Kub 1S91 str"
   },
@@ -425,6 +431,18 @@ units = {
     frequencies = {},
     radars = { "RDY" },
     type = "Mirage 2000-5"
+  },
+  ["Mirage-F1AD"] = {
+    DisplayName = "Mirage F1AD",
+    frequencies = {},
+    radars = { "RDY" },
+    type = "Mirage-F1AD"
+  },
+  ["Mirage-F1AZ"] = {
+    DisplayName = "Mirage F1AZ",
+    frequencies = {},
+    radars = { "RDY" },
+    type = "Mirage-F1AZ"
   },
   ["Mirage-F1B"] = {
     DisplayName = "Mirage F1B",
@@ -578,7 +596,7 @@ units = {
   },
   ["Osa 9A33 ln"] = {
     DisplayName = 'SAM SA-8 Osa "Gecko" TEL',
-    frequencies = { { 6000000000, 8000000000 } },
+    frequencies = { { 500000000, 1000000000 } },
     radars = { "Osa 9A33 ln" },
     type = "Osa 9A33 ln"
   },
@@ -650,7 +668,7 @@ units = {
   },
   ["S-300PS 40B6MD sr"] = {
     DisplayName = 'SAM SA-10 S-300 "Grumble" Clam Shell SR',
-    frequencies = { { 8000000000, 10000000000 } },
+    frequencies = { { 2900000000, 3300000000 } },
     radars = { "S-300PS 40B6MD sr" },
     type = "S-300PS 40B6MD sr"
   },
@@ -692,7 +710,7 @@ units = {
   },
   ["SA-11 Buk SR 9S18M1"] = {
     DisplayName = 'SAM SA-11 Buk "Gadfly" Snow Drift SR',
-    frequencies = { { 6000000000, 10000000000 } },
+    frequencies = { { 3000000000, 4000000000 } },
     radars = { "SA-11 Buk SR 9S18M1" },
     type = "SA-11 Buk SR 9S18M1"
   },
@@ -765,12 +783,12 @@ units = {
   TICONDEROG = {
     DisplayName = "CG Ticonderoga",
     frequencies = { { 3100000, 3500000 }, { 850000000, 942000000 } },
-    radars = { "Patriot str", "ticonderoga search radar" },
+    radars = { "AEGIS_search_radar", "ticonderoga search radar" },
     type = "TICONDEROG"
   },
   ["Tor 9A331"] = {
     DisplayName = 'SAM SA-15 Tor "Gauntlet"',
-    frequencies = { { 4000000000, 8000000000 } },
+    frequencies = { { 3000000000, 4000000000 } },
     radars = { "Tor 9A331" },
     type = "Tor 9A331"
   },
@@ -825,7 +843,7 @@ units = {
   Type_054A = {
     DisplayName = "Type 054A Frigate",
     frequencies = { { 2000000000, 2500000000 }, { 8000000000, 12000000000 } },
-    radars = { "PLAN Search Radar B", "052B SAM TR" },
+    radars = { "PLAN Search Radar B", "052B SAM SR", "052B SAM TR" },
     type = "Type_054A"
   },
   Type_071 = {
@@ -843,7 +861,7 @@ units = {
   USS_Arleigh_Burke_IIa = {
     DisplayName = "DDG Arleigh Burke IIa",
     frequencies = { { 3100000, 3500000 }, { 850000000, 942000000 } },
-    radars = { "Patriot str", "ticonderoga search radar" },
+    radars = { "AEGIS_search_radar", "ticonderoga search radar" },
     type = "USS_Arleigh_Burke_IIa"
   },
   VINSON = {
@@ -863,6 +881,12 @@ units = {
     frequencies = { { 50000000, 54000000 }, { 2000000000, 2200000000 } },
     radars = { "Osa 9A33 ln", "rezki search radar", "carrier search radar" },
     type = "ara_vdm"
+  },
+  atconveyor = {
+    DisplayName = "SS Atlantic Conveyor",
+    frequencies = {},
+    radars = { "Osa 9A33 ln", "rezki search radar", "carrier search radar" },
+    type = "atconveyor"
   },
   hms_invincible = {
     DisplayName = "HMS Invincible (R05)",
@@ -902,19 +926,19 @@ units = {
   },
   ["p-19 s-125 sr"] = {
     DisplayName = 'SAM SA-2/3/5 P19 "Flat Face" SR ',
-    frequencies = { { 830000000, 882000000 } },
+    frequencies = { { 830000000, 875000000 } },
     radars = { "p-19 s-125 sr" },
     type = "p-19 s-125 sr"
   },
   rapier_fsa_blindfire_radar = {
     DisplayName = "SAM Rapier Blindfire TR",
-    frequencies = { { 10000000000, 20000000000 } },
+    frequencies = { { 3000000000, 4000000000 } },
     radars = { "Tor 9A331" },
     type = "rapier_fsa_blindfire_radar"
   },
   rapier_fsa_launcher = {
     DisplayName = "SAM Rapier LN",
-    frequencies = {},
+    frequencies = { { 1000000000, 4000000000 } },
     radars = { "Roland Radar" },
     type = "rapier_fsa_launcher"
   },
