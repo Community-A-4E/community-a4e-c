@@ -1642,7 +1642,7 @@ function update_bdhi()
             --    aids available to the pilot. ARN-52(V)
             --    is inoperative when the landing gear is DOWN
             -- ARN-52(V) == TACAN bearing-distance
-            bdhi_draw_needle2( (tacan_bearing_handle:get() - maghead) % 360 )
+            bdhi_draw_needle2( tacan_bearing_handle:get() )
             update_adf()
             bdhi_draw_needle1( math.deg(adf_antenna_bearing) )
 

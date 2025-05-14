@@ -272,6 +272,11 @@ function get_tacan_state()
     return TACAN_STATE_OFF
 end
 
+function SetBearing( bearing )
+    local maghead = get_magnetic()
+    arn52_bearing = (bearing - maghead) % 360 
+end
+
 -- Literally copy the ADF logic
 function update_bearing(bearing)
     local speed = math.rad(72.0)
@@ -379,7 +384,9 @@ function update_tacan()
         local adj = get_true_deviation_from_grid((closest_beacon.position.x + curx) / 2,
             (closest_beacon.position.z + curz) / 2)
 
-        arn52_target_bearing = math.rad((bearing - declination - adj))
+        arn52_target_bearing = math.rad((bearing - declination - adj)) - sensor_data.getMagneticHeading()
+        arn52_target_bearing = (arn52_target_bearing + math.pi) % (2.0 * math.pi)
+        arn52_target_bearing = arn52_target_bearing - math.pi
     end
 
     configure_morse_playback(closest_beacon.callsign)
