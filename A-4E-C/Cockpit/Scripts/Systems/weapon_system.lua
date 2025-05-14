@@ -199,11 +199,11 @@ local shrike_seeker_type = {
 }
 
 local shrike_seekers_armed = {
-    1,
-    1,
-    1,
-    1,
-    1
+    10,
+    10,
+    10,
+    10,
+    10
 }
 
 local jato_armed_and_full_param = get_param_handle("JATO_ARMED_AND_FULL")
