@@ -43,7 +43,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          permissions: write-all
           tag_name: ${{ github.ref }}
           release_name: Community A-4E-C ${{ github.ref }}
           draft: true
