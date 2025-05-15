@@ -1,11 +1,25 @@
--- Weapons definitions here
-dofile("Scripts/Database/Weapons/warheads.lua")
-dofile("Scripts/Database/generated_wstypes.lua")
-print("WEAPON TEST")
+-- running without dcs
+if stub then
+    function _(s) return s end
+    function declare_loadout() end
+    function declare_weapon() end
+    function simple_warhead() end
+    function Get_Combined_GUISettings_Preset() end
+    function Get_Fuze_GUISettings_Preset() end
+    function Get_RFGU_GUISettings_Preset() end
+    warheads = {}
+    generated_wstypes = { ["bombs"] = {} }
+else
+    -- Weapons definitions here
+    dofile("Scripts/Database/Weapons/warheads.lua")
+    dofile("Scripts/Database/generated_wstypes.lua")
+end
+
+
 
 -- Support Functions:
 local GALLON_TO_KG = 3.785 * 0.8
-local INCHES_TO_M = 0.0254
+local INCH_TO_METER = 0.0254
 local POUNDS_TO_KG = 0.453592
 
 ---------FUEL TANKS-----------
@@ -1951,48 +1965,82 @@ function make_cbu_a4e_multi(dispenser,count,side) -- assemble a rack of cluster 
 end
 
 local suu7_dispenser_empty_mass = 121 * POUNDS_TO_KG
-
+local suu7_tube_number = 19
 -- Store index on the F-4E is 3.3 -> Cx_pil = 0.0006416
 -- Currently the F-4E is wrong, so pre-emptively put correct drag value.
 local suu7_cx_pil = 0.0006416
 
+-- https://www.bulletpicker.com/pdf/CBU.pdf#page=6
+-- BLU-4 (CBU-1A/A)
+-- N = 508
+-- Explosive Mass Total = 89.8 lbs
+-- Explosive Mass Per Bomblet = 0.177 lbs
+-- Mass = 1.18 lbs
+-- Length = 4.92 ing
+-- Diameter = 2.76 in
+local blu4 = {
+	N_per_tube 		= 27, -- 27x19 = 513
+	mass 			= 1.18 * POUNDS_TO_KG,
+	name = "BLU-4B",
+}
 
-local function CBU_Type(level4)
-    return {wsType_Weapon, wsType_Bomb, wsType_Bomb_Cluster, level4}
-end
+-- BLU-3 (CBU-2/A)
+-- N = 360
+-- Explosive Mass Total = 129.07 lbs
+-- Explosive Mass Per Bomblet = 0.359 lbs
+-- Mass = 1.73 lbs
+-- Length = 3.75 in
+-- Diameter = 2.75 in
+local blu3 = {
+	N_per_tube 		= 19, -- 19x19 = 361
+	mass 			= 1.73 * POUNDS_TO_KG,
+	name = "BLU-3",
+}
+
+-- BLU-3B (CBU-2B/A)
+-- N = 406
+-- Explosive Mass Total = 143.06 lbs
+-- Explosive Mass Per Bomblet = 0.359 lbs
+-- Mass = 1.73 lbs
+-- Length = 3.75 in
+-- Diameter = 2.75 in
+local blu3b = {
+	N_per_tube 		= 22, -- 22x19 = 418
+	mass 			= 1.73 * POUNDS_TO_KG,
+	name = "BLU-3B",
+}
 
 local CBU_1A = {
-    Weight = suu7_dispenser_empty_mass + 27 * 1.18 * POUNDS_TO_KG,
-    Weight_empty = suu7_dispenser_empty_mass,
+    Weight = suu7_dispenser_empty_mass + suu7_tube_number * blu4.N_per_tube * blu4.mass,
+    Weight_Empty = suu7_dispenser_empty_mass,
     wsType_dispenser = "weapons.containers.{HB_F4E_CBU-1/A}",
-    wsType = "weapons.bombs.HB_BLU_4B_GROUP",
-    wsType4 = generated_wstypes["bombs"]["weapons.bombs.HB_BLU_4B_GROUP"],
-    Cx_pil = 0.0006416
+    wsType = "weapons.bombs.BLU-4B_GROUP",
+    wsType4 = generated_wstypes["bombs"]["weapons.bombs.BLU-4B_GROUP"],
+    Cx_pil = suu7_cx_pil
 }
 
 local CBU_2A = {
-    Weight = suu7_dispenser_empty_mass + 19 * 1.73 * POUNDS_TO_KG,
-    Weight_empty = suu7_dispenser_empty_mass,
+    Weight = suu7_dispenser_empty_mass + suu7_tube_number * blu3.N_per_tube * blu3.mass,
+    Weight_Empty = suu7_dispenser_empty_mass,
     wsType_dispenser = "weapons.containers.{HB_F4E_CBU-2/A}",
-    wsType = "weapons.bombs.HB_BLU_3_GROUP",
-    wsType4 = generated_wstypes["bombs"]["weapons.bombs.HB_BLU_3_GROUP"],
-    Cx_pil = 0.0006416
+    wsType = "weapons.bombs.BLU-3_GROUP",
+    wsType4 = generated_wstypes["bombs"]["weapons.bombs.BLU-3_GROUP"],
+    Cx_pil = suu7_cx_pil
 }
 
 local CBU_2BA = {
-    Weight = suu7_dispenser_empty_mass + 22 * 1.73 * POUNDS_TO_KG,
-    Weight_empty = suu7_dispenser_empty_mass,
+    Weight = suu7_dispenser_empty_mass + suu7_tube_number * blu3b.N_per_tube * blu3b.mass,
+    Weight_Empty = suu7_dispenser_empty_mass,
     wsType_dispenser = "weapons.containers.{HB_F4E_CBU-2B/A}",
-    wsType = "weapons.bombs.HB_BLU_3B_GROUP",
-    wsType4 = generated_wstypes["bombs"]["weapons.bombs.HB_BLU_3B_GROUP"],
-    Cx_pil = 0.0006416
+    wsType = "weapons.bombs.BLU-3_GROUP",
+    wsType4 = generated_wstypes["bombs"]["weapons.bombs.BLU-3B_GROUP"],
+    Cx_pil = suu7_cx_pil
 }
 
-
 local new_dispenser_data = {
-	["CBU-1A"]			= {name = "CBU-1A/A x 27x19 (513) BLU-4B Bomblets, HE",     mass = CBU_1A.Weight, 	mass_empty = CBU_1A.Weight_Empty, 	CLSID = "{HB_F4E_CBU-1/A}",     wsType = CBU_Type(CBU_1A.wsType4),  Cx = CBU_1A.Cx_pil, picture= "Picto_CBU-1-2.png"},
-	["CBU-2A"]			= {name = "CBU-2/A x 19x19 (361) BLU-3 Bomblets, HE",       mass = CBU_2A.Weight, 	mass_empty = CBU_2A.Weight_Empty, 	CLSID = "{HB_F4E_CBU-2/A}",     wsType = CBU_Type(CBU_2A.wsType4),  Cx = CBU_2A.Cx_pil, picture= "Picto_CBU-1-2.png"},
-	["CBU-2BA"]			= {name = "CBU-2B/A x 22x19 (418) BLU-3B Bomblets, HE",     mass = CBU_2BA.Weight, 	mass_empty = CBU_2BA.Weight_Empty, 	CLSID = "{HB_F4E_CBU-2B/A}",    wsType = CBU_Type(CBU_2BA.wsType4), Cx = CBU_2BA.Cx_pil, picture= "Picto_CBU-1-2.png"},
+	["CBU-1A"]			= {name = "CBU-1A/A x 27x19 (513) BLU-4B Bomblets, HE", n_tubes = suu7_tube_number, mass = CBU_1A.Weight, 	mass_empty = CBU_1A.Weight_Empty, 	CLSID = "{HB_F4E_CBU-1/A}",     wsType = CBU_1A.wsType,  Cx = CBU_1A.Cx_pil,  picture= "suu-1a.png"},
+	["CBU-2A"]			= {name = "CBU-2/A x 19x19 (361) BLU-3 Bomblets, HE",   n_tubes = suu7_tube_number, mass = CBU_2A.Weight, 	mass_empty = CBU_2A.Weight_Empty, 	CLSID = "{HB_F4E_CBU-2/A}",     wsType = CBU_2A.wsType,  Cx = CBU_2A.Cx_pil,  picture= "suu-1a.png"},
+	["CBU-2BA"]			= {name = "CBU-2B/A x 22x19 (418) BLU-3B Bomblets, HE", n_tubes = suu7_tube_number, mass = CBU_2BA.Weight, 	mass_empty = CBU_2BA.Weight_Empty, 	CLSID = "{HB_F4E_CBU-2B/A}",    wsType = CBU_2BA.wsType, Cx = CBU_2BA.Cx_pil, picture= "suu-1a.png"},
 }
 
 function convert_to_pod(bomb)
@@ -2004,13 +2052,13 @@ function convert_to_pod(bomb)
 		CLSID				= "{C_A4E_"..bomb.."}",
 		attribute			= {wsType_Weapon, wsType_Bomb, wsType_Container, WSTYPE_PLACEHOLDER},
         wsTypeOfWeapon      = bomb_variant.wsType,
-		Count				= 1,
+		Count				= 1 * bomb_variant.n_tubes,
 		Cx_pil				= bomb_variant.Cx,
 		Picture				= bomb_variant.picture,
 		displayName			= bomb_variant.name,
 		Weight				= bomb_variant.mass,
         Weight_Empty        = bomb_variant.mass_empty,
-		Elements = {{ payload_CLSID	=	bomb_variant.CLSID	}}
+		Elements = {{ payload_CLSID	= bomb_variant.CLSID }}---	}}
 	}
 end
 
@@ -2052,16 +2100,23 @@ function bru42_dispenser(dispenser, side)
         })
     end
 
+    -- Okay so there is a super weird bug that can happen here.
+    -- If the wstype you put here is not a real wstype, then what will happen
+    -- is the Weight here will be multiplied by the number of weapons on the CLSID
+    -- weapon. So if you had 19 tubes and the weight was 100 kg, it would make it 19 * 100 = 1900
+    -- DCS even gets confused and reports the weight as you would expect it would but then in game
+    -- the MASS will be stupidly HIGH like with the case I ran into it was like 60 METRIC TONS
+    -- ...that's like 3 days I'm not getting back
     local result = {
         category = CAT_PODS,
         CLSID = "{C_A4E_"..dispenser.."_2x_TER_"..side.."}",
         attribute = rack_variant.wstype,
         Picture = dispenser_pod.picture,
-        Count = count,
+        Count = count * dispenser_pod.n_tubes,
         displayName = tostring(count).." x "..dispenser_pod.name.." (TER)",
         wsTypeOfWeapon = dispenser_pod.wsType,
-        Weight = dispenser_pod.mass,
-        Weight_Empty = dispenser_pod.mass_empty,
+        Weight = rack_variant.mass + count * dispenser_pod.mass,
+        Weight_Empty = rack_variant.mass + count * dispenser_pod.mass_empty,
         Cx_pil = 0.001887 + count * dispenser_pod.Cx,
         ejectDirection = {-1, 0, 0},
 	    ejectVelocity = 15,

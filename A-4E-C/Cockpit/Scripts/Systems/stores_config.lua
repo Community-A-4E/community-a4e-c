@@ -196,15 +196,15 @@ loadout_names = {
     ["{mk77mod1}"]                              = "BOMB - MK-77 MOD1 - 500 LB. PETROLEUM",
     
     --CLUSTER MUNITIONS--
-    ["{CBU-1/A}"]                               = "CBU-1/A ANTI-PERS - 26 BLU-4/B PER TUBE",
-    ["{CBU-1/A_TER_2_L}"]                       = "CBU-1/A * 2 ANTI-PERS - 26 BLU-4/B PER TUBE - TER",
-    ["{CBU-1/A_TER_2_R}"]                       = "CBU-1/A * 2 ANTI-PERS - 26 BLU-4/B PER TUBE - TER",
-    ["{CBU-2/A}"]                               = "CBU-2/A - 12 BLU-3/B PER TUBE",
-    ["{CBU-2/A_TER_2_L}"]                       = "CBU-2/A * 2 - 12 BLU-3/B PER TUBE - TER",
-    ["{CBU-2/A_TER_2_R}"]                       = "CBU-2/A * 2 - 12 BLU-3/B PER TUBE - TER",
-    ["{CBU-2B/A}"]                              = "CBU-2B/A - 22 BLU-3/B PER TUBE",
-    ["{CBU-2B/A_TER_2_L}"]                      = "CBU-2B/A * 2 - 22 BLU-3/B PER TUBE - TER",
-    ["{CBU-2B/A_TER_2_R}"]                      = "CBU-2B/A * 2 - 22 BLU-3/B PER TUBE - TER",
+    ["{C_A4E_CBU-1A}"]                          = "CBU-1/A ANTI-PERS - 27 BLU-4/B PER TUBE",
+    ["{C_A4E_CBU-1A_2x_TER_L}"]                 = "CBU-1/A * 2 ANTI-PERS - 27 BLU-4/B PER TUBE - TER",
+    ["{C_A4E_CBU-1A_2x_TER_R}"]                 = "CBU-1/A * 2 ANTI-PERS - 27 BLU-4/B PER TUBE - TER",
+    ["{C_A4E_CBU-2A}"]                          = "CBU-2/A - 19 BLU-3/B PER TUBE",
+    ["{C_A4E_CBU-2A_2x_TER_L}"]                 = "CBU-2/A * 2 - 19 BLU-3/B PER TUBE - TER",
+    ["{C_A4E_CBU-2A_2x_TER_R}"]                 = "CBU-2/A * 2 - 19 BLU-3/B PER TUBE - TER",
+    ["{C_A4E_CBU-2BA}"]                         = "CBU-2B/A - 22 BLU-3/B PER TUBE",
+    ["{C_A4E_CBU-2BA_2x_TER_L}"]                = "CBU-2B/A * 2 - 22 BLU-3/B PER TUBE - TER",
+    ["{C_A4E_CBU-2BA_2x_TER_R}"]                = "CBU-2B/A * 2 - 22 BLU-3/B PER TUBE - TER",
 
     --BOMB RACKS--
     ["{Mk-20_TER_2_C}"]                         = "BOMBS - MK-20 ROCKEYE - 490 LB. CBU - TER",

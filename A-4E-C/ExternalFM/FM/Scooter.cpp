@@ -184,6 +184,10 @@ void init(const char* config)
 	s_state->avionics.getComputer().setEjectionVelocity( ejectionVelocity );
 	printf( "Ejection Velocity: %lf\n", ejectionVelocity );
 
+	LuaImGui::AddItem( "Menu Name", "C++ Test", [state = &s_state.value()]() {
+		ImGui::Text("Mass: %lf", state->airframe.getMass());
+	});
+
 	
 }
 
