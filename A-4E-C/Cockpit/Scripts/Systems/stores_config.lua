@@ -42,8 +42,10 @@ loadout_names = {
 
     --AIR AIR--
     ["{GAR-8}"]                                 = "MISSILE - AIM-9B",
+    ["{AIM-9J}"]                                = "MISSILE - AIM-9J",
     ["{AIM-9P-ON-ADAPTER}"]                     = "MISSILE - AIM-9P",
     ["{AIM-9P5-ON-ADAPTER}"]                    = "MISSILE - AIM-9P5",
+    ["{A4E-AIM-9P3-ON-ADAPTER}"]                = "MISSILE - AIM-9P3",
 
     --ROCKETS--
     ["{LAU3_FFAR_WP156}"]                       = "ROCKETS - LAU-3 - FFAR M156 WHT PHOS",
