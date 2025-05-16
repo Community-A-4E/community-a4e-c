@@ -20,7 +20,7 @@
 #include "CP741.h"
 #include "Interface.h"
 #include "AirDataComputer.h"
-#include "Gyro.h"
+//#include "Gyro.h"
 //=========================================================================//
 
 namespace Scooter
@@ -74,39 +74,39 @@ private:
 	// 0.0
 
 
-	Gyro::Variables m_ajb3_settings = {
-		0.5,
-		0.07,
-		100.0,
-		8000.0_rpm,
-		DamageCell::TAIL_LEFT_SIDE,
-		"AJB-3 Gyro",
-		1.0e-4,
-		0.001,
-		0.01,
-		0.01,
-		0.0, // Precision instrument
-		40.0,
-		60.0,
-	};
-	Gyro m_gyro_ajb3;
+	// Gyro::Variables m_ajb3_settings = {
+	// 	0.5,
+	// 	0.07,
+	// 	100.0,
+	// 	8000.0_rpm,
+	// 	DamageCell::TAIL_LEFT_SIDE,
+	// 	"AJB-3 Gyro",
+	// 	1.0e-4,
+	// 	0.001,
+	// 	0.01,
+	// 	0.01,
+	// 	0.0, // Precision instrument
+	// 	40.0,
+	// 	60.0,
+	// };
+	// Gyro m_gyro_ajb3;
 
-	Gyro::Variables m_standby_adi_settings = {
-		0.2, // Rotor Mass
-		0.035, // Radius
-		100.0, // RPM Factor
-		6000.0_rpm, // operating Omega
-		DamageCell::NOSE_RIGHT_SIDE,
-		"Standby ADI Gyro",
-		1.0e-4, // Gimbal Friction
-		0.001,
-		0.1, // Erection Rate
-		0.01,
-		1.0e-4, // Random Torque
-		40.0, // Spin Down
-		60.0, // Spin Up
-	};
-	Gyro m_standby_adi;
+	// Gyro::Variables m_standby_adi_settings = {
+	// 	0.2, // Rotor Mass
+	// 	0.035, // Radius
+	// 	100.0, // RPM Factor
+	// 	6000.0_rpm, // operating Omega
+	// 	DamageCell::NOSE_RIGHT_SIDE,
+	// 	"Standby ADI Gyro",
+	// 	1.0e-4, // Gimbal Friction
+	// 	0.001,
+	// 	0.1, // Erection Rate
+	// 	0.01,
+	// 	1.0e-4, // Random Torque
+	// 	40.0, // Spin Down
+	// 	60.0, // Spin Up
+	// };
+	// Gyro m_standby_adi;
 
 	static constexpr bool advanced_gyro_enabled = false;
 

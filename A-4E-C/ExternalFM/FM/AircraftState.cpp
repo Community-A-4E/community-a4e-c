@@ -48,7 +48,10 @@ void Scooter::AircraftState::zeroInit()
 	m_gs = 0.0;
 	m_surfaceHeight = 0.0;
 
-	world_orientation.setIdentity();
+	world_orientation.w = 1.0;
+	world_orientation.x = 0.0;
+	world_orientation.y = 0.0;
+	world_orientation.z = 0.0;
 
 }
 
