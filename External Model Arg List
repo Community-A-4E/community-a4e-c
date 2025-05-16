@@ -22,6 +22,8 @@ This is not a comprehensive list and continued documentation is in progress
 =#13 -- right slat
 =#14 -- left slat
 =#25 -- tail hook
+=#31 -- Bort 0x0
+=#32 -- Bort 00x
 =#38 -- canopy
 =#42 -- Refuelling Pod
 =#45 -- Cockpit Interior Light WHITE
@@ -31,8 +33,12 @@ This is not a comprehensive list and continued documentation is in progress
 =#190 -- left (red) navigation wing-tip light
 =#191 -- right (green) navigation wing-tip light
 =#192 -- tail (white) light
-=#198 -- anticollision (flashing red) top light
-=#199 -- anticollision (flashing red) bottom light
+=#198 -- Top Nav Light Bulb On/Off
+=#200 -- Top Nav Light Beacon - Brightness
+=#201 -- Top Nav Light Beacon - Motion
+=#205 -- Bottom Nav Light Bulb - On/Off
+=#202 -- Bottom Nav Light Beacon - Brightness
+=#203 -- Bottom Nav Light Beacon - Motion
 =#208 -- taxi light (white) right main gear door
 =#499 -- Wheel Chocks
 =#402 -- huffer
