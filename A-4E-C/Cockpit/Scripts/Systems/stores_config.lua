@@ -44,7 +44,7 @@ loadout_names = {
     ["{GAR-8}"]                                 = "MISSILE - AIM-9B",
     ["{AIM-9J-ON-ADAPTER}"]                     = "MISSILE - AIM-9J",
     ["{AIM-9P-ON-ADAPTER}"]                     = "MISSILE - AIM-9P",
-    ["{AIM-9P3-ON-ADAPTER"]                     = "MISSILE - AIM-9P3",
+    ["{AIM-9P3-ON-ADAPTER}"]                    = "MISSILE - AIM-9P3",
     ["{AIM-9P5-ON-ADAPTER}"]                    = "MISSILE - AIM-9P5",
     ["{A4E-ASQ-T50-ON-ADAPTER}"]                = "DATA RECORDER - ASQ-T50",
 
