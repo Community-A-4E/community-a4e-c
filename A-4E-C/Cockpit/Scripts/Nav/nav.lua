@@ -1,13 +1,15 @@
-dofile(LockOn_Options.script_path.."command_defs.lua")
-dofile(LockOn_Options.script_path.."devices.lua")
-dofile(LockOn_Options.script_path.."Systems/electric_system_api.lua")
-dofile(LockOn_Options.script_path.."utils.lua")
-dofile(LockOn_Options.script_path.."Systems/mission.lua")
-dofile(LockOn_Options.script_path.."Systems/mission_utils.lua")
-dofile(LockOn_Options.script_path.."Nav/NAV_util.lua")
-dofile(LockOn_Options.script_path.."Nav/ils_utils.lua")
-dofile(LockOn_Options.script_path.."EFM_Data_Bus.lua")
-dofile(LockOn_Options.script_path.."Systems/air_data_computer_api.lua")
+dofile(LockOn_Options.script_path.."ConfigurePackage.lua")
+require('Nav.coord_utils')
+
+require("command_defs")
+require("devices")
+require("Systems.electric_system_api")
+require("utils")
+require("Systems.mission")
+require("Systems.mission_utils")
+require("Nav.NAV_util")
+require("Nav.ils_utils")
+require("Systems.air_data_computer_api")
 
 avionics = require_avionics()
 
@@ -37,13 +39,6 @@ local degrees_per_radian = 57.2957795
 
 
 ----------------------
-local carrier_posx_param = get_param_handle("CARRIER_POSX")
-local carrier_posz_param = get_param_handle("CARRIER_POSZ")
-local cvn_tcn_id = nil
-
-local tacan_channel_param = get_param_handle("TACAN_CHANNEL")
-
-local efm_data_bus = get_efm_data_bus()
 
 -----------------------------------------------------------------------
 -----------------------------------------------------------------------
@@ -188,6 +183,9 @@ local heading_err = 0.0
 -- BDHI STATE, OUTPUT and INDICATORS
 -----------------------------------------------------------------------
 -----------------------------------------------------------------------
+local tacan_bearing_handle = get_param_handle("TACAN_BEARING")
+local tacan_range_handle = get_param_handle("TACAN_RANGE")
+
 
 bdhi_modelist = {"NAVPAC", "TACAN", "NAVCMPTR"}
 bdhi_mode = "TACAN"
@@ -209,22 +207,6 @@ local bdhi_dme_xxX = get_param_handle("BDHI_DME_xxX")
 -----------------------------------------------------------------------
 -----------------------------------------------------------------------
 
--- arn-52 state and input processing
-tacan_modelist = {"OFF", "REC", "T/R", "A/A"}
-local tacan_mode = "OFF"
-local tacan_volume = 0
-local tacan_volume_moving = 0
-local tacan_volume_playback = 0
-local tacan_ch_major = 0
-local tacan_ch_minor = 1
-local tacan_channel = 1
-local tacan_channel_last = 1
-
--- arn-52 shared output data
-local arn52_range = nil
-local arn52_bearing = nil
-local atcn -- "active tacan"
-
 local adf_antenna_bearing = 0.0
 local adf_antenna_target = nil
 
@@ -233,14 +215,6 @@ current_marker = nil
 
 
 -- Variables
-
-
-
--- beacon_data[] entry table holds {ntype, beaconId, positionGeo {latititude, longitude}, name, channel, direction, position {x, y, z}, callsign, frequency}
-local beacon_data = {}
-
-local tacan_to_object_id = {}
-local icls_to_object_id = {}
 
 local tcnchnidx = 0
 local ndbchnidx = 0
@@ -272,17 +246,6 @@ dev:listen_command(Keys.NavDopplerCW)
 dev:listen_command(Keys.NavDopplerCCW)
 dev:listen_command(Keys.PlaneChgTargetNext)
 dev:listen_command(Keys.PlaneChgTargetPrev)
-dev:listen_command(Keys.TacanModeInc)
-dev:listen_command(Keys.TacanModeDec)
-dev:listen_command(Keys.TacanChMajorInc)
-dev:listen_command(Keys.TacanChMajorDec)
-dev:listen_command(Keys.TacanChMinorInc)
-dev:listen_command(Keys.TacanChMinorDec)
-dev:listen_command(Keys.TacanVolumeInc)
-dev:listen_command(Keys.TacanVolumeDec)
-dev:listen_command(Keys.TacanVolumeStartUp)
-dev:listen_command(Keys.TacanVolumeStartDown)
-dev:listen_command(Keys.TacanVolumeStop)
 dev:listen_command(device_commands.doppler_select)
 dev:listen_command(device_commands.doppler_memory_test)
 dev:listen_command(device_commands.nav_select)
@@ -294,89 +257,11 @@ dev:listen_command(device_commands.bdhi_mode)
 dev:listen_command(device_commands.asn41_windspeed)
 dev:listen_command(device_commands.asn41_winddir)
 dev:listen_command(device_commands.asn41_magvar)
-dev:listen_command(device_commands.tacan_ch_major)
-dev:listen_command(device_commands.tacan_ch_minor)
-dev:listen_command(device_commands.tacan_volume)
-dev:listen_command(device_commands.tacan_volume_axis_abs)
-dev:listen_command(device_commands.tacan_volume_axis_slew)
-dev:listen_command(device_commands.tacan_mode)
-
-
-function get_true()
-    -- getHeading() returns straight radians heading where positive is counter-clockwise from north = 0,
-    -- thus we must subtract returned value from 360 to get a "compass" heading
-    local trueheading = (360 - math.deg( sensor_data.getTrueHeading() ) ) % 360
-    return trueheading
-end
-
-function get_magnetic()
-    -- getMagneticHeading() returns heading where 0 is north, pi/2 = east, pi = south, etc.
-    -- so we can straight convert to degrees
-    local maghead = math.deg( sensor_data.getMagneticHeading() ) % 360
-    return maghead
-end
-
--- returns declination based on current plane position.  negative is easterly declination, subtract from TH to get MH
-function get_declination()
-    local mh = sensor_data.getMagneticHeading()
-    local th = 2*math.pi - sensor_data.getHeading()
-    local dec = math.deg(th-mh)
-    if dec > 180 then
-        dec = dec - 360
-    end
-    return dec
-end
-
-function get_calculated_true_heading()
-    result = sensor_data.getMagneticHeading() + math.rad(asn41_magvar_offset)
-    return result 
-end
-
--- measures the deviation between grid north (delta x, fixed z) and "true" north in lat/long at that point
-function get_true_deviation_from_grid(x,z)
-    return true_bearing_viall_from_xz(x-1000, z, x+1000, z)
-end
-
-
---[[
-short mark, dot or "dit" (·) : "dot duration" is one time unit long
-longer mark, dash or "dah" (–) : three time units long
-inter-element gap between the dots and dashes within a character : one dot duration or one unit long
-short gap (between letters) : three time units long
-medium gap (between words) : seven time units long
---]]
-
-local morse_alphabet={ a=".-~",b="-...~",c="-.-.~",d="-..~",e=".~",f="..-.~",g="--.~",h="....~",
-i="..~",j=".---~",k="-.-~",l=".-..~",m="--~",n="-.~",o="---~",p=".--.~",q="--.-~",r=".-.~",
-s="...~",t="-~",u="..-~",v="...-~",w=".--~",x="-..-~",y="-.--~",z="--..~",[" "]="|",
-["0"]="-----~",["1"]=".----~",["2"]="..---~",["3"]="...--~",["4"]="....-~",["5"]=".....~",
-["6"]="-....~",["7"]="--...~",["8"]="---..~",["9"]="----.~"}
-
-function get_morse(str)
-     local morse = string.gsub(string.lower(str), "%Z", morse_alphabet)
-     local morse = string.gsub(morse, "~|", "      ") -- 6 units, 7th given by preceding dot or dash
-     local morse = string.gsub(morse, "|", "       ")
-     local morse = string.gsub(morse, "~", "  ") -- 2 units, 3rd given by preceding dot or dash
-     return morse
-end
-
-local morse_unit_time = 0.1  -- MorzeDot.wav is 0.1s long, MorzeDash.wav is 0.3s
-local time_to_next_morse = 0
-local current_morse_string=""
-local morse_silent = false
-local current_morse_char = 0
-local tacan_audio_active = false
-
 
 function post_initialize()
     asn41_magvar_offset = round(get_declination(),1)
 
     startup_print("nav: postinit")
-    sndhost = create_sound_host("COCKPIT_TACAN","HEADPHONES",0,0,0)
-    morse_dot_snd = sndhost:create_sound("Aircrafts/A-4E-C/MorzeDot") -- refers to sdef file, and sdef file content refers to sound file, see DCSWorld/Sounds/sdef/_example.sdef
-    morse_dash_snd = sndhost:create_sound("Aircrafts/A-4E-C/MorzeDash")
-    marker_middle_snd = sndhost:create_sound("Aircrafts/A-4E-C/MarkerMiddle")
-    marker_outer_snd = sndhost:create_sound("Aircrafts/A-4E-C/MarkerOuter")
 
     local mhdg = get_magnetic()
   
@@ -396,13 +281,8 @@ function post_initialize()
     --local f2 = loadfile(LockOn_Options.script_path.."Nav/vor_data.lua")
     --local f3 = loadfile(LockOn_Options.script_path.."Nav/ndb_data.lua")
 
-    --tacan_data = f1()
     --vor_data = f2()
     --ndb_data = f3() -- test
-
-    -- load Nav data
-    local f4 = loadfile(LockOn_Options.script_path.."Nav/beacon_data.lua")
-    beacon_data = f4()
 
     bdhi_mode = "TACAN"
 
@@ -437,8 +317,7 @@ function post_initialize()
     roll_err = 0.02 * randDir()
     heading_err = 0.02 * randDir()
 
-    dev:performClickableAction(device_commands.tacan_ch_major, 0.0, true)
-    dev:performClickableAction(device_commands.tacan_ch_minor, 0.1, true)
+
 
     local birth = LockOn_Options.init_conditions.birth_place
     if birth=="GROUND_HOT" or birth=="AIR_HOT" then
@@ -469,15 +348,6 @@ function post_initialize()
         dev:performClickableAction(device_commands.nav_select, 0.1, true)  -- set switch to "off" initially
 
     end
-
-	load_tempmission_file() 
-
-    tacan_to_object_id, icls_to_object_id = find_mobile_tacan_and_icls()
-
-    --local s = recursively_traverse(tacan_to_object_id)
-    --print_message_to_user(s)
-
-	tacan_channel_param:set(0)
     startup_print("nav: postinit end")
 end
 
@@ -630,71 +500,6 @@ function SetCommand(command,value)
         elseif asn41_input == "OFF" then
             dev:performClickableAction(device_commands.nav_select, 0.0, false) -- set TEST
         end
-    ---------------------------------------------
-    -- ARN-52(V) TACAN BEARING-DISTANCE EQUIPMENT
-    ---------------------------------------------
-    elseif command == device_commands.tacan_mode then
-        tacan_mode = tacan_modelist[ round((value*10)+1,0) ]
-        check_air_to_air_tacan()
-    elseif command == device_commands.tacan_ch_major then
-        tacan_ch_major = value * 20     -- 0.05 per increment, 0 to 12
-        tacan_channel = round(10*tacan_ch_major + tacan_ch_minor)
-        atcn = find_matched_tacan(tacan_channel)
-    elseif command == device_commands.tacan_ch_minor then
-        tacan_ch_minor = value * 10     -- 0.10 per digit, 0 to 9
-        tacan_channel = round(10*tacan_ch_major + tacan_ch_minor)
-        atcn = find_matched_tacan(tacan_channel)
-    elseif command == device_commands.tacan_volume then
-        tacan_volume = value
-        if tacan_volume < -0.5 then
-            dev:performClickableAction(device_commands.tacan_volume, 0.8, false)  -- bound check to fix wrap
-        elseif tacan_volume < 0 and tacan_volume > -0.5 then
-            dev:performClickableAction(device_commands.tacan_volume, 0, false)  -- bounds check to fix wrap
-        else
-            morse_dot_snd:update(nil,tacan_volume_playback,nil)
-            morse_dash_snd:update(nil,tacan_volume_playback,nil)
-        end
-    elseif command == device_commands.tacan_volume_axis_abs then
-        -- normalize and constrain tacan axis input to bounds set above (0.2-0.8)
-        local set_tacan_volume_from_axis = (((value+1)*0.5)*0.6) + 0.2
-        dev:performClickableAction(device_commands.tacan_volume, set_tacan_volume_from_axis, false)
-    elseif command == device_commands.tacan_volume_axis_slew then
-        tacan_volume_moving = value/75
-    --plusnine added mode switch (could probably be more efficient, but it works)
-    elseif command == Keys.TacanModeInc then
-        if tacan_mode == "OFF" then
-            dev:performClickableAction(device_commands.tacan_mode, 0.1, false) -- set REC
-        elseif tacan_mode == "REC" then
-            dev:performClickableAction(device_commands.tacan_mode, 0.2, false) -- set T/R
-        elseif tacan_mode == "T/R" then
-            dev:performClickableAction(device_commands.tacan_mode, 0.3, false) -- set A/A
-        end
-    elseif command == Keys.TacanModeDec then
-        if tacan_mode == "A/A" then
-            dev:performClickableAction(device_commands.tacan_mode, 0.2, false) -- set T/R
-        elseif tacan_mode == "T/R" then
-            dev:performClickableAction(device_commands.tacan_mode, 0.1, false) -- set REC
-        elseif tacan_mode == "REC" then
-            dev:performClickableAction(device_commands.tacan_mode, 0.0, false) -- set OFF
-        end
-    elseif command == Keys.TacanChMajorInc then
-        dev:performClickableAction(device_commands.tacan_ch_major, clamp(tacan_ch_major / 20 + 0.05, 0, 0.6), false) -- increment as as per amounts and limits set above
-    elseif command == Keys.TacanChMajorDec then
-        dev:performClickableAction(device_commands.tacan_ch_major, clamp(tacan_ch_major / 20 - 0.05, 0, 0.6), false) -- decrement as as per amounts and limits set above
-    elseif command == Keys.TacanChMinorInc then
-        dev:performClickableAction(device_commands.tacan_ch_minor, clamp(tacan_ch_minor / 10 + 0.10, 0, 0.9), false) -- increment as as per amounts and limits set above
-    elseif command == Keys.TacanChMinorDec then
-        dev:performClickableAction(device_commands.tacan_ch_minor, clamp(tacan_ch_minor / 10 - 0.10, 0, 0.9), false) -- decrement as as per amounts and limits set above
-    elseif command == Keys.TacanVolumeInc then
-        dev:performClickableAction(device_commands.tacan_volume, clamp(tacan_volume + 0.03, 0.2, 0.8), false)
-    elseif command == Keys.TacanVolumeDec then
-        dev:performClickableAction(device_commands.tacan_volume, clamp(tacan_volume - 0.03, 0.2, 0.8), false)
-    elseif command == Keys.TacanVolumeStartUp then
-        tacan_volume_moving = 1/100
-    elseif command == Keys.TacanVolumeStartDown then
-        tacan_volume_moving = -1/100
-    elseif command == Keys.TacanVolumeStop then
-        tacan_volume_moving = 0
     end
 end
 
@@ -911,7 +716,7 @@ function getAirDataComputerVariables(precision)
     local tas = round(Air_Data_Computer:getTAS(), precision - 1)
     local roll = round(sensor_data.getRoll(), precision)
     local pitch = round(sensor_data.getPitch(),precision)
-    local heading = round(get_calculated_true_heading(),precision)
+    local heading = round(get_calculated_true_heading(asn41_magvar_offset),precision)
     local aoa = round(sensor_data.getAngleOfAttack(), precision)
 
     return tas, pitch, roll, heading, aoa
@@ -1110,20 +915,6 @@ local function haversine(x1, y1, x2, y2)
     local c = 2 * math.asin(math.sqrt(a));
     local d = 6372800 * c;
     return d;
-end
-
--- calculates the "forward azimuth" bearing of a great circle route from x1,y1 to x2,y2 in true heading degrees
-local function forward_azimuth_bearing(x1,y1,x2,y2)
-    local lat1r = math.rad(x1)
-    local lon1r = math.rad(y1)
-    local lat2r = math.rad(x2)
-    local lon2r = math.rad(y2)
-
-    local y = math.sin(lon2r-lon1r) * math.cos(lat2r)
-    local x = math.cos(lat1r)*math.sin(lat2r) - math.sin(lat1r)*math.cos(lat2r)*math.cos(lon2r-lon1r)
-    local brng = math.deg(math.atan2(y, x))
-
-    return brng
 end
 
 --
@@ -1774,149 +1565,6 @@ function set_apn153_memorylight(state)
     end
 end
 
-
-function true_bearing_deg_from_xz(x1,z1,x2,z2)
-    return ( math.deg(math.atan2(z2-z1,x2-x1)) %360 )  -- true bearing in degrees
-end
-
-function true_bearing_viall_from_xz(x1,z1,x2,z2)
-    local geopos1 = lo_to_geo_coords(x1,z1)
-    local geopos2 = lo_to_geo_coords(x2,z2)
-    
-    return forward_azimuth_bearing(geopos1.lat, geopos1.lon, geopos2.lat, geopos2.lon)
-end
-
-function check_air_to_air_tacan()
-    if atcn == nil then
-        return
-    end
-
-    if atcn.air_to_air ~= (tacan_mode == "A/A") then
-        atcn = nil
-    end
-end
-
--- find_active_tacan()
---
--- takes channel 'chan' as an argument, searches the beacon database, and returns
--- key parameters about the matching beacon, or 'nil' if there's no tacan on the
--- appropriate frequency
-function find_matched_tacan(chan)
-
-    local air_to_air = tacan_mode == "A/A"
-    local bcn = fetch_object_beacon_data(chan, air_to_air)
-    
-    if bcn then
-        return bcn
-    end
-
-    if air_to_air then
-        return nil
-    end
-
-    for i = 1,#beacon_data do
-        if beacon_data[i].ntype == NAV_TYPE_VOR_TAC or beacon_data[i].ntype == NAV_TYPE_TCN then
-		
-            if chan == beacon_data[i].channel or getTACANFrequency(chan, 'X') == beacon_data[i].frequency then
-
-                if beacon_data[i].position.y == nil then
-                    beacon_data[i].position.y = Terrain.GetHeight(beacon_data[i].position.x, beacon_data[i].position.z)+10   -- fix caucasus height
-                end
-
-			--	tacan_channel_param:set(chan)
-                bcn = beacon_data[i]
-                bcn.air_to_air = false
-                return bcn
-				
-				
-            end
-        end
-    end
-    return nil
-end
-
-function update_tacan()
-
-    local max_tacan_range = 225
-
-    -- for position of the active_tacan beacon, update visibility, distance, and range
-
-    if tacan_mode == "REC" or tacan_mode == "T/R" or tacan_mode == "A/A" then
-
-        
-        --if tacan_mode == "ILS" then
-            --tacan_channel_param:set(tacan_channel)
-        --else
-        tacan_channel_param:set(0)
-        --end
-
-        if atcn == nil then
-            atcn = find_matched_tacan(tacan_channel)
-        end
-
-        if atcn == nil then
-            morse_silent = true
-            arn52_range = nil
-            arn52_bearing = nil
-            stop_morse_playback()
-            return 
-        end
-
-        update_object_beacon(atcn)
-        
-        
-    
-	   local curx,cury,curz = sensor_data.getSelfCoordinates()
-
-        if Terrain.isVisible(curx,cury,curz,atcn.position.x,atcn.position.y+15,atcn.position.z) then
-            
-            local range = math.sqrt( (atcn.position.x - curx)^2 + (atcn.position.y - cury)^2 + (atcn.position.z - curz)^2 )/nm2meter
-            if range < max_tacan_range then
-
-                if tacan_mode == "T/R" or tacan_mode == "A/A" then
-                    arn52_range = (range < max_tacan_range) and range or nil
-                    --print_message_to_user("range: "..arn52_range)
-                else
-                    arn52_range = nil
-                end
-
-                --local bearing = true_bearing_deg_from_xz(curx, curz, atcn.position.x, atcn.position.z)
-                local bearing = true_bearing_viall_from_xz(curx, curz, atcn.position.x, atcn.position.z)
-                
-                local declination = get_declination()
-
-                -- grid X/Y isn't aligned with true north, so find average adjustment between current position and beacon source
-                local adj = get_true_deviation_from_grid( (atcn.position.x+curx)/2, (atcn.position.z+curz)/2)
-                --print_message_to_user("declination= "..declination.."  adj= "..adj)
-
-                arn52_bearing = (bearing - declination - adj) % 360
-
-                
-                --print_message_to_user("brg: "..bearing.."  dec: "..declination.."  mb: "..arn52_bearing)
-
-                configure_morse_playback(atcn.callsign)
-
-            else
-                stop_morse_playback()
-            end
-        else
-            morse_silent = true
-            arn52_range = nil
-            arn52_bearing = nil
-        end
-    elseif tacan_mode == "ILS" then
-        --nothing
-    else
-        morse_silent = true
-        arn52_range = nil
-        arn52_bearing = nil
-        stop_morse_playback()
-    end
-
-    
-
-end
-
 local needle1_value = WMA_wrap(0.15,0,0,360)
 function bdhi_draw_needle1( brg )
     bdhi_needle1:set( needle1_value:get_WMA_wrap(brg) )
@@ -1948,7 +1596,7 @@ function update_adf()
         return
     end
 
-    local speed = math.rad(60.0)
+    local speed = math.rad(72.0)
     local step = speed * update_time_step
 
     adf_antenna_target = radio_dev:getADFBearing()
@@ -1994,17 +1642,15 @@ function update_bdhi()
             --    aids available to the pilot. ARN-52(V)
             --    is inoperative when the landing gear is DOWN
             -- ARN-52(V) == TACAN bearing-distance
-            if arn52_bearing ~= nil then
-                --print_message_to_user("mh= "..maghead.." brg= "..arn52_bearing)
-                bdhi_draw_needle2( (arn52_bearing - maghead) % 360 )
-            else
-                bdhi_draw_needle2( 0 )
-            end
-
+            bdhi_draw_needle2( tacan_bearing_handle:get() )
             update_adf()
             bdhi_draw_needle1( math.deg(adf_antenna_bearing) )
 
-            bdhi_draw_range( arn52_range )
+            if tacan_range_handle:get() > 0 then
+                bdhi_draw_range( tacan_range_handle:get() )
+            else
+                bdhi_draw_range(nil)
+            end
         else
             bdhi_draw_needle2( mh )
             bdhi_draw_range( nil )
@@ -2040,105 +1686,11 @@ function update_bdhi()
 --    bdhi_ils_loc:set(-1)
 end
 
-function configure_morse_playback(code)
-    if not tacan_audio_active then
-        local timenow = get_model_time()
-        if (math.floor(timenow) % 8) == 0 then
-            current_morse_string = get_morse(code)
-            tacan_audio_active = true
-        end
-    end
-end
 
-function stop_morse_playback()
-    current_morse_char = 0
-    tacan_audio_active = false
-    current_morse_string = ""
-end
-
-function update_morse_playback_2()
-
-    
-
-    time_to_next_morse = time_to_next_morse - update_time_step
-
-    if time_to_next_morse <= 0 then
-
-        if morse_silent and false then
-            morse_dot_snd:update(nil,0,nil)
-            morse_dash_snd:update(nil,0,nil)
-        else
-            morse_dot_snd:update(nil,tacan_volume_playback,nil)
-            morse_dash_snd:update(nil,tacan_volume_playback,nil)
-        end
-
-        local c = current_morse_string:sub(current_morse_char+1, current_morse_char+1)
-
-        if c == '.' then
-            time_to_next_morse = 2 * morse_unit_time
-            morse_dot_snd:play_once()
-        elseif c == '-' then
-            time_to_next_morse = 4 * morse_unit_time
-            morse_dash_snd:play_once()
-        elseif c == ' ' then
-            time_to_next_morse = morse_unit_time
-        end
-
-        current_morse_char = (current_morse_char + 1) % #current_morse_string
-
-        if current_morse_char == 0 then
-            time_to_next_morse = 0
-            tacan_audio_active = false
-        end
-
-    end
-end
-
-function update_morse_playback()
-    if #current_morse_string==0 then
-        tacan_audio_active = false
-        return
-    end
-    if (time_to_next_morse>0) then
-        time_to_next_morse=time_to_next_morse-update_time_step
-    end
-    if time_to_next_morse <= 0 then
-        -- if we fly behind a hill in the middle of a transmission, mute it while it's obscured but keep updating it
-        if arn52_bearing == nil then
-            morse_dot_snd:update(nil,0,nil)
-            morse_dash_snd:update(nil,0,nil)
-        else
-            morse_dot_snd:update(nil,tacan_volume_playback,nil)
-            morse_dash_snd:update(nil,tacan_volume_playback,nil)
-        end
-
-        local c = current_morse_string:sub(1,1)
-        --[[if morse_dot_snd:is_playing() or morse_dash_snd:is_playing() then
-            print_message_to_user("previous sound still playing!")
-            log.alert("previous sound still playing!")
-        end--]]
-        --print(c)
-        if (c=='.') then
-            time_to_next_morse=2*morse_unit_time  -- dot and pause
-            morse_dot_snd:play_once()
-        elseif (c=='-') then
-            time_to_next_morse=4*morse_unit_time  -- dash and pause
-            morse_dash_snd:play_once()
-        elseif (c==' ') then
-            time_to_next_morse=morse_unit_time
-        else
-            log.alert("Bad morse character: "..tostring(c))
-        end
-        current_morse_string=current_morse_string:sub(2,#current_morse_string)
-    end
-end
 
 function update()
-	model_time = get_model_time()
-	get_base_sensor_data()
 
-    
-    
+	model_time = get_model_time()
 	--update_carrier_pos()
 	--update_carrier_tcn()	
 	
@@ -2151,136 +1703,11 @@ function update()
         apn153_update_tempcondition()
     end
 
-    if get_elec_mon_primary_ac_ok() then
-        update_tacan()  -- AN/ARN-52(V) TACAN BEARING-DISTANCE EQUIPMENT
-    end
-
     if get_elec_26V_ac_ok() then
         update_bdhi()
     end
-    if tacan_audio_active then
-        --update_morse_playback()
-        update_morse_playback_2()
-    end
-
-    if tacan_volume_moving ~= 0 then
-        dev:performClickableAction(device_commands.tacan_volume, clamp(tacan_volume + tacan_volume_moving, 0.2, 0.8), false)
-    end
 
     update_egg()
-
-    tacan_volume_playback = clamp(tacan_volume - 0.21, 0, 0.6)
-    --print_message_to_user(tacan_volume_playback)
-end
-
-function fetch_object_beacon_data(channel, air_to_air)
-
-    local objects = tacan_to_object_id[channel]
-    --print_message_to_user(tostring(objects))
-    if objects then
-        local object = objects[1]
-
-        --print_message_to_user("Object ID: "..tostring(object.id))
-
-        if object.air_to_air ~= air_to_air then
-            return nil
-        end
-
-        local cur_beacon = {
-            position = { x = 0.0, y = 0.0, z = 0.0 },
-            callsign = object.callsign,
-            objectID = object.id,
-            objectName = object.name,
-            ntype = NAV_TYPE_TCN,
-            frequency = 0.0,
-            channel = channel,
-            air_to_air = object.air_to_air,
-            mobile = true,
-        }
-
-        return cur_beacon
-    end
-
-    return nil
-end
-
-function update_object_beacon(cur_beacon)
-
-    if cur_beacon == nil or not cur_beacon.mobile then
-        return false
-    end
-    --cur_beacon.position.x, cur_beacon.position.y, cur_beacon.position.z = tacan_efm_api:getPosition()
-    cur_beacon.position = avionics.MissionObjects.getObjectPosition(cur_beacon.objectID, cur_beacon.objectName)
-
-    --print_message_to_user(tostring(cur_beacon.position.x).." "..tostring(cur_beacon.position.y).." "..tostring(cur_beacon.position.z))
-
-    if cur_beacon.position == nil then
-        cur_beacon.position = {x = 0.0, y = 0.0, z = 0.0}
-        return false
-    end
-
-    return true
-end
-
-
-function get_base_sensor_data()
-
-	Sensor_Data_Raw = get_base_data()
-	
-	local self_loc_x , own_alt, self_loc_y = Sensor_Data_Raw.getSelfCoordinates()
-	local self_vel_l,	self_vel_v,self_vel_h = Sensor_Data_Raw.getSelfAirspeed()
-	Sensor_Data_Mod = 	{
-							throttle_pos_l  = Sensor_Data_Raw.getThrottleLeftPosition(),
-							throttle_pos_r  = Sensor_Data_Raw.getThrottleRightPosition(),
-							mach			= Sensor_Data_Raw.getMachNumber(),
-							nose_wow		= Sensor_Data_Raw.getWOW_NoseLandingGear(),
-							
-							AoS 			= math.deg(Sensor_Data_Raw.getAngleOfSlide()),		--is in rad
-							AoA 			= math.deg(Sensor_Data_Raw.getAngleOfAttack()),		--is in rad?
-							
-							self_m_x 		= self_loc_x,
-							self_m_z 		= self_loc_y,
-							self_m_y 		= own_alt,
-							self_alt 		= own_alt,
-							
-							self_vl			= self_vel_l,
-							self_vv			= self_vel_v,
-							self_vh			= self_vel_h,
-							self_gs			= math.sqrt(self_vel_h^2 + self_vel_l^2),	--grondspeed meters/s
-							
-							
-							self_balt		= Sensor_Data_Raw.getBarometricAltitude(),
-							self_ralt		= Sensor_Data_Raw.getRadarAltitude(),
-							
-							self_pitch		= math.deg(Sensor_Data_Raw.getPitch()),
-							self_bank		= math.deg(Sensor_Data_Raw.getRoll()),
-							
-							self_head			= math.rad(360)-Sensor_Data_Raw.getHeading(),
-							self_head_raw		= Sensor_Data_Raw.getHeading(),
-							self_head_rad		= math.rad(360)-Sensor_Data_Raw.getHeading(),
-							self_head_deg		= -((math.deg(Sensor_Data_Raw.getHeading()))-360),
-							
-							self_head_wpt_rad	= math.rad((360-(math.deg(Sensor_Data_Raw.getHeading()))) + 0),
-							
-							self_ias 			=  Sensor_Data_Raw.getIndicatedAirSpeed(),
-							true_speed			= Sensor_Data_Raw.getTrueAirSpeed()		,
-							--true_speed			= (3600 * (Sensor_Data_Raw.getTrueAirSpeed()))		/ 1000,
-							
-							eng_l_fuel_usage	=	Sensor_Data_Raw.getEngineLeftFuelConsumption(),
-							eng_l_rpm_text		=	Sensor_Data_Raw.getEngineLeftRPM(),
-							eng_l_temp_text		=	Sensor_Data_Raw.getEngineLeftTemperatureBeforeTurbine(),
-							eng_l_rpm_rot		=	math.rad(180) * (Sensor_Data_Raw.getEngineLeftRPM()),
-							eng_l_temp_rot		=	(Sensor_Data_Raw.getEngineLeftTemperatureBeforeTurbine()),
-													
-							eng_r_fuel_usage	=	Sensor_Data_Raw.getEngineRightFuelConsumption(),
-							eng_r_rpm_text		=	Sensor_Data_Raw.getEngineRightRPM(),
-							eng_r_temp_text		=	Sensor_Data_Raw.getEngineRightTemperatureBeforeTurbine(),
-							eng_r_rpm_rot		=	math.rad(180) * (Sensor_Data_Raw.getEngineRightRPM()),
-							eng_r_temp_rot		=	(Sensor_Data_Raw.getEngineRightTemperatureBeforeTurbine()),
-
-							fuel_weight			= 	Sensor_Data_Raw.getTotalFuelWeight(),
-						}	
-
 end
 
 local egg = get_param_handle("EGG")

@@ -47,6 +47,9 @@ void Scooter::AircraftState::zeroInit()
 	m_radarAltitude = 0.0;
 	m_gs = 0.0;
 	m_surfaceHeight = 0.0;
+
+	world_orientation.setIdentity();
+
 }
 
 void Scooter::AircraftState::coldInit()

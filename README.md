@@ -1,10 +1,10 @@
-![Community A-4E-C for DCS World, v2.1.2](https://cdn.discordapp.com/attachments/518815335013679104/1036033807352090725/unknown.png)
+![Community A-4E-C for DCS World, v2.2.1](https://cdn.discordapp.com/attachments/518815335013679104/1036033807352090725/unknown.png)
 
 ## About the A-4E-C Project
 
 The A-4 was a cold war workhorse which proved to be a capable, reliable light attack aircraft to dozens of nations around the world. From the jungles of southeast Asia, to the desert of Sinai, to the coasts of South America, the scooter was a common sight above battlefields around the world for decades.
 
-### A-4E-C Version 2.1.2 Community Update
+### A-4E-C Version 2.2.1 Community Update
 
 Hello, A-4E-C pilots! We hope you are well. This update fixes some bugs and brings the module into compliance with DCS 2.9, currently in OpenBeta. If you play on the main branch, wait to update your A-4E-C installation: this version of the A-4E-C 2.1.2 requires a minimum version of DCS 2.9.0.46801, and older versions of the A-4E-C are incompaible with this version or later. Always ensure servers, clients, and DCS versions are aligned and compatible! 
 Additional information about what's new this update is available in the changelog below. 
@@ -49,55 +49,7 @@ SkateZilla, uboats, Dr. Manius, LevelPulse, Cubeboy, Talo, GVad, OpticFlow, pohl
 - Unique sounds inside and outside the aircraft
 - User manual (PDF and Kneeboard)
 
-### Version 2.1.2 Changelog: Featured Items
-
-#### Added
-- A new NWS (that's Nosewheel Simulation, mind you) makes correcting turns on the ground much easier, and eliminating the "stuck wheel" feeling due to over-braking in taxi. Amaze your friends with your drifting skill!
-- AN/ARC-51 UHF Radio supports DCS VOIP radios. In addition to Radio Microphone Push-to-Talk (PTT) Transmit binding for sending to VOIP radio, a second Radio Microphone Push-to-Talk (PTT) Guard bindings allows the pilot to transmit to the guard frequency when the radio is in TR+G mode. These two bindings function identically to the DCS default "cockpit r.1 VoIP PTT" and "cockpit r.2 VoIP PTT" bindings, respectively, and you can use them instead if you wish. See the Updated AN/ARC-51 UHF Radio guidance on page 1-2 in the Kneeboard Manual for additional details.
-- AN/ARN-25 Automated Direction Finder (ADF) system is now modeled for use with the AN/ARC-51 UHF Radio. Information on using the equipment is detailed in the Kneeboard Manual on page 1-3.
-- Weapons:
-  - AIM-9J and AIM-9P3 are available on inboard and outboard stations.
-  - AGM-45B Shrike is available loadout options on inboard and outboard stations.
-  - 2.75" Hydra rockets are available loadout options with LAU-3 (19 rocket) and LAU-68 (7 rocket) launchers, including white phosphorous, HE, HEAT, as well as Mk1, Mk61, and WRU-1/B practice munitions to the loadout options. LAU-68 launchers also allow loadouts with Para Illum and Practice Smoke Hydra rockets. Outboard stations support 1 launcher, inboard stations up to 2, and up to 3 can be added on the centerline station.
-  - AN/ASQ-T50 TCTS ACMI pod is available on inboard and outboard stations.
-- Enhanced damage modeling: In addition to Reduced effect of transient forces to prevent wake breaking wings, and improved engine damage. The following system failures can be triggered by damage, or selected as a failure in mission editor:
-  - Radar Receiver
-  - Gear Jamming
-  - Gear Actuator
-  - Pitot Tube
-  - Static Port
-  - Boost Pump
-  - Wing Pump
-  - Aileron Actuators
-  - Elevator Actuator
-  - Rudder Actuator
-  - Wing Tank Leak
-  - Fuselage Tank Leak
-  - Engine and Inlet
-- Cold Start, Taxi, Takeoff, and Free Flight missions for the Sinai map are available in the Instant Action.
-- Input bindings:
-  - Else option for the Chaff Dispenser Select added (for a 3-position switch).
-  - Radar Altitude Warning - Slew axis.
-
-#### Changed
-- Standardized naming conventions for loadouts with multiple ejector racks, and provided additional detail for weapon payloads original to the A-4E-C.
-- Recalculated the weight of rocket launcher pod payloads.
-- Kneeboard Manual:
-  - Updated AN/ARN-52 TACAN guidance on page 1-3.
-  - Updated Airfield Radio and ILS data on page 1-4, which can now accomodate up to 30 entries, making it compatible with the contents of the Sinai map.
-  - Updated Shrike and Sidewinder delivery guidance on page 3-5.
-  - Updated AN/APR-25 Radar Homing and Warning System guidance on page 3-6.
-  - Compressed images for smaller file size and faster loading.
-
-#### Fixed
-- **TACAN and MCL system crashes.**
-- The AN/ARC-51 UHF Radio volume knob now adjusts radio and VOIP radio volume.
-- The AN/APG-53A Radar OBST tone and AN/APR-25 RHWR audio properly route to the Helmet sound channel.
-- Black lines along center and around the nose cones of fuel tanks have been removed.
-- Malaysia TUDM livery uses the provided custom fuel tanks.
-- Station arming switches no longer produce a debug printout with the weapon selector in the BOMBS & GM ARM position.
-- Loadout option inaccuracies in the Kneeboard Manual on page 1-6 are corrected.
-- Eliminated Kneeboard Manual typos in page reference annotations.
+### Version 2.2.1 Changelog: Featured Items
 
 [See full changelog](https://github.com/heclak/community-a4e-c/blob/master/CHANGELOG.md)
 
@@ -128,7 +80,7 @@ Failure to perform these steps will result in DCS World not recognizing the modu
 
 - Download [the latest official A-4E-C release package](https://github.com/heclak/community-a4e-c/releases/). Do not download directly from the Github repository.
 
-- Place the `Mods\aircraft\A-4E-C` folder in into your Windows user folder's Saved Games folder for DCS. For most users, this can be accessed by pasting `%HOMEPATH%\Saved Games\Saved Games\DCS` into a windows explorer address bar.
+- Place the `Mods\aircraft\A-4E-C` folder in into your Windows user folder's Saved Games folder for DCS. For most users, this can be accessed by pasting `%HOMEPATH%\Saved Games\DCS` into a windows explorer address bar.
 
 - If you have installed other DCS World mods, you might already have the `Mods` and `aircraft` folders indicated in the file path. If so, merge the new A-4E-C folder into the existing folders.
 

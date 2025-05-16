@@ -17,8 +17,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "../include/Cockpit/ccParametersAPI.h"
-#include "Vec3.h"
-#include "Globals.h"
+#include <Common/Vec3.h>
+#include <Common/Globals.h>
 
 //=========================================================================//
 
@@ -39,16 +39,16 @@ extern "C"
 namespace Scooter
 {//namespace begin
 
-class Interface
+class ParameterInterface
 {
 public:
-	Interface( cockpit_param_api api ):
+	ParameterInterface( cockpit_param_api api ):
 	    m_api(api)
 	{
 		Init();
 	}
 
-	Interface()
+	ParameterInterface()
 	{
 		m_api = ed_get_cockpit_param_api();
 		Init();
@@ -230,25 +230,26 @@ public:
 	inline void* getPointer( void* handle )
 	{
 		char buffer[20];
-		uintptr_t ptr = NULL;
+		void* ptr = NULL;
 		getParamString( handle, buffer, 20 );
 		printf( "%s\n", buffer );
 		//printf( "%s\n", buffer );
 		if ( sscanf_s( buffer, "%p.0", &ptr ) )
 		{
-			if ( ptr )
+			uintptr_t iptr = uintptr_t(ptr);
+			if ( iptr )
 			{
 				//0x20 is the offset from the lua virtual
 				//function table to the primary virtual function
 				//table.
 				//                                                           
 				//primary table | 16 bytes of data | global context pointer | lua table 
-				return (void*)(ptr - 0x20);
+				return (void*)( iptr - 0x20);
 			}
 		}
 		else
 		{
-			LOG( "Pointer could not be found from string: %s\n", buffer )
+			LOG( "Pointer could not be found from string: %s\n", buffer );
 		}
 
 		return NULL;

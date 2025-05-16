@@ -19,7 +19,7 @@
 #include "Table.h"
 #include "Input.h"
 #include "Data.h"
-#include "Maths.h"
+#include <Common/Maths.h>
 #include "AircraftState.h"
 #include <algorithm>
 #include "SmoothVary.h"
@@ -29,8 +29,6 @@
 
 #undef max
 #undef min
-
-#define PI 3.14159
 
 #define c_lpInertia 500.0
 #define c_hpInertia 2.0

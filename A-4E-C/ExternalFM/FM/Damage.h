@@ -6,7 +6,7 @@
 #include "DamageCells.h"
 #include <string>
 #include <random>
-#include "Maths.h"
+#include <Common/Maths.h>
 namespace Scooter
 {
     class DamageObject
@@ -45,16 +45,16 @@ namespace Scooter
     {
     public:
 
-        DamageProcessor( Interface& inter ) : m_interface( inter ) {};
+        DamageProcessor( ParameterInterface& inter );
 
         static DamageProcessor& GetDamageProcessor()
         {
             return *m_damage_processor;
         }
 
-        static void Create( Interface& inter )
+        static void Create( ParameterInterface& inter )
         {
-            m_damage_processor = std::make_unique<DamageProcessor>(inter);
+            m_damage_processor = std::make_unique<DamageProcessor>( inter );
         }
 
         static void Destroy()
@@ -62,10 +62,12 @@ namespace Scooter
             m_damage_processor = nullptr;
         }
 
+        static void AddRepairCallback( std::function<void()>&& repair_callback );
         static std::shared_ptr<DamageObject> MakeDamageObject( const std::string&& name, DamageCell cell, std::function<void(DamageObject&,double)> on_damage_handle = nullptr );
         static std::shared_ptr<DamageObject> MakeDamageObjectMultiple( const std::string&& name, const std::vector<DamageCell>& cells, std::function<void(DamageObject&,double)> on_damage_handle = nullptr );
         void SetupObject( DamageObject& object, std::function<void( DamageObject&, double )> on_damage_handle );
 
+        void AddCallback( std::function<void()>&& repair_callback );
         void RegisterDamageObject( int cell, std::shared_ptr<DamageObject> object );
         void OnDamage( int cell, double integrity );
         bool NeedRepair() const;
@@ -77,9 +79,13 @@ namespace Scooter
         void SetFailure( const std::string& failure, double integrity );
 
     private:
+
+        void ImGuiDebugWindow();
+
+        std::vector<std::function<void()>> m_damage_callbacks;
         std::unordered_map<std::string, std::weak_ptr<DamageObject>> m_objects_by_name;
         std::unordered_map<int, std::vector<std::weak_ptr<DamageObject>>> m_damage_objects;
-        Interface& m_interface;
+        ParameterInterface& m_interface;
         static std::unique_ptr<DamageProcessor> m_damage_processor;
         std::uniform_real_distribution<double> distribution{ 0.0, 1.0 };
         std::mt19937 generator{ 4 };

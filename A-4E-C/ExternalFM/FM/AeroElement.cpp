@@ -219,4 +219,6 @@ double Scooter::AeroControlElement::controlInput()
 		printf("ERROR: invalid control surface\n");
 		break;
 	}
+
+	return 0.0;
 }

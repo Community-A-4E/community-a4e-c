@@ -13,6 +13,7 @@
 //================================ Includes ===============================//
 #include "Airframe.h"
 #include <algorithm>
+//#include <LuaImGui.h>
 //=========================================================================//
 
 Scooter::Airframe::Airframe(AircraftState& state, Input& controls, Engine2& engine) :
@@ -24,6 +25,9 @@ Scooter::Airframe::Airframe(AircraftState& state, Input& controls, Engine2& engi
 	zeroInit();
 
 	m_damageStack.reserve( 10 );
+
+	//LuaImGui::AddImGuiItem( "Airframe", "Catapult", [this] { ImGuiDebugWindow(); } );
+
 }
 
 Scooter::Airframe::~Airframe()
@@ -233,3 +237,53 @@ void Scooter::Airframe::airframeUpdate(double dt)
 
 	//printDamageState();
 }
+
+//void Scooter::Airframe::ImGuiDebugWindow()
+//{
+//	ImGui::Text( "Cat State Sent: %s", m_catStateSent ? "Sent" : "Not Sent" );
+//
+//    switch ( m_catapultState )
+//    {
+//    case CatapultState::OFF_CAT:
+//		ImGui::Text( "Off CAT" );
+//		break;
+//    case CatapultState::ON_CAT_NOT_READY:
+//		ImGui::Text( "On CAT not ready" );
+//		break;
+//	case CatapultState::ON_CAT_WAITING:
+//		ImGui::Text( "On CAT waiting" );
+//		break;
+//	case CatapultState::ON_CAT_READY:
+//		ImGui::Text( "On CAT ready" );
+//		break;
+//	case CatapultState::ON_CAT_LAUNCHING:
+//		ImGui::Text( "On CAT launching" );
+//		break;
+//
+//    }
+//
+//	if ( ImGui::Button( "Switch Off" ) )
+//	{
+//		m_catapultState = CatapultState::OFF_CAT;
+//	}
+//
+//	if ( ImGui::Button("Switch Not Ready") )
+//	{
+//		m_catapultState = CatapultState::ON_CAT_NOT_READY;
+//	}
+//
+//	if ( ImGui::Button( "Switch Waiting" ) )
+//	{
+//		m_catapultState = CatapultState::ON_CAT_WAITING;
+//	}
+//
+//	if ( ImGui::Button( "Switch Ready" ) )
+//	{
+//		m_catapultState = CatapultState::ON_CAT_READY;
+//	}
+//
+//	if ( ImGui::Button( "Switch Launching" ) )
+//	{
+//		m_catapultState = CatapultState::ON_CAT_LAUNCHING;
+//	}
+//}

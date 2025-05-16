@@ -1,3 +1,6 @@
+dofile(LockOn_Options.script_path .. "ConfigurePackage.lua")
+Scooter = require('Scooter')
+
 local optionsData_cockpitShake = get_plugin_option_value("A-4E-C", "cockpitShake", "local")
 local optionsData_wheelBrakeAssist = get_plugin_option_value("A-4E-C", "wheelBrakeAssist", "local")
 
@@ -398,33 +401,23 @@ function get_efm_data_bus()
     efm_data_bus.fm_setTankState = fm_setTankState
     efm_data_bus.fm_setCP741Power = fm_setCP741Power
     efm_data_bus.fm_setGForce = fm_setGForce
-    efm_data_bus.fm_setTacanID = fm_setTacanID
-    efm_data_bus.fm_setTacanName = fm_setTacanName
     efm_data_bus.fm_setRadarDisabled = fm_setRadarDisabled
     efm_data_bus.fm_toggleCatMode = fm_toggleCatMode
     efm_data_bus.fm_setCatMode = fm_setCatMode
 
 
     efm_data_bus.fm_getGunsightAngle = fm_getGunsightAngle
-    efm_data_bus.fm_getInternalFuel = fm_getInternalFuel
-    efm_data_bus.fm_getExternalFuel = fm_getExternalFuel
-    efm_data_bus.fm_getIgnition = fm_getIgnition
-    efm_data_bus.fm_getAOAUnits = fm_getAOAUnits
-    efm_data_bus.fm_getValidSolution = fm_getValidSolution
-    efm_data_bus.fm_getTargetSet = fm_getTargetSet
-	efm_data_bus.fm_getPitchInput = fm_getPitchInput
-    efm_data_bus.fm_getRollInput = fm_getRollInput
-    efm_data_bus.fm_getRudderInput = fm_getRudderInput
-    efm_data_bus.fm_getSlatLeft = fm_getSlatLeft
-    efm_data_bus.fm_getSlatRight = fm_getSlatRight
-    efm_data_bus.fm_getUsingFFB = fm_getUsingFFB
-    efm_data_bus.fm_getInRange = fm_getInRange
-    efm_data_bus.fm_getTacanPosX = fm_getTacanPosX
-    efm_data_bus.fm_getTacanPosY = fm_getTacanPosY
-    efm_data_bus.fm_getTacanPosZ = fm_getTacanPosZ
-    efm_data_bus.fm_tacanValid = fm_tacanValid
-    efm_data_bus.fm_getICLSHeading = fm_getICLSHeading
-    efm_data_bus.fm_getWorldAcceleration = fm_getWorldAcceleration
+    efm_data_bus.fm_getInternalFuel = Scooter.GetFuelQtyInternal
+    efm_data_bus.fm_getExternalFuel = Scooter.GetFuelQtyExternal
+    efm_data_bus.fm_getAOAUnits = Scooter.GetAlphaUnits
+    efm_data_bus.fm_getValidSolution = Scooter.GetValidSolution
+    efm_data_bus.fm_getTargetSet = Scooter.GetTargetSet
+	efm_data_bus.fm_getPitchInput = Scooter.GetStickInputPitch
+    efm_data_bus.fm_getRollInput = Scooter.GetStickInputRoll
+    efm_data_bus.fm_getRudderInput = Scooter.GetRudderInput
+    efm_data_bus.fm_getSlatLeft = Scooter.GetLeftSlat
+    efm_data_bus.fm_getSlatRight = Scooter.GetRightSlat
+    efm_data_bus.fm_getUsingFFB = Scooter.GetFFBEnabled
     efm_data_bus.fm_getMeasuredMach = fm_getMeasuredMach
     
 
@@ -470,12 +463,12 @@ function get_efm_sensor_data_overrides()
     local data = get_base_data()
 
     if EFM_enabled then
-        data.getEngineLeftRPM = fm_getEngineRPM
-        data.getEngineLeftFuelConsumption = fm_getFuelFlow
+        data.getEngineLeftRPM = Scooter.GetRPMPercent
+        data.getEngineLeftFuelConsumption = Scooter.GetFuelFlow
         data.getThrottleLeftPosition = fm_getThrottle
         data.getTrueAirSpeed = fm_getAirspeed
-        data.getAngleOfSlide = fm_getBeta
-        data.getAngleOfAttack = fm_getAOA
+        data.getAngleOfSlide = Scooter.GetBeta
+        data.getAngleOfAttack = Scooter.GetAlpha
         data.getIndicatedAirSpeed = fm_getCalibratedAirSpeed
     end
 

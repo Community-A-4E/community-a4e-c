@@ -82,7 +82,7 @@ bool LuaVM::getTableNumber( const char* key, float& value )
 		return false;
 	}
 
-	value = lua_tonumber( m_state, -1 );
+	value = float(lua_tonumber( m_state, -1 ));
 	lua_pop( m_state, 1 );
 	return true;
 }
@@ -260,49 +260,49 @@ bool LuaVM::writeTableKeysToFile( FILE* file, const char* name )
 	return true;
 }
 
-bool LuaVM::outputCommands( const char* name )
-{
-
-	FILE* file = fopen( name, "w+" );
-
-	if ( ! file )
-		return false;
-
-	fprintf( file,  "#pragma once\nenum Command\n{\n" );
-
-	if ( ! writeTableKeysToFile( file, "Keys" ) )
-	{
-		printf( "ERROR: Couldn't get Keys table." );
-	}
-
-	if ( ! writeTableKeysToFile( file, "device_commands" ) )
-	{
-		printf( "ERROR: Couldn't get device_commands table." );
-	}
-
-	fprintf( file, "};\n" );
-
-	fclose( file );
-
-	return true;
-}
-
-bool LuaVM::outputDevices( const char* name )
-{
-	FILE* file = fopen( name, "w+" );
-
-	if ( ! file )
-		return false;
-
-	fprintf( file, "#pragma once\nenum Devices\n{\n" );
-	if ( ! writeTableKeysToFile( file, "devices" ) )
-	{
-		printf( "ERROR: Couldn't get devices table." );
-	}
-
-	fprintf( file, "};\n" );
-
-	fclose( file );
-
-	return true;
-}
+//bool LuaVM::outputCommands( const char* name )
+//{
+//
+//	FILE* file = fopen( name, "w+" );
+//
+//	if ( ! file )
+//		return false;
+//
+//	fprintf( file,  "#pragma once\nenum Command\n{\n" );
+//
+//	if ( ! writeTableKeysToFile( file, "Keys" ) )
+//	{
+//		printf( "ERROR: Couldn't get Keys table." );
+//	}
+//
+//	if ( ! writeTableKeysToFile( file, "device_commands" ) )
+//	{
+//		printf( "ERROR: Couldn't get device_commands table." );
+//	}
+//
+//	fprintf( file, "};\n" );
+//
+//	fclose( file );
+//
+//	return true;
+//}
+//
+//bool LuaVM::outputDevices( const char* name )
+//{
+//	FILE* file = fopen( name, "w+" );
+//
+//	if ( ! file )
+//		return false;
+//
+//	fprintf( file, "#pragma once\nenum Devices\n{\n" );
+//	if ( ! writeTableKeysToFile( file, "devices" ) )
+//	{
+//		printf( "ERROR: Couldn't get devices table." );
+//	}
+//
+//	fprintf( file, "};\n" );
+//
+//	fclose( file );
+//
+//	return true;
+//}

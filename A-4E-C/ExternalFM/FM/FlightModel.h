@@ -14,14 +14,13 @@
 //================================ Includes ===============================//
 #include "BaseComponent.h"
 #include <iostream>
-#include "Vec3.h"
+#include <Common/Maths.h>
 #include "Table.h"
 #include "Input.h"
 #include "Airframe.h"
 #include "Engine2.h"
 #include "Interface.h"
 #include "AeroElement.h"
-#include "Maths.h"
 #include "Timer.h"
 #include "AircraftState.h"
 #include "MovingAverage.h"
@@ -45,7 +44,7 @@ public:
 		Input& controls, 
 		Airframe& airframe, 
 		Engine2& engine, 
-		Interface& inter,
+		ParameterInterface& inter,
 		std::vector<LERX>& splines
 	);
 	~FlightModel();
@@ -111,6 +110,8 @@ public:
 	inline void setCockpitShakeModifier( double mod );
 
 	inline std::vector<Force>& getForces() { return m_forces; }
+
+	void ImGuiDebugWindow();
 
 private:
 
@@ -295,7 +296,7 @@ private:
 	bool slatLShakePrev;
 	bool slatRShake;
 	bool slatRShakePrev;
-	Interface& m_interface;
+	ParameterInterface& m_interface;
 };
 
 void FlightModel::setCOM(const Vec3& com)

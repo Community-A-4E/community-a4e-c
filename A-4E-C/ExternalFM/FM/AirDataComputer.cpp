@@ -6,7 +6,7 @@
 
 Scooter::AirDataComputer::AirDataComputer
 (
-	Interface& inter,
+	ParameterInterface& inter,
 	AircraftState& state
 ) :
 	m_interface( inter ),
@@ -47,6 +47,9 @@ void Scooter::AirDataComputer::update(double dt)
 	calculateEAS();
 	calculateCAS();
 	calculateBaroAlt();
+
+	m_tas_acceleration = ( m_tas - m_tas_prev ) / dt;
+	m_tas_prev = m_tas;
 
 	m_interface.ADC_setTAS( m_tas );
 	m_interface.ADC_setCAS( m_cas );

@@ -6,8 +6,9 @@ local AFMenabled = true
 bin = {}
 
 if AFMenabled == true then
-	bin = {'A-4E-C'} 
+    bin = { 'Scooter' } --
 end
+
 
 
 local self_ID="A-4E-C"
@@ -19,7 +20,7 @@ displayName  = _("A-4E-C"),
 
 fileMenuName = _("A-4E-C"),
 update_id        = "A-4E-C",
-version		 = "2.2-beta",	-- increment this number on the release branch. Use semantic versioning https://semver.org
+version		 = "2.3",	-- increment this number on the release branch. Use semantic versioning https://semver.org
 state		 = "installed",
 info		 = _("A-4E-C aka \"Community A-4E\"\n\nThe A-4 is a lightweight, subsonic, single-engine attack aircraft. Entering service in 1956, it was designed to deliver conventional and nuclear weapons in daytime visual flight conditions.  However, using the APG-53(A) radar first installed on the A-4C, the A-4 is capable of all-weather navigation at low altitudes, as well as limited computer-assisted weapon delivery."),
 encyclopedia_path = current_mod_path..'/Encyclopedia',

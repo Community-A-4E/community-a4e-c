@@ -1,20 +1,23 @@
 local dev = GetSelf()
-dofile(LockOn_Options.common_script_path.."devices_defs.lua")
-dofile(LockOn_Options.script_path.."devices.lua")
-dofile(LockOn_Options.script_path.."Systems/stores_config.lua")
-dofile(LockOn_Options.script_path.."command_defs.lua")
-dofile(LockOn_Options.script_path.."Systems/electric_system_api.lua")
-dofile(LockOn_Options.script_path.."utils.lua")
-dofile(LockOn_Options.script_path.."EFM_Data_Bus.lua")
-dofile(LockOn_Options.script_path.."Systems/air_data_computer.lua")
-dofile(LockOn_Options.script_path.."sound_params.lua") 
-dofile(LockOn_Options.script_path.."Systems/mission.lua")
-dofile(LockOn_Options.script_path.."Systems/mission_utils.lua")
+dofile(LockOn_Options.script_path .. "ConfigurePackage.lua")
+
+require(common_scripts.."devices_defs")
+require("devices")
+require("Systems.stores_config")
+require("command_defs")
+require("Systems.electric_system_api")
+require("utils")
+require("EFM_Data_Bus")
+require("Systems.air_data_computer")
+require("sound_params") 
+require("Systems.mission")
+require("Systems.mission_utils")
 
 local update_time_step = 0.05
 make_default_activity(update_time_step)--update will be called 20 times per second
 
 startup_print("avionics: load")
+Scooter = require('Scooter')
 
 local once_per_second_refresh = 1/update_time_step
 local once_per_second = once_per_second_refresh
@@ -347,6 +350,8 @@ function post_initialize()
 
     load_tempmission_file()
     alt_setting = get_qnh() * MM_TO_INCHES
+
+    log.write( "A-4E-C", log.INFO, string.format("%s Initialized...", Scooter.Version()))
 
     auto_catapult_power = get_aircraft_property("Auto_Catapult_Power")
     --efm_data_bus.fm_setCatMode(auto_catapult_power)

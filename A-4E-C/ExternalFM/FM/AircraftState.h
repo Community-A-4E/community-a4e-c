@@ -16,8 +16,8 @@
 //================================ Includes ===============================//
 #include "BaseComponent.h"
 #include <math.h>
-#include "Vec3.h"
-#include "Maths.h"
+#include <Common/Maths.h>
+#include <Eigen/Geometry>
 //=========================================================================//
 
 namespace Scooter
@@ -34,6 +34,13 @@ public:
 
 	inline void setCurrentStateBodyAxis(double aoa, double beta, const Vec3& angle, const Vec3& omega, const Vec3& omegaDot, const Vec3& speed, const Vec3& airspeed, const Vec3& acceleration);
 	inline void setCurrentStateWorldAxis( const Vec3& worldPosition, const Vec3& worldVelocity, const Vec3& worldDirection, const Vec3& globalDown );
+	void SetWorldQuaternion( double w, double x, double y, double z )
+	{
+		world_orientation.w() = w;
+		world_orientation.x() = x;
+		world_orientation.y() = y;
+		world_orientation.z() = z;
+	}
 	inline void setCurrentAtmosphere( double temperature, double speedOfSound, double density, double pressure, const Vec3& wind );
 	inline void setSurface( double surfaceHeight, const Vec3& surfaceNormal );
 
@@ -52,6 +59,8 @@ public:
 	inline const Vec3& getLocalSpeed() const;
 	inline const Vec3& getLocalAirspeed() const;
 	inline const Vec3& getLocalAcceleration() const;
+
+	Eigen::Quaternion<double> GetOrientation() { return world_orientation; }
 
 	inline const Vec3& getWorldWindVelocity() const;
 	inline const double getPressure() const;
@@ -91,6 +100,8 @@ private:
 	Vec3 m_com; //centre of mass
 	Vec3 m_globalDownInLocal;
 	Vec3 m_surfaceNormal;
+
+	Eigen::Quaternion<double> world_orientation;
 
 	double m_aoa;
 	double m_beta;

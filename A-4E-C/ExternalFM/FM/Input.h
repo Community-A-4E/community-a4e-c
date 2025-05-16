@@ -14,7 +14,7 @@
 //================================ Includes ===============================//
 #include "BaseComponent.h"
 #include "Axis.h"
-#include "Maths.h"
+#include <Common/Maths.h>
 
 //=========================================================================//
 
@@ -212,7 +212,7 @@ public:
 	{
 		return m_throttleAxis.updateAxis(value);
 	}
-	inline const double& brakeLeft() const
+	inline const double brakeLeft() const
 	{
 		if ( ! m_brakeAssist )
 			return m_leftBrakeAxis.getValue();
@@ -224,7 +224,7 @@ public:
 	{
 		m_leftBrakeAxis.updateAxis(normalise(-value));
 	}
-	inline const double& brakeRight() const
+	inline const double brakeRight() const
 	{
 		if ( ! m_brakeAssist )
 			return m_rightBrakeAxis.getValue();

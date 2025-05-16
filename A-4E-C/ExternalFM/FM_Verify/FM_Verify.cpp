@@ -191,7 +191,7 @@ public:
     }
 
     Scooter::AircraftState state;
-    Scooter::Interface inter;
+    Scooter::ParameterInterface inter;
     Scooter::Input input;
     Scooter::Engine2 engine;
     Scooter::Airframe airframe;

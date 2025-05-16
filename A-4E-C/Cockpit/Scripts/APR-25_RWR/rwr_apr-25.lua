@@ -31,12 +31,9 @@ local apr25_aaa_defeat = false
 local apr25_audio = false
 local apr25_volume = 0.1
 
-<<<<<<< HEAD
 local apr25_sam_light = false
 local apr25_launch_light = false
 
-=======
->>>>>>> c1451e20245f117b2f401c7649925d52b0f063c9
 --Signal
 SIGNAL_SEARCH = 1
 SIGNAL_LOCK = 2

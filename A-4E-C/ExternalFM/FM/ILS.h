@@ -14,7 +14,7 @@ namespace Scooter
 class ILS
 {
 public:
-	ILS(Interface& inter):
+	ILS(ParameterInterface& inter):
 		m_interface(inter)
 	{
 		m_api = ed_get_cockpit_param_api();
@@ -124,7 +124,7 @@ private:
 	void* m_device = NULL;
 	void* m_switch1 = NULL;
 	void* m_switch2 = NULL;
-	Interface& m_interface;
+	ParameterInterface& m_interface;
 	cockpit_param_api m_api;
 	PFN_SET_ELEC_POWER fnc_setPower;
 };

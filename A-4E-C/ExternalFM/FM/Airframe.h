@@ -20,8 +20,7 @@
 #include "Input.h"
 #include <stdio.h>
 #include "Engine2.h"
-#include "Maths.h"
-#include "Vec3.h"
+#include <Common/Maths.h>
 //=========================================================================//
 
 //Macro police don't hurt me
@@ -439,12 +438,12 @@ public:
 
 	inline void breakWing()
 	{
-		setDamageDelta( Airframe::Damage::WING_L_IN, random() );
-		setDamageDelta( Airframe::Damage::WING_L_CENTER, 1.0 );
-		setDamageDelta( Airframe::Damage::WING_L_PART_CENTER, 1.0 );
-		setDamageDelta( Airframe::Damage::FLAP_L, 1.0 );
-		setDamageDelta( Airframe::Damage::WING_L_OUT, 1.0 );
-		setDamageDelta( Airframe::Damage::AILERON_L, 1.0 );
+		setDamageDelta( Airframe::Damage::WING_L_IN, float(random()) );
+		setDamageDelta( Airframe::Damage::WING_L_CENTER, 1.0f );
+		setDamageDelta( Airframe::Damage::WING_L_PART_CENTER, 1.0f );
+		setDamageDelta( Airframe::Damage::FLAP_L, 1.0f );
+		setDamageDelta( Airframe::Damage::WING_L_OUT, 1.0f );
+		setDamageDelta( Airframe::Damage::AILERON_L, 1.0f );
 	}
 
 	double GetNoseWheelAngle() const {return m_nose_wheel_angle;}
@@ -462,6 +461,8 @@ public:
 		m_nose_wheel_force_position.z = z;
 	}
 private:
+
+	void ImGuiDebugWindow();
 
 	//Airframe Constants
 	const double m_hookExtendTime = 1.5;
@@ -908,7 +909,7 @@ bool Airframe::processDamageStack( Damage& element, float& damage )
 
 
 	m_integrityElement[(int)delta.m_element] -= delta.m_delta;
-	m_integrityElement[(int)delta.m_element] = clamp( m_integrityElement[(int)delta.m_element], 0.0, 1.0 );
+	m_integrityElement[(int)delta.m_element] = clamp( m_integrityElement[(int)delta.m_element], 0.0f, 1.0f );
 	
 	element = delta.m_element;
 	damage = delta.m_delta;//m_integrityElement[(int)delta.m_element];
@@ -918,22 +919,22 @@ bool Airframe::processDamageStack( Damage& element, float& damage )
 
 inline float Airframe::getLWingDamage() const
 {
-	return (DMG_ELEM( Damage::WING_L_IN) + DMG_ELEM( Damage::WING_L_CENTER) + DMG_ELEM( Damage::WING_L_OUT)) / 3.0;
+	return (DMG_ELEM( Damage::WING_L_IN) + DMG_ELEM( Damage::WING_L_CENTER) + DMG_ELEM( Damage::WING_L_OUT)) / 3.0f;
 }
 
 inline float Airframe::getRWingDamage() const
 {
-	return (DMG_ELEM( Damage::WING_R_IN) + DMG_ELEM( Damage::WING_R_CENTER) + DMG_ELEM( Damage::WING_R_OUT)) / 3.0;
+	return (DMG_ELEM( Damage::WING_R_IN) + DMG_ELEM( Damage::WING_R_CENTER) + DMG_ELEM( Damage::WING_R_OUT)) / 3.0f;
 }
 
 inline float Airframe::getAileronDamage() const
 {
-	return (DMG_ELEM(Damage::AILERON_L) + DMG_ELEM(Damage::AILERON_R)) / 2.0;
+	return (DMG_ELEM(Damage::AILERON_L) + DMG_ELEM(Damage::AILERON_R)) / 2.0f;
 }
 
 inline float Airframe::getVertStabDamage() const
 {
-	return (DMG_ELEM( Damage::FIN_L_TOP ) + DMG_ELEM( Damage::FIN_L_BOTTOM )) / 2.0;
+	return (DMG_ELEM( Damage::FIN_L_TOP ) + DMG_ELEM( Damage::FIN_L_BOTTOM )) / 2.0f;
 }
 
 inline float Airframe::getRudderDamage() const
@@ -943,34 +944,34 @@ inline float Airframe::getRudderDamage() const
 
 inline float Airframe::getHoriStabDamage() const
 {
-	return (DMG_ELEM(Damage::STABILIZATOR_L) + DMG_ELEM(Damage::STABILIZATOR_R)) / 2.0;
+	return (DMG_ELEM(Damage::STABILIZATOR_L) + DMG_ELEM(Damage::STABILIZATOR_R)) / 2.0f;
 }
 
 inline float Airframe::getElevatorDamage() const
 {
-	return (DMG_ELEM( Damage::ELEVATOR_L ) + DMG_ELEM( Damage::ELEVATOR_R )) / 2.0;
+	return (DMG_ELEM( Damage::ELEVATOR_L ) + DMG_ELEM( Damage::ELEVATOR_R )) / 2.0f;
 }
 
 inline float Airframe::getCompressorDamage() const
 {
-	return 1.0 - clamp(2.0 - DMG_ELEM( Damage::FUSELAGE_LEFT_SIDE ) - DMG_ELEM( Damage::FUSELAGE_RIGHT_SIDE ), 0.0, 1.0);
+	return 1.0f - clamp(2.0f - DMG_ELEM( Damage::FUSELAGE_LEFT_SIDE ) - DMG_ELEM( Damage::FUSELAGE_RIGHT_SIDE ), 0.0f, 1.0f);
 }
 inline float Airframe::getTurbineDamage() const
 {
-	return 1.0 - clamp( 2.0 - DMG_ELEM( Damage::TAIL_LEFT_SIDE ) - DMG_ELEM( Damage::TAIL_RIGHT_SIDE ), 0.0, 1.0 );
+	return 1.0f - clamp( 2.0f - DMG_ELEM( Damage::TAIL_LEFT_SIDE ) - DMG_ELEM( Damage::TAIL_RIGHT_SIDE ), 0.0f, 1.0f );
 }
 
 inline float Airframe::getSpoilerDamage() const
 {
-	return (DMG_ELEM( Damage::WING_L_PART_CENTER ) + DMG_ELEM( Damage::WING_R_PART_CENTER )) / 2.0;
+	return (DMG_ELEM( Damage::WING_L_PART_CENTER ) + DMG_ELEM( Damage::WING_R_PART_CENTER )) / 2.0f;
 }
 inline float Airframe::getSpeedbrakeDamage() const
 {
-	return (DMG_ELEM( Damage::AIR_BRAKE_L ) + DMG_ELEM( Damage::AIR_BRAKE_R )) / 2.0;
+	return (DMG_ELEM( Damage::AIR_BRAKE_L ) + DMG_ELEM( Damage::AIR_BRAKE_R )) / 2.0f;
 }
 inline float Airframe::getFlapDamage() const
 {
-	return (DMG_ELEM( Damage::FLAP_L ) + DMG_ELEM( Damage::FLAP_R )) / 2.0;
+	return (DMG_ELEM( Damage::FLAP_L ) + DMG_ELEM( Damage::FLAP_R )) / 2.0f;
 }
 
 double Airframe::getNoseCompression() const

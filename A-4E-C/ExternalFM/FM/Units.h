@@ -35,3 +35,14 @@ constexpr inline long double operator"" _mil( long double x )
 {
 	return x * 0.00098175;
 }
+
+constexpr long double operator"" _hours(long double x)
+{
+	return 3600.0 * x;
+}
+
+// RPM -> rad/s
+constexpr long double operator"" _rpm( long double x )
+{
+	return x * 0.1047197551;
+}

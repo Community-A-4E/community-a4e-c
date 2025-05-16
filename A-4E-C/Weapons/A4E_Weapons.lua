@@ -1,11 +1,25 @@
--- Weapons definitions here
-dofile("Scripts/Database/Weapons/warheads.lua")
-dofile("Scripts/Database/generated_wstypes.lua")
-print("WEAPON TEST")
+-- running without dcs
+if stub then
+    function _(s) return s end
+    function declare_loadout() end
+    function declare_weapon() end
+    function simple_warhead() end
+    function Get_Combined_GUISettings_Preset() end
+    function Get_Fuze_GUISettings_Preset() end
+    function Get_RFGU_GUISettings_Preset() end
+    warheads = {}
+    generated_wstypes = { ["bombs"] = {} }
+else
+    -- Weapons definitions here
+    dofile("Scripts/Database/Weapons/warheads.lua")
+    dofile("Scripts/Database/generated_wstypes.lua")
+end
+
+
 
 -- Support Functions:
 local GALLON_TO_KG = 3.785 * 0.8
-local INCHES_TO_M = 0.0254
+local INCH_TO_METER = 0.0254
 local POUNDS_TO_KG = 0.453592
 
 ---------FUEL TANKS-----------
@@ -1025,6 +1039,8 @@ declare_loadout({
         ShapeName   = MK_81SE.model
         }
     },
+
+    settings = Get_Combined_GUISettings_Preset("MDRN_B_A_GPLD"),
 })
 
 -- AN-M66A2     -- 2000lb GP HE bomb, WW2 era
@@ -1648,17 +1664,17 @@ local bomb_data = {
     --                                              volatile hardcoded values
     --                                              may need periodic updates
     --                                              if patches reenumerate things
-    ["Mk-81"]         = { name = _("Mk-81 - 250lb GP Bomb LD"),  mass = 118          ,   wstype = {4,5,9,30},                pic = 'mk81.png',      cx = 0.00018,        ofs = -0.0508,  PictureBlendColor = false },  -- 2" offset back
-    ["Mk-81SE"]       = { name = _("Mk-81 Snakeye - 250lb GP Bomb HD"),  mass = MK_81SE.mass ,   wstype = MK_81SE.wsTypeOfWeapon,    pic = 'mk81SE.png',    cx = MK_81SE.Cx,     ofs = 0.0,      PictureBlendColor = false },  -- 0" offset back
-    ["Mk-82"]         = { name = _("Mk-82 - 500lb GP Bomb LD"),  mass = 241          ,   wstype = {4,5,9,31},                pic = 'mk82.png',      cx = 0.00025,        ofs = -0.0762,  PictureBlendColor = false },  -- 3" offset back
-    ["Mk-82 Snakeye"] = { name = _("Mk-82 Snakeye - 500lb GP Bomb HD"),  mass = 241          ,   wstype = {4,5,9,79},                pic = 'mk82air.png',   cx = 0.00025,        ofs = -0.2540,  PictureBlendColor = false },  -- 10" offset back
-    ["Mk-83"]         = { name = _("Mk-83 - 1000lb GP Bomb LD"),  mass = 447          ,   wstype = {4,5,9,32},                pic = 'mk83.png',      cx = 0.00035,        ofs = 0.0,      PictureBlendColor = false },  -- 0" offset, hangars are in wrong place
-    ["Mk-77 mod 1"]   = { name = mk77mod1.displayName,  mass = mk77mod1.mass,   wstype = mk77mod1.wsTypeOfWeapon,   pic = 'mk77mod1.png',  cx = mk77mod1.Cx,    ofs = 0.0,      PictureBlendColor = false },  -- drag number is garbage
-    ["Mk-20"]         = { name = _("Mk-20 Rockeye - 490lbs CBU, 247 x HEAT Bomblets"),  mass = 222          ,   wstype = {4,5,38,45},               pic = 'mk20.png',      cx = 0.00070,        ofs = 0.0,      PictureBlendColor = false },
-    ["AN-M57"]        = { name = _("AN-M57 - 250lb GP Bomb LD"),  mass = 113.0        ,   wstype = {4,5,9,282},               pic = 'us_AN-M57.png', cx = 0.00035,        ofs = 0.0,      PictureBlendColor = true  }, 
-    ["AN-M81"]        = { name = AN_M81.displayName,  mass = AN_M81.mass  ,   wstype = AN_M81.wsTypeOfWeapon,     pic = 'an-m81.png',    cx = AN_M81.Cx,      ofs = 0.0,      PictureBlendColor = false },
-    ["AN-M88"]        = { name = AN_M88.displayName,  mass = AN_M88.mass  ,   wstype = AN_M88.wsTypeOfWeapon,     pic = 'an-m88.png',    cx = AN_M88.Cx,      ofs = 0.0,      PictureBlendColor = false },
-    ["BDU-33"]        = { name = _("BDU-33 - 25lb Practice Bomb LD"),  mass = 11.3         ,   wstype = {4,5,9,69},                pic = 'bdu-33.png',    cx = 0.00000143,     ofs = 0.0,      PictureBlendColor = false },
+    ["Mk-81"]         = { name = _("Mk-81 - 250lb GP Bomb LD"),                         mass = 118          ,   wstype = {4,5,9,30},                pic = 'mk81.png',      cx = 0.00018,        ofs = -0.0508,  PictureBlendColor = false, settings = Get_Combined_GUISettings_Preset("MDRN_B_A_GPLD") },  -- 2" offset back
+    ["Mk-81SE"]       = { name = _("Mk-81 Snakeye - 250lb GP Bomb HD"),                 mass = MK_81SE.mass ,   wstype = MK_81SE.wsTypeOfWeapon,    pic = 'mk81SE.png',    cx = MK_81SE.Cx,     ofs = 0.0,      PictureBlendColor = false, settings = Get_Combined_GUISettings_Preset("MDRN_B_A_GPLD") },  -- 0" offset back
+    ["Mk-82"]         = { name = _("Mk-82 - 500lb GP Bomb LD"),                         mass = 241          ,   wstype = {4,5,9,31},                pic = 'mk82.png',      cx = 0.00025,        ofs = -0.0762,  PictureBlendColor = false, settings = Get_Combined_GUISettings_Preset("MDRN_B_A_GPLD") },  -- 3" offset back
+    ["Mk-82 Snakeye"] = { name = _("Mk-82 Snakeye - 500lb GP Bomb HD"),                 mass = 241          ,   wstype = {4,5,9,79},                pic = 'mk82air.png',   cx = 0.00025,        ofs = -0.2540,  PictureBlendColor = false, settings = Get_Combined_GUISettings_Preset("MDRN_B_A_GPLD") },  -- 10" offset back
+    ["Mk-83"]         = { name = _("Mk-83 - 1000lb GP Bomb LD"),                        mass = 447          ,   wstype = {4,5,9,32},                pic = 'mk83.png',      cx = 0.00035,        ofs = 0.0,      PictureBlendColor = false, settings = Get_Combined_GUISettings_Preset("MDRN_B_A_GPLD") },  -- 0" offset, hangars are in wrong place
+    ["Mk-77 mod 1"]   = { name = mk77mod1.displayName,                                  mass = mk77mod1.mass,   wstype = mk77mod1.wsTypeOfWeapon,   pic = 'mk77mod1.png',  cx = mk77mod1.Cx,    ofs = 0.0,      PictureBlendColor = false, settings = Get_Combined_GUISettings_Preset("MDRN_B_A_GPLD") },  -- drag number is garbage
+    ["Mk-20"]         = { name = _("Mk-20 Rockeye - 490lbs CBU, 247 x HEAT Bomblets"),  mass = 222          ,   wstype = {4,5,38,45},               pic = 'mk20.png',      cx = 0.00070,        ofs = 0.0,      PictureBlendColor = false, settings = Get_Fuze_GUISettings_Preset("MDRN_CC_A_Mk20")    },
+    ["AN-M57"]        = { name = _("AN-M57 - 250lb GP Bomb LD"),                        mass = 113.0        ,   wstype = {4,5,9,282},               pic = 'us_AN-M57.png', cx = 0.00035,        ofs = 0.0,      PictureBlendColor = true , settings = Get_Combined_GUISettings_Preset("MDRN_B_A_GPLD") }, 
+    ["AN-M81"]        = { name = AN_M81.displayName,                                    mass = AN_M81.mass  ,   wstype = AN_M81.wsTypeOfWeapon,     pic = 'an-m81.png',    cx = AN_M81.Cx,      ofs = 0.0,      PictureBlendColor = false, settings = Get_Combined_GUISettings_Preset("MDRN_B_A_GPLD") },
+    ["AN-M88"]        = { name = AN_M88.displayName,                                    mass = AN_M88.mass  ,   wstype = AN_M88.wsTypeOfWeapon,     pic = 'an-m88.png',    cx = AN_M88.Cx,      ofs = 0.0,      PictureBlendColor = false, settings = Get_Combined_GUISettings_Preset("MDRN_B_A_GPLD") },
+    ["BDU-33"]        = { name = _("BDU-33 - 25lb Practice Bomb LD"),                   mass = 11.3         ,   wstype = {4,5,9,69},                pic = 'bdu-33.png',    cx = 0.00000143,     ofs = 0.0,      PictureBlendColor = false },
 }
 
 local rack_data = {
@@ -1770,8 +1786,9 @@ function bru_41(element,count,side) -- build up to a 6x MER loadout of the speci
     data.attribute          = rack_variant.wstype
     data.Picture            = bomb_variant.pic
     if bomb_variant.PictureBlendColor then
-        data.PictureBlendColor  = "0xffffffff"
+        data.PictureBlendColor = "0xffffffff"
     end
+    data.settings           = bomb_variant.settings
     data.Count              = count
     data.displayName        = tostring(count).." x "..bomb_variant.name.." (MER)"
     data.wsTypeOfWeapon     = bomb_variant.wstype
@@ -1834,6 +1851,7 @@ function bru_42(element,count,side) -- build a TER setup for the specified bombs
     if bomb_variant.PictureBlendColor then
         data.PictureBlendColor  = "0xffffffff"
     end
+    data.settings           = bomb_variant.settings
     data.Count              = count
     data.displayName        = tostring(count).." x "..bomb_variant.name.." (TER)"
     data.wsTypeOfWeapon     = bomb_variant.wstype
@@ -1946,11 +1964,219 @@ function make_cbu_a4e_multi(dispenser,count,side) -- assemble a rack of cluster 
     return data
 end
 
+local suu7_dispenser_empty_mass = 121 * POUNDS_TO_KG
+local suu7_tube_number = 19
+-- Store index on the F-4E is 3.3 -> Cx_pil = 0.0006416
+-- Currently the F-4E is wrong, so pre-emptively put correct drag value.
+local suu7_cx_pil = 0.0006416
+
+-- https://www.bulletpicker.com/pdf/CBU.pdf#page=6
+-- BLU-4 (CBU-1A/A)
+-- N = 508
+-- Explosive Mass Total = 89.8 lbs
+-- Explosive Mass Per Bomblet = 0.177 lbs
+-- Mass = 1.18 lbs
+-- Length = 4.92 ing
+-- Diameter = 2.76 in
+local blu4 = {
+	N_per_tube 		= 27, -- 27x19 = 513
+	mass 			= 1.18 * POUNDS_TO_KG,
+	name = "BLU-4B",
+}
+
+-- BLU-3 (CBU-2/A)
+-- N = 360
+-- Explosive Mass Total = 129.07 lbs
+-- Explosive Mass Per Bomblet = 0.359 lbs
+-- Mass = 1.73 lbs
+-- Length = 3.75 in
+-- Diameter = 2.75 in
+local blu3 = {
+	N_per_tube 		= 19, -- 19x19 = 361
+	mass 			= 1.73 * POUNDS_TO_KG,
+	name = "BLU-3",
+}
+
+-- BLU-3B (CBU-2B/A)
+-- N = 406
+-- Explosive Mass Total = 143.06 lbs
+-- Explosive Mass Per Bomblet = 0.359 lbs
+-- Mass = 1.73 lbs
+-- Length = 3.75 in
+-- Diameter = 2.75 in
+local blu3b = {
+	N_per_tube 		= 22, -- 22x19 = 418
+	mass 			= 1.73 * POUNDS_TO_KG,
+	name = "BLU-3B",
+}
+
+local CBU_1A = {
+    Weight = suu7_dispenser_empty_mass + suu7_tube_number * blu4.N_per_tube * blu4.mass,
+    Weight_Empty = suu7_dispenser_empty_mass,
+    wsType_dispenser = "weapons.containers.{HB_F4E_CBU-1/A}",
+    wsType = "weapons.bombs.BLU-4B_GROUP",
+    wsType4 = generated_wstypes["bombs"]["weapons.bombs.BLU-4B_GROUP"],
+    Cx_pil = suu7_cx_pil
+}
+
+local CBU_2A = {
+    Weight = suu7_dispenser_empty_mass + suu7_tube_number * blu3.N_per_tube * blu3.mass,
+    Weight_Empty = suu7_dispenser_empty_mass,
+    wsType_dispenser = "weapons.containers.{HB_F4E_CBU-2/A}",
+    wsType = "weapons.bombs.BLU-3_GROUP",
+    wsType4 = generated_wstypes["bombs"]["weapons.bombs.BLU-3_GROUP"],
+    Cx_pil = suu7_cx_pil
+}
+
+local CBU_2BA = {
+    Weight = suu7_dispenser_empty_mass + suu7_tube_number * blu3b.N_per_tube * blu3b.mass,
+    Weight_Empty = suu7_dispenser_empty_mass,
+    wsType_dispenser = "weapons.containers.{HB_F4E_CBU-2B/A}",
+    wsType = "weapons.bombs.BLU-3_GROUP",
+    wsType4 = generated_wstypes["bombs"]["weapons.bombs.BLU-3B_GROUP"],
+    Cx_pil = suu7_cx_pil
+}
+
+local new_dispenser_data = {
+	["CBU-1A"]			= {name = "CBU-1A/A x 27x19 (513) BLU-4B Bomblets, HE", n_tubes = suu7_tube_number, mass = CBU_1A.Weight, 	mass_empty = CBU_1A.Weight_Empty, 	CLSID = "{HB_F4E_CBU-1/A}",     wsType = CBU_1A.wsType,  Cx = CBU_1A.Cx_pil,  picture= "suu-1a.png"},
+	["CBU-2A"]			= {name = "CBU-2/A x 19x19 (361) BLU-3 Bomblets, HE",   n_tubes = suu7_tube_number, mass = CBU_2A.Weight, 	mass_empty = CBU_2A.Weight_Empty, 	CLSID = "{HB_F4E_CBU-2/A}",     wsType = CBU_2A.wsType,  Cx = CBU_2A.Cx_pil,  picture= "suu-1a.png"},
+	["CBU-2BA"]			= {name = "CBU-2B/A x 22x19 (418) BLU-3B Bomblets, HE", n_tubes = suu7_tube_number, mass = CBU_2BA.Weight, 	mass_empty = CBU_2BA.Weight_Empty, 	CLSID = "{HB_F4E_CBU-2B/A}",    wsType = CBU_2BA.wsType, Cx = CBU_2BA.Cx_pil, picture= "suu-1a.png"},
+}
+
+function convert_to_pod(bomb)
+
+	local bomb_variant = new_dispenser_data[bomb]
+
+	return {
+		category			= CAT_PODS,
+		CLSID				= "{C_A4E_"..bomb.."}",
+		attribute			= {wsType_Weapon, wsType_Bomb, wsType_Container, WSTYPE_PLACEHOLDER},
+        wsTypeOfWeapon      = bomb_variant.wsType,
+		Count				= 1 * bomb_variant.n_tubes,
+		Cx_pil				= bomb_variant.Cx,
+		Picture				= bomb_variant.picture,
+		displayName			= bomb_variant.name,
+		Weight				= bomb_variant.mass,
+        Weight_Empty        = bomb_variant.mass_empty,
+		Elements = {{ payload_CLSID	= bomb_variant.CLSID }}---	}}
+	}
+end
+
+-- Side: L or R
+-- {C_A4E_<dispenser>_2x_TER_<side>}
+function bru42_dispenser(dispenser, side)
+
+    local rack_variant = rack_data["BRU_42"]
+
+    local dispenser_pod = new_dispenser_data[dispenser] or new_dispenser_data["CBU-1A"]
+
+    local count = 2
+
+    local connectors_left = {
+        "Point02", -- Left
+        "Point01"  -- Centre
+    }
+
+    local connectors_right = {
+        "Point03", -- Right
+        "Point01"  -- Centre
+    }
+
+    local elements = {{
+        Position =    {0,0,0},
+        ShapeName =    rack_variant.shapename,
+        IsAdapter =   true,
+    },}
+
+    local connectors = connectors_left
+    if side == "R" then
+        connectors = connectors_right
+    end
+
+    for i,v in ipairs(connectors) do
+        table.insert(elements,{
+            connector_name = v,
+            payload_CLSID =	dispenser_pod.CLSID,
+        })
+    end
+
+    -- Okay so there is a super weird bug that can happen here.
+    -- If the wstype you put here is not a real wstype, then what will happen
+    -- is the Weight here will be multiplied by the number of weapons on the CLSID
+    -- weapon. So if you had 19 tubes and the weight was 100 kg, it would make it 19 * 100 = 1900
+    -- DCS even gets confused and reports the weight as you would expect it would but then in game
+    -- the MASS will be stupidly HIGH like with the case I ran into it was like 60 METRIC TONS
+    -- ...that's like 3 days I'm not getting back
+    local result = {
+        category = CAT_PODS,
+        CLSID = "{C_A4E_"..dispenser.."_2x_TER_"..side.."}",
+        attribute = rack_variant.wstype,
+        Picture = dispenser_pod.picture,
+        Count = count * dispenser_pod.n_tubes,
+        displayName = tostring(count).." x "..dispenser_pod.name.." (TER)",
+        wsTypeOfWeapon = dispenser_pod.wsType,
+        Weight = rack_variant.mass + count * dispenser_pod.mass,
+        Weight_Empty = rack_variant.mass + count * dispenser_pod.mass_empty,
+        Cx_pil = 0.001887 + count * dispenser_pod.Cx,
+        ejectDirection = {-1, 0, 0},
+	    ejectVelocity = 15,
+        Elements = elements,
+    }
+
+    return result
+end
+
+local AGM_45B = {
+    mass = 185.0,
+    Cx_pil = 4 / 4096,
+    wsType = "weapons.missiles.AGM_45B",
+    model = "agm-45",
+}
+
+function LoadAGM45(agm45, display_name, clsid)
+
+    local rack_data = {
+        Weight = 39,
+        Cx_pil = 0.001,
+    }
+
+	local result = {
+		category = CAT_MISSILES,
+		CLSID = clsid,
+		attribute = {4, 4, 32, WSTYPE_PLACEHOLDER},
+		Picture = "agm45.png",
+		Count = 1,
+		displayName = display_name,
+		wsTypeOfWeapon = agm45.wsType,
+		Weight = agm45.mass + rack_data.Weight,
+		Weight_Empty = rack_data.Weight,
+		Cx_pil = agm45.Cx_pil + rack_data.Cx_pil,
+		settings = Get_RFGU_GUISettings_Preset("AGM_45"),
+		JettisonSubmunitionOnly = true,
+
+		Elements = {
+			{
+				Position	=	{0,0,0},
+				ShapeName	=	"HB_F-4E_LAU-34",
+				IsAdapter   =   true,
+			},
+			{
+				Position	=	{0,	0, 0},
+				ShapeName = agm45.model,
+				connector_name = "AGM45_ATTACH",
+			}
+		},
+	}
+
+	return result
+end
+
+declare_loadout(LoadAGM45(AGM_45B, "AGM-45B Shrike ARM (LAU-34)", "{C_A4E_AGM-45B_LAU34}"))
+
 local aim9_variants =
 {
 	["CATM-9M"] 	= {picture = "us_CATM-9.png",   CLSID = "CATM-9M", 								  display_name = _("Captive AIM-9M for ACM")	  	 	,wstype = {wsType_Weapon,wsType_Missile,wsType_AA_TRAIN_Missile,CATM_9},	    category = CAT_AIR_TO_AIR, mass = 85.73 },
 	["ais-pod-t50"] = {picture = "ais-pod-t50.png",                                                   display_name = _("AN/ASQ-T50 TCTS Pod - ACMI Pod")	,wstype = {4,	15,	47	,	 108},	category = CAT_PODS,       mass = 62.6  },
-	["AIM-9P3"]		= {picture = "us_AIM-9P.png",   CLSID = "{AIM-9P3}",							  display_name = _("AIM-9P3 Sidewinder IR AAM")	,wstype = "weapons.missiles.AIM-9P3",	category = CAT_AIR_TO_AIR, mass = 80.7 },
 }
 -- YOINKED from CoreMods, aim9_family.lua
 local AIM9_DRAG  			  = 1.68 / 4096.0 -- 4096 - magic number from long time ago when flanker was 1.5 
@@ -1981,7 +2207,6 @@ local function aim_9_with_adapter(CLSID,aim_9_variant)
 	})
 end
 
-aim_9_with_adapter("{A4E-AIM-9P3-ON-ADAPTER}", "AIM-9P3")
 aim_9_with_adapter("{A4E-ASQ-T50-ON-ADAPTER}", "ais-pod-t50")
 
 -- {<rocket_pod>_TER_3_C}
@@ -2021,6 +2246,18 @@ CreateRocketLoadout("LAU-68 Hydra Mk5 HEAT")
 CreateRocketLoadout("LAU-68 Hydra Mk61 Practice")
 CreateRocketLoadout("LAU-68 Hydra WTU1B Practice")
 CreateRocketLoadout("LAU-10 ZUNI")
+
+--{C_A4E_<dispenser>_2x_TER_L}
+--{C_A4E_<dispenser>_2x_TER_R}
+function CreateDispenserLoadout(dispenser)
+    declare_loadout(bru42_dispenser(dispenser, "L"))
+    declare_loadout(bru42_dispenser(dispenser, "R"))
+    declare_loadout(convert_to_pod(dispenser))
+end
+
+CreateDispenserLoadout("CBU-1A")
+CreateDispenserLoadout("CBU-2A")
+CreateDispenserLoadout("CBU-2BA")
 
 -- BOMB LOADOUTS
 declare_loadout(rackme_a4e("AN-M57", 6,  0))                -- {AN-M57_MER_6_C}

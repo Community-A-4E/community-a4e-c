@@ -13,13 +13,14 @@
 //						is the the yaw damper and the CP741/A bombing computer.
 //
 //================================ Includes ===============================//
-#include "Maths.h"
+#include <Common/Maths.h>
 #include "BaseComponent.h"
 #include "Input.h"
 #include "AircraftState.h"
 #include "CP741.h"
 #include "Interface.h"
 #include "AirDataComputer.h"
+#include "Gyro.h"
 //=========================================================================//
 
 namespace Scooter
@@ -28,7 +29,7 @@ namespace Scooter
 class Avionics : public BaseComponent
 {
 public:
-	Avionics(Input& input, AircraftState& state, Interface& inter);
+	Avionics(Input& input, AircraftState& state, ParameterInterface& inter);
 	~Avionics();
 	virtual void zeroInit();
 	virtual void coldInit();
@@ -43,7 +44,13 @@ public:
 	bool handleInput( int command, float value );
 
 	inline CP741& getComputer();
+
+	void SetAJB3Output( double dt ) const;
+	void SetStandbyADIOutput( double dt ) const;
+	void SetADIOutput( double dt ) const;
 private:
+
+	void ImGuiDebugWindow();
 
 	//constants
 	const double m_timeConstant = 4.5; //was 4.5
@@ -54,14 +61,61 @@ private:
 
 	Input& m_input;
 	AircraftState& m_state;
-	Interface& m_interface;
+	ParameterInterface& m_interface;
 
 	CP741 m_bombingComputer;
 	AirDataComputer m_adc;
 
+	// 0.001
+	// 0.0
+	// 1.0
+	// 0.01
+	// 0.01
+	// 0.0
+
+
+	Gyro::Variables m_ajb3_settings = {
+		0.5,
+		0.07,
+		100.0,
+		8000.0_rpm,
+		DamageCell::TAIL_LEFT_SIDE,
+		"AJB-3 Gyro",
+		1.0e-4,
+		0.001,
+		0.01,
+		0.01,
+		0.0, // Precision instrument
+		40.0,
+		60.0,
+	};
+	Gyro m_gyro_ajb3;
+
+	Gyro::Variables m_standby_adi_settings = {
+		0.2, // Rotor Mass
+		0.035, // Radius
+		100.0, // RPM Factor
+		6000.0_rpm, // operating Omega
+		DamageCell::NOSE_RIGHT_SIDE,
+		"Standby ADI Gyro",
+		1.0e-4, // Gimbal Friction
+		0.001,
+		0.1, // Erection Rate
+		0.01,
+		1.0e-4, // Random Torque
+		40.0, // Spin Down
+		60.0, // Spin Up
+	};
+	Gyro m_standby_adi;
+
+	static constexpr bool advanced_gyro_enabled = false;
+
 	bool m_damperEnabled = false;
 
 	bool m_oxygen = true;
+
+	std::uniform_real_distribution<double> distribution{ 0.0, 1.0 };
+	std::mt19937 generator{ 444 };
 };
 
 bool Avionics::getOxygen()

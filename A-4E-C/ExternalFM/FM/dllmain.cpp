@@ -6,7 +6,7 @@
 #include <io.h>
 #include <windows.h>
 #include <fstream>
-#include "Globals.h"
+#include <Common/Globals.h>
 
 FILE* stream;
 FILE* g_log = NULL;

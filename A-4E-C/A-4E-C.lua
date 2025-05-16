@@ -77,7 +77,7 @@ local function get_outboard_weapons( side )
         { CLSID = "{GAR-8}",                                    connector = rocketConnector, arg_value = 0.2 },  -- AIM-9B, aligned to -3deg armament datum
         { CLSID = "{AIM-9P-ON-ADAPTER}",                        connector = rocketConnector, arg_value = 0.2 },  -- AIM-9P
         { CLSID = "{AIM-9P5-ON-ADAPTER}",                       connector = rocketConnector, arg_value = 0.2 },  -- AIM-9P5
-        { CLSID = "{A4E-AIM-9P3-ON-ADAPTER}",                   connector = rocketConnector, arg_value = 0.2 },  -- AIM-9P3
+        { CLSID = "{AIM-9P3-ON-ADAPTER}",                       connector = rocketConnector, arg_value = 0.2 },  -- AIM-9P3
         { CLSID = "{A4E-ASQ-T50-ON-ADAPTER}",                   connector = rocketConnector, arg_value = 0.2 },  -- ASQ-T50
         { CLSID = "{AIM-9J-ON-ADAPTER}",                        connector = rocketConnector, arg_value = 0.2 },  -- AIM-9J
         -- ROCKETS --
@@ -104,8 +104,8 @@ local function get_outboard_weapons( side )
         { CLSID = "LAU3_WP156",     connector = rocketConnector, arg_value = 0.2 }, -- LAU-3 Hydra
         { CLSID = "LAU3_HE151",     connector = rocketConnector, arg_value = 0.2 }, -- LAU-3 Hydra
         -- MISSILES --
-        { CLSID = "{AGM_45A}",                                  connector = shrikeConnector, arg_value = 0.1 }, -- AGM-45 SHRIKE
-        { CLSID = "{3E6B632D-65EB-44D2-9501-1C2D04515404}",     connector = shrikeConnector, arg_value = 0.1 }, -- AGM-45B SHRIKE
+        { CLSID = "{LAU_34_AGM_45A}" }, -- AGM-45A SHRIKE
+        { CLSID = "{C_A4E_AGM-45B_LAU34}"}, -- AGM-45B SHRIKE
         -- BOMBS --
         { CLSID = "{ADD3FAE1-EBF6-4EF9-8EFC-B36B5DDF1E6B}" },   -- Mk-20 Rockeye cluster bomb
         { CLSID = "{90321C8E-7ED1-47D4-A160-E074D5ABD902}" },   -- MK-81
@@ -155,7 +155,7 @@ local function get_inboard_weapons( side )
         { CLSID = "{GAR-8}",                                            connector = rocketConnector, arg_value = 0.2 },  -- AIM-9B, aligned to -3deg armament datum
         { CLSID = "{AIM-9P-ON-ADAPTER}",                                connector = rocketConnector, arg_value = 0.2 },  -- AIM-9P
         { CLSID = "{AIM-9P5-ON-ADAPTER}",                               connector = rocketConnector, arg_value = 0.2 },  -- AIM-9P5
-        { CLSID = "{A4E-AIM-9P3-ON-ADAPTER}",                           connector = rocketConnector, arg_value = 0.2 },  -- AIM-9P3
+        { CLSID = "{AIM-9P3-ON-ADAPTER}",                               connector = rocketConnector, arg_value = 0.2 },  -- AIM-9P3
         { CLSID = "{A4E-ASQ-T50-ON-ADAPTER}",                           connector = rocketConnector, arg_value = 0.2 },  -- ASQ-T50
         { CLSID = "{AIM-9J-ON-ADAPTER}",                                connector = rocketConnector, arg_value = 0.2 },  -- AIM-9J        
         -- ROCKETS --
@@ -207,8 +207,8 @@ local function get_inboard_weapons( side )
        
 
         -- MISSILES --
-        { CLSID = "{AGM_45A}", connector = shrikeConnector, arg_value = 0.1 }, -- AGM-45A SHRIKE
-        { CLSID = "{3E6B632D-65EB-44D2-9501-1C2D04515404}",             connector = shrikeConnector, arg_value = 0.1 }, -- AGM-45B SHRIKE
+        { CLSID = "{LAU_34_AGM_45A}" }, -- AGM-45A SHRIKE
+        { CLSID = "{C_A4E_AGM-45B_LAU34}"}, -- AGM-45B SHRIKE
         -- BOMBS --
         { CLSID = "{ADD3FAE1-EBF6-4EF9-8EFC-B36B5DDF1E6B}" }, -- Mk-20 Rockeye cluster bomb
         { CLSID = "{90321C8E-7ED1-47D4-A160-E074D5ABD902}" }, -- MK-81
@@ -227,12 +227,12 @@ local function get_inboard_weapons( side )
         { CLSID = "{AN-M81}" },                               -- AN-M81 260 lb Fragmentation (34.1 lb Comp B)
         { CLSID = "{AN-M88}" },                               -- AN-M88 216 lb Fragmentation (47 lb Comp B)
         -- CLUSTER MUNITIONS --
-        { CLSID = "{CBU-1/A}" },                              -- CBU-1/A Cluster Dispenser (509x BLU-4/B anti-personnel cluster bomblets)
-        { CLSID = "{CBU-2/A}" },                              -- CBU-2/A Cluster Dispenser (360x BLU-3/B cluster bomblets)
-        { CLSID = "{CBU-2B/A}" },                             -- CBU-2B/A Cluster Dispenser (409x BLU-3/B cluster bomblets)
-        { CLSID = "{CBU-1/A_TER_2_"..side.."}" },             -- CBU-1/A Cluster Dispenser x2 (509x BLU-4/B anti-personnel cluster bomblets)
-        { CLSID = "{CBU-2/A_TER_2_"..side.."}" },             -- CBU-2/A Cluster Dispenser x2 (360x BLU-3/B cluster bomblets)
-        { CLSID = "{CBU-2B/A_TER_2_"..side.."}" },            -- CBU-2B/A Cluster Dispenser x2 (409x BLU-3/B cluster bomblets)
+        { CLSID = "{C_A4E_CBU-1A}" },                              -- CBU-1/A Cluster Dispenser (509x BLU-4/B anti-personnel cluster bomblets)
+        { CLSID = "{C_A4E_CBU-2A}" },                              -- CBU-2/A Cluster Dispenser (360x BLU-3/B cluster bomblets)
+        { CLSID = "{C_A4E_CBU-2BA}" },                             -- CBU-2B/A Cluster Dispenser (409x BLU-3/B cluster bomblets)
+        { CLSID = "{C_A4E_CBU-1A_2x_TER_"..side.."}" },             -- CBU-1/A Cluster Dispenser x2 (509x BLU-4/B anti-personnel cluster bomblets)
+        { CLSID = "{C_A4E_CBU-2A_2x_TER_"..side.."}" },             -- CBU-2/A Cluster Dispenser x2 (360x BLU-3/B cluster bomblets)
+        { CLSID = "{C_A4E_CBU-2BA_2x_TER_"..side.."}" },            -- CBU-2B/A Cluster Dispenser x2 (409x BLU-3/B cluster bomblets)
         -- BOMB RACKS --
         { CLSID = "{Mk-20_TER_2_"..side.."}" },               -- Mk-20 Rockeye cluster bomb x2
         { CLSID = "{Mk-81_MER_5_"..side.."}" },               -- MER Mk-81 x5
@@ -709,8 +709,8 @@ A_4E_C =  {
             {Transition = {"Stage", "Extend"},   Sequence = {{C = {{"ChangeDriveTo", "HydraulicGravityAssisted"}, {"VelType", 3}, {"Arg", 85, "from", 0.815, "to", 0.881, "in", 0.2}}}}},
         },
         FoldableWings = {
-            {Transition = {"Retract", "Extend"}, Sequence = {{C = {{"Arg", 85, "to", 0.0, "in", 5.0}}}}, Flags = {"Reversible"}},
-            {Transition = {"Extend", "Retract"}, Sequence = {{C = {{"Arg", 85, "to", 1.0, "in", 5.0}}}}, Flags = {"Reversible", "StepsBackwards"}},
+            {Transition = {"Retract", "Extend"}, Sequence = {{C = {{"Arg", 8, "to", 0.0, "in", 5.0}}}}, Flags = {"Reversible"}},
+            {Transition = {"Extend", "Retract"}, Sequence = {{C = {{"Arg", 8, "to", 1.0, "in", 5.0}}}}, Flags = {"Reversible", "StepsBackwards"}},
         },
     },
 ---------------------------------------------------------------------------------------------------------------------------------------------

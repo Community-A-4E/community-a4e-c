@@ -268,41 +268,53 @@ end
 --==========================================================================================
 --MCC-SR Sborka "Dog Ear" SR                --Dog Ear radar                 --F/G
 --SAM Hawk SR (AN/MPQ-50)                   --Hawk sr                       --H/I/J
---SAM SA-2/3/5 P19 "Flat Face" SR           --p-19 s-125 sr                 --E/F, 12s rotation
+--SAM SA-2/3/5 P19 "Flat Face" SR           --p-19 s-125 sr                 --E/F, ~12s rotation
 add_emitter("p-19 s-125 sr", E_BAND_RADAR, 1.0, nil, {"RWR_SA2_SEARCH"})
---SAM SA-5 S-200 ST-68U "Tin Shield" SR     --RLS_19J6                      --E/F, 6/12s rotation
+--SAM SA-5 S-200 ST-68U "Tin Shield" SR     --RLS_19J6                      --E/F, ~12s rotation
 add_emitter("RLS_19J6", E_BAND_RADAR, 1.0, nil, {"RWR_SA5_SEARCH"})
---SAM SA-10 S-300 "Grumble" Clam Shell SR   --S-300PS 40B6MD sr             --E/F
---SAM SA-10 S-300 "Grumble" Big Bird SR     --S-300PS 64H6E s               --E/F
---SAM SA-11 Buk "Gadfly" Snow Drift SR      --SA-11 Buk SR 9S18M1           --E
+--SAM SA-10 S-300 "Grumble" Big Bird SR     --S-300PS 64H6E sr              --E/F, ~12s rotation
+add_emitter("S-300PS 64H6E sr", E_BAND_RADAR, 1.0, nil, {"RWR_SA10_SR_BB"})
+--SAM SA-10 S-300 "Grumble" Clam Shell SR   --S-300PS 40B6MD sr             --E/F, ~3s rotation
+add_emitter("S-300PS 40B6MD sr", E_BAND_RADAR, 1.0, nil, {"RWR_SA10_SR_CS"})
+--SAM SA-10 S-300 "Grumble" Tin Shield SR   --S-300PS 40B6MD sr_19J6        --E/F, ~10s rotation
+add_emitter("S-300PS 40B6MD sr_19J6", E_BAND_RADAR, 1.0, nil, {"RWR_SA10_SR_TS"})
+--SAM SA-11 Buk "Gadfly" Snow Drift SR      --SA-11 Buk SR 9S18M1           --E, ~12s rotation
+add_emitter("SA-11 Buk SR 9S18M1", E_BAND_RADAR, 1.0, nil, {"RWR_SA11_SR"})
 --SAM NASAMS SR MPQ64F1                     --NASAMS_Radar_MPQ64F1          --H/I
 
 --==========================================================================================
 --TRACKING RADARS                           --EMITTER ID                    --BAND (NATO)
 --==========================================================================================
 --AAA SON Fire Can							--SON_9							--E
-add_emitter("SON_9", E_BAND_RADAR, 0.7, {LIGHT_REC,LIGHT_REC}, {"RWR_AAA_FIRECAN_SON9"})
+add_emitter("SON_9", E_BAND_RADAR, 0.7, {LIGHT_REC}, {"RWR_AAA_FIRECAN_SON9"})
 --SAM Avenger (Stinger)                     --M1097 Avenger                 --H/I
 --SAM Chaparral M48                         --M48 Chaparral                 --D
---SAM Hawk TR (AN/MPQ-46)                   --Hawk tr                       --J (HPIR)
+--SAM Hawk TR (AN/MPQ-46)                   --Hawk tr                       --J (HPIR), out of band range, no sound
 --SAM Linebacker - Bradley M6               --M6 Linebacker                 --H/I
 --SAM Rapier Blindfire TR                   --rapier_fsa_blindfire_radar    --F
 --SAM SA-2 S-75 "Fan Song" TR               --SNR_75V                       --E/G variants assigned below
 add_emitter("SNR_75VE", E_BAND_RADAR, 1.0, {LIGHT_REC,LIGHT_REC,LIGHT_SAM}, {"RWR_SA2_E_LO", "RWR_SA2_E_HI"})
 add_emitter("SNR_75VG", G_BAND_RADAR, 1.0, {LIGHT_REC,LIGHT_REC,LIGHT_SAM}, {"RWR_SA2_G_LO", "RWR_SA2_G_LO", "RWR_SA2_G_LAUNCH"})
 --SAM SA-3 S-125 "Low Blow" TR              --snr s-125 tr                  --E
-add_emitter("snr s-125 tr", E_BAND_RADAR, {LIGHT_REC,LIGHT_REC}, 1.0, {"RWR_SA3_LO"})
+add_emitter("snr s-125 tr", E_BAND_RADAR, 1.0, {LIGHT_REC,LIGHT_REC}, {"RWR_SA3_LO"})
 --SAM SA-5 S-200 "Square Pair" TR           --RPC_5N62V                     --I
 add_emitter("RPC_5N62V", I_BAND_RADAR, 1.0, {LIGHT_REC,LIGHT_REC}, {"RWR_SA5_LO", "RWR_SA5_HI"})
 --SAM SA-6 Kub "Straight Flush" STR         --Kub 1S91 str                  --I
 add_emitter("Kub 1S91 str", I_BAND_RADAR, 1.0, {LIGHT_REC,LIGHT_REC}, {"RWR_SA6_LO", "RWR_SA6_HI"})
 --SAM SA-8 Osa "Gecko" TEL                  --Osa 9A33 ln                   --I
---SAM SA-9 Strela 1 "Gaskin" TEL            --Strela-1 9P31                 --E/F
---SAM SA-10 S-300 "Grumble" Flap Lid TR     --S-300PS 40B6M tr              --H/I/J
+add_emitter("Osa 9A33 ln", I_BAND_RADAR, 0.7, {LIGHT_REC}, {"RWR_SA8_TR"})
+--SAM SA-9 Strela 1 "Gaskin" TEL            --Strela-1 9P31                 --passively informed, no sound
+--SAM SA-10 S-300 "Grumble" Flap Lid-A TR   --S-300PS 40B6M tr              --H/I/J
+add_emitter("S-300PS 40B6M tr", I_BAND_RADAR, 1.0, {LIGHT_REC}, {"RWR_SA10_TR_A"})
+--SAM SA-10 S-300 "Grumble" Flap Lid-B TR   --S-300PS 5H63C 30H6_tr         --H/I/J
+add_emitter("S-300PS 5H63C 30H6_tr", I_BAND_RADAR, 1.0, {LIGHT_REC}, {"RWR_SA10_TR_B"})
 --SAM SA-11 Buk "Gadfly" Fire Dome TEL      --SA-11 Buk LN 9A310M1          --H/I
+add_emitter("SA-11 Buk LN 9A310M1", I_BAND_RADAR, 1.0, {LIGHT_REC}, {"RWR_SA11_TR"})
 --SAM SA-13 Strela 10M3 "Gopher" TEL        --Strela-10M3                   --F/G
---SAM SA-15 Tor "Gauntlet"                  --Tor 9A331                     --K
---SAM SA-19 Tunguska "Grison"               --2S6 Tunguska                  --H/I
+add_emitter("Strela-10M3", I_BAND_RADAR, 0.7, {LIGHT_REC}, {"RWR_SA13_TR"})
+--SAM SA-15 Tor "Gauntlet"                  --Tor 9A331                     --K, out of band range, so no sound
+--SAM SA-19 Tunguska "Grison"               --2S6 Tunguska                  --J
+add_emitter("2S6 Tunguska", I_BAND_RADAR, 0.7, {LIGHT_REC}, {"RWR_SA19_TR"})
 
 --==========================================================================================
 --VEHICLES                                  --EMITTER ID                    --BAND (NATO)

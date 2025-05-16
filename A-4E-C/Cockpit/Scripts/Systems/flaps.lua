@@ -174,7 +174,15 @@ function update()
 	
 	flaps_ind:set(FLAPS_STATE)
 	efm_data_bus.fm_setFlaps(FLAPS_STATE)
-	--set_aircraft_draw_argument_value(9,FLAPS_STATE)
+
+
+    local wing_fold = 0.0
+    -- Less than 10% flaps -> wings folded
+    if FLAPS_STATE <= 0.1 then
+        wing_fold = 1.0
+    end
+
+	set_aircraft_draw_argument_value(8, wing_fold )
 	--set_aircraft_draw_argument_value(10,FLAPS_STATE)
 	
 end

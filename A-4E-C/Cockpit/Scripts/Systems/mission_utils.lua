@@ -1,6 +1,8 @@
+dofile(LockOn_Options.script_path.."ConfigurePackage.lua")
 
-dofile(LockOn_Options.common_script_path.."tools.lua")
-dofile(LockOn_Options.script_path.."utils.lua")
+
+require(common_scripts.."tools")
+require("utils")
 
 function get_qnh()
     return mission["weather"]["qnh"]

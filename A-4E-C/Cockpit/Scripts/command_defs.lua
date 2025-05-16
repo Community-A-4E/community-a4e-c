@@ -442,6 +442,12 @@ Keys =
     BombArmSwitch                 = __custom_counter(),
     throttle_acc                  = __custom_counter(),
     CmBankSelectToggle            = __custom_counter(),
+    
+    shrike_seeker_change_1      = __custom_counter(),
+    shrike_seeker_change_2      = __custom_counter(),
+    -- Station 3 cannot carry shrike
+    shrike_seeker_change_4      = __custom_counter(),
+    shrike_seeker_change_5      = __custom_counter(),
 
 }
 

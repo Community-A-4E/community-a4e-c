@@ -57,14 +57,16 @@ end
 
 function load_tempmission_file()
 
-	if temp_mission_created:get() < 0.5 then
-		local fList = scandir(mdir)
-		local rf 	= findMissionFile(fList)
-		copyFile(rf, cfile)
-		temp_mission_created:set(1.0)
-	end
+	-- if temp_mission_created:get() < 0.5 then
+	-- 	local fList = scandir(mdir)
+	-- 	local rf 	= findMissionFile(fList)
+	-- 	copyFile(rf, cfile)
+	-- 	temp_mission_created:set(1.0)
+	-- end
 
-	dofile(userPath..'tempMission.lua')
+	do_mission_file("mission")
+
+	--dofile(userPath..'tempMission.lua')
 
 	log.info("Temp mission file loaded")
 end

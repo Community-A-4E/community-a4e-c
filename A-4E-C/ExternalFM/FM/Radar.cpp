@@ -1,5 +1,5 @@
 #include "Radar.h"
-#include "Maths.h"
+#include <Common/Maths.h>
 #include <math.h>
 #include "ShipFinder.h"
 #include "AirframeConstants.h"
@@ -40,7 +40,7 @@ static double fNorm( double x )
 	return ( 1.0 / ( c_beamSigma * sqrt( 2.0 * PI ) ) ) * f(x);
 }
 
-Scooter::Radar::Radar( Interface& inter, AircraftState& state ) :
+Scooter::Radar::Radar( ParameterInterface& inter, AircraftState& state ) :
 	m_scope( inter ),
 	m_aircraftState( state ),
 	m_interface( inter ),
@@ -76,11 +76,11 @@ void Scooter::Radar::zeroInit()
 	m_gainMoving = 0;
 	m_detailMoving = 0;
 
-	ed_cockpit_dispatch_action_to_device( DEVICES_RADAR, DEVICE_COMMANDS_RADAR_GAIN, 0.50 );
-	ed_cockpit_dispatch_action_to_device( DEVICES_RADAR, DEVICE_COMMANDS_RADAR_BRILLIANCE, 1.0 );
-	ed_cockpit_dispatch_action_to_device( DEVICES_RADAR, DEVICE_COMMANDS_RADAR_DETAIL, 1.0 );
-	ed_cockpit_dispatch_action_to_device( DEVICES_RADAR, DEVICE_COMMANDS_RADAR_STORAGE, 0.94 );
-	ed_cockpit_dispatch_action_to_device( DEVICES_RADAR, DEVICE_COMMANDS_RADAR_ANGLE, 0.4 );
+	ed_cockpit_dispatch_action_to_device( DEVICES_RADAR, DEVICE_COMMANDS_RADAR_GAIN, 0.50f );
+	ed_cockpit_dispatch_action_to_device( DEVICES_RADAR, DEVICE_COMMANDS_RADAR_BRILLIANCE, 1.0f );
+	ed_cockpit_dispatch_action_to_device( DEVICES_RADAR, DEVICE_COMMANDS_RADAR_DETAIL, 1.0f );
+	ed_cockpit_dispatch_action_to_device( DEVICES_RADAR, DEVICE_COMMANDS_RADAR_STORAGE, 0.94f );
+	ed_cockpit_dispatch_action_to_device( DEVICES_RADAR, DEVICE_COMMANDS_RADAR_ANGLE, 0.4f );
 
 }
 
@@ -97,7 +97,7 @@ void Scooter::Radar::hotInit()
 		return;
 
 	m_warmup = m_warmupTime;
-	ed_cockpit_dispatch_action_to_device( DEVICES_RADAR, DEVICE_COMMANDS_RADAR_MODE, 0.1 );
+	ed_cockpit_dispatch_action_to_device( DEVICES_RADAR, DEVICE_COMMANDS_RADAR_MODE, 0.1f );
 }
 
 void Scooter::Radar::airborneInit()
@@ -108,7 +108,7 @@ void Scooter::Radar::airborneInit()
 		return;
 
 	m_warmup = m_warmupTime;
-	ed_cockpit_dispatch_action_to_device( DEVICES_RADAR, DEVICE_COMMANDS_RADAR_MODE, 0.1 );
+	ed_cockpit_dispatch_action_to_device( DEVICES_RADAR, DEVICE_COMMANDS_RADAR_MODE, 0.1f );
 }
 
 bool Scooter::Radar::handleInput( int command, float value )
@@ -128,7 +128,7 @@ bool Scooter::Radar::handleInput( int command, float value )
 		m_aoaCompSwitch = (bool)value;
 		return true;
 	case DEVICE_COMMANDS_RADAR_MODE:
-		m_modeSwitch = (State)round(value * 10.0);
+		m_modeSwitch = State(round(value * 10.0));
 		return true;
 	case DEVICE_COMMANDS_RADAR_FILTER:
 		m_scope.setFilter( ! (bool)value );
@@ -221,13 +221,13 @@ bool Scooter::Radar::handleInput( int command, float value )
 			ed_cockpit_dispatch_action_to_device( DEVICES_RADAR, DEVICE_COMMANDS_RADAR_AOACOMP, value );
 		return true;
 	case KEYS_RADARVOLUME:
-		ed_cockpit_dispatch_action_to_device( DEVICES_RADAR, DEVICE_COMMANDS_RADAR_VOLUME, clamp(m_obstacleVolume + (value == 1.0 ? 0.1 : -0.1), 0.0, 1.0) );
+		ed_cockpit_dispatch_action_to_device( DEVICES_RADAR, DEVICE_COMMANDS_RADAR_VOLUME, float(clamp(m_obstacleVolume + (value == 1.0 ? 0.1 : -0.1), 0.0, 1.0)) );
 		return true;
 	case KEYS_RADARTILTINC:
-		ed_cockpit_dispatch_action_to_device( DEVICES_RADAR, DEVICE_COMMANDS_RADAR_ANGLE, clamp(0.04 + m_angleKnob, 0.0, 1.0) );
+		ed_cockpit_dispatch_action_to_device( DEVICES_RADAR, DEVICE_COMMANDS_RADAR_ANGLE, float(clamp(0.04 + m_angleKnob, 0.0, 1.0) ));
 		return true;
 	case KEYS_RADARTILTDEC:
-		ed_cockpit_dispatch_action_to_device( DEVICES_RADAR, DEVICE_COMMANDS_RADAR_ANGLE, clamp(-0.04 + m_angleKnob, 0.0, 1.0) );
+		ed_cockpit_dispatch_action_to_device( DEVICES_RADAR, DEVICE_COMMANDS_RADAR_ANGLE, float(clamp(-0.04 + m_angleKnob, 0.0, 1.0)) );
 		return true;
 	case KEYS_RADARTILTSTARTUP:
 		m_radarTilting = 1;
@@ -512,7 +512,7 @@ void Scooter::Radar::scanPlan( double dt )
 
 void Scooter::Radar::scanOneLine3( bool detail )
 {
-	float x = 1.0 - 2.0 * (float)m_xIndex / (float)SIDE_LENGTH;
+	float x = 1.0f - 2.0f * float(m_xIndex) / float(SIDE_LENGTH);
 	double yawAngle = x * 30.0_deg;
 
 	double range = 0.0;
@@ -546,7 +546,7 @@ void Scooter::Radar::scanOneLine3( bool detail )
 
 void Scooter::Radar::scanOneLine2( bool detail )
 {
-	float x = 1.0 - 2.0 * (float)m_xIndex / (float)SIDE_LENGTH;
+	float x = 1.0f - 2.0f * float(m_xIndex) / float(SIDE_LENGTH);
 	double yawAngle = x * 30.0_deg;
 
 	double range = 0.0;
@@ -575,13 +575,13 @@ void Scooter::Radar::scanOneLine2( bool detail )
 
 void Scooter::Radar::scanOneLine(bool detail)
 {
-	float x = 1.0 - 2.0 * (float)m_xIndex / (float)SIDE_LENGTH;
+	float x = 1.0f - 2.0f * float(m_xIndex) / float(SIDE_LENGTH);
 	double yawAngle = x * 30.0_deg;
 
 	double range = 0.0;
 	for ( size_t i = 0; i < c_rays; i++ )
 	{
-		float y = -1.0 + 2.0 * (float)i / (float)c_rays;
+		float y = -1.0f + 2.0f * float(i) / float(c_rays);
 		double pitchAngle = 2.5_deg * y;
 
 		if ( ! detail || abs( pitchAngle ) <= m_detail )
@@ -829,7 +829,7 @@ void Scooter::Radar::scanAG(double dt)
 	//This is because the minimum range will most likely be 0.25 degrees below the weapons datum.
 	for ( size_t i = 0; i < 1; i++ )
 	{
-		float y = -1.0 + 2.0 * (float)i / (float)c_raysAG;
+		float y = -1.0f + 2.0f * float(i) / float(c_raysAG);
 
 		//Minus 3.0 degress for Aircraft weapons datum.
 		double cosRoll = cos( m_aircraftState.getAngle().x );
@@ -943,7 +943,9 @@ void Scooter::Radar::drawScanProfile()
 		double normalisedAngle = (15.0_deg / 25.0_deg) + (m_scanAngle[i] / 25.0_deg); //clamp((10.0_deg - m_scanProfile[i]) / 25.0_deg, 0.0, 1.0);
 
 		size_t index;
-		if ( findIndex( i * SIDE_RATIO, round(normalisedAngle * (double)SIDE_HEIGHT), index ) )
+		const size_t horizontal_scan_index = size_t( double( i ) * SIDE_RATIO );
+		const size_t vertical_scan_index = size_t( round( normalisedAngle * double( SIDE_HEIGHT ) ) );
+		if ( findIndex( horizontal_scan_index, vertical_scan_index, index ) )
 			m_scope.addBlobOpacity( index, m_scanIntensity[i], m_brilliance );
 	}
 }

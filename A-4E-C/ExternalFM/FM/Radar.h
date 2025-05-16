@@ -1,21 +1,26 @@
 #pragma once
 #include <random>
-#include "Devices.h"
-#include "Commands.h"
+#include <Common/Devices.h>
+#include <Common/Commands.h>
 #include "RadarScope.h"
 #include "AircraftState.h"
 #include "Units.h"
-#include "Maths.h"
+#include <Common/Maths.h>
 #include "BaseComponent.h"
 #include "cockpit_base_api.h"
-#include "Ship.h"
+#include <Common/Ship.h>
 #include "Damage.h"
 
 constexpr static double c_obstructionPeriod = 2.0;
 
-extern "C"
+inline void* find_vfptr( void* ptr, int offset )
 {
-	void* _find_vfptr_fnc( void*, intptr_t );
+	return ( *(void***)ptr )[offset];
+}
+
+inline void* find_vfptr_raw( void* ptr, int offset )
+{
+	return find_vfptr( ptr, offset / 8 );
 }
 
 typedef bool (*FNC_INTERSECTION)(void* object, Vec3f* point, Vec3f* direction, float maxDist, Vec3f* out);
@@ -28,7 +33,7 @@ namespace Scooter
 class Radar : public BaseComponent
 {
 public:
-	Radar( Interface& inter, AircraftState& state );
+	Radar( ParameterInterface& inter, AircraftState& state );
 
 	virtual void zeroInit();
 	virtual void coldInit();
@@ -104,13 +109,13 @@ private:
 	static inline bool screenCoordToIndex( double x, double y, size_t& index );
 	static inline double getReflection( const Vec3& dir, const Vec3& normal, TerrainType type );
 	static inline double typeReflectivity( TerrainType type );
-	static inline double angleAxisToCommand( double axis );
+	static inline float angleAxisToCommand( double axis );
 	static inline double getShipGain( double rcs, double range );
 
 	inline double getCorrectedRange( double range )
 	{
 		double warmupFactor = getWarmupFactor();
-		return clamp(warmupFactor * range, 0.0, 40.0_nauticalMile);
+		return clamp(warmupFactor * range, 0.0, double(40.0_nauticalMile));
 	}
 	
 	inline double getWarmupFactor();
@@ -146,7 +151,7 @@ private:
 
 	RadarScope m_scope;
 	AircraftState& m_aircraftState;
-	Interface& m_interface;
+	ParameterInterface& m_interface;
 
 	void* m_terrain = nullptr;
 
@@ -246,14 +251,14 @@ private:
 
 	inline void setKnob( Command command, double value, double min = 0.0, double max = 1.0 )
 	{
-		ed_cockpit_dispatch_action_to_device( DEVICES_RADAR, command, clamp( value, min, max ) );
+		ed_cockpit_dispatch_action_to_device( DEVICES_RADAR, command, float(clamp( value, min, max )) );
 	}
 
 	inline void moveKnob( Command command, double current, double change, double direction, double min = 0.0, double max = 1.0 )
 	{
 		if ( direction == 0.0 )
 			return;
-		ed_cockpit_dispatch_action_to_device( DEVICES_RADAR, command, clamp( current + change * direction, min, max ) );
+		ed_cockpit_dispatch_action_to_device( DEVICES_RADAR, command, float(clamp( current + change * direction, min, max )) );
 	}
 
 	// Monte Carlo Stuff
@@ -280,7 +285,7 @@ double Radar::rangeToDisplay( double range )
 
 bool Radar::rangeToDisplayIndex( double range, size_t& index )
 {
-	index = round( SIDE_HEIGHT * range / (20.0_nauticalMile * m_scale));
+	index = size_t(round( SIDE_HEIGHT * range / (20.0_nauticalMile * m_scale)));
 
 	if ( index >= 0 && index < SIDE_HEIGHT )
 		return true;
@@ -375,8 +380,8 @@ void Radar::indexToScreenCoords( size_t index, double& x, double& y )
 
 bool Radar::screenCoordToIndex( double x, double y, size_t& index )
 {
-	size_t xI = round(((x + 1.0) / 2.0) * SIDE_LENGTH);
-	size_t yI = round(((y + 1.0) / 2.0) * SIDE_HEIGHT);
+	size_t xI = size_t(round(((x + 1.0) / 2.0) * SIDE_LENGTH));
+	size_t yI = size_t(round(((y + 1.0) / 2.0) * SIDE_HEIGHT));
 
 	return findIndex( xI, yI, index);
 }
@@ -391,7 +396,7 @@ bool Radar::findIndex( size_t horizontalScanIndex, size_t verticalScanIndex, siz
 		return false;
 }
 
-double Radar::angleAxisToCommand( double axis )
+float Radar::angleAxisToCommand( double axis )
 {
 	double fraction = abs( axis );
 
@@ -399,7 +404,7 @@ double Radar::angleAxisToCommand( double axis )
 	//Since it is 25.0_deg * value - 10.0_deg
 	//If axis is greater than zero it scales linearly over the remaining upper 0.6 range.
 	//If axis is less than zero it scales linearly over the remaining lower 0.4 range.
-	return axis > 0 ? 0.4 + 0.6 * axis : 0.4 + 0.4 * axis;
+	return float(axis > 0.0 ? 0.4 + 0.6 * axis : 0.4 + 0.4 * axis);
 
 
 }
@@ -436,7 +441,7 @@ void Radar::setObstacle(double range)
 
 unsigned char Radar::getType( double x, double z )
 {
-	FNC_TYPE getType = (FNC_TYPE)_find_vfptr_fnc( m_terrain, 0x50 );
+	FNC_TYPE getType = (FNC_TYPE)find_vfptr_raw( m_terrain, 0x50 );
 	return getType( m_terrain, (float)x, (float)z );
 }
 
@@ -446,12 +451,12 @@ bool Radar::getIntersection( Vec3& out, const Vec3& pos, const Vec3& dir, double
 	if ( maxRange == 0.0 )
 		maxRange = 20.0_nauticalMile * m_scale;
 
-	FNC_INTERSECTION getIntersection = (FNC_INTERSECTION)_find_vfptr_fnc( m_terrain, 0x68 );
+	FNC_INTERSECTION getIntersection = (FNC_INTERSECTION)find_vfptr_raw( m_terrain, 0x68 );
 
 	Vec3f posf( pos );
 	Vec3f dirf( dir );
 	Vec3f outf;
-	bool success = getIntersection( m_terrain, &posf, &dirf, maxRange, &outf );
+	bool success = getIntersection( m_terrain, &posf, &dirf, float(maxRange), &outf );
 
 	out.x = outf.x;
 	out.y = outf.y;
@@ -463,7 +468,7 @@ bool Radar::getIntersection( Vec3& out, const Vec3& pos, const Vec3& dir, double
 
 Vec3 Radar::getNormal( double x, double z )
 {
-	FNC_GET_NORMAL getNormal = (FNC_GET_NORMAL)_find_vfptr_fnc( m_terrain, 0x58 );
+	FNC_GET_NORMAL getNormal = (FNC_GET_NORMAL)find_vfptr_raw( m_terrain, 0x58 );
 	Vec3f normf;
 	getNormal( m_terrain, &normf, (float)x, (float)z );
 

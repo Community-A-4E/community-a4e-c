@@ -1,6 +1,5 @@
 #pragma once
-#include "Vec3.h"
-#include "Maths.h"
+#include <Common/Maths.h>
 #include "Interface.h"
 #include "Input.h"
 #include <vector>
@@ -37,7 +36,7 @@ public:
 		m_alive = true;
 	}
 
-	void setInterface( Scooter::Interface* inter )
+	void setInterface( Scooter::ParameterInterface* inter )
 	{
 		m_interface = inter;
 	}
@@ -126,13 +125,13 @@ private:
 	double m_alive = false;
 	Vec3 m_position;
 	Vec3 m_velocity;
-	Scooter::Interface* m_interface;
+	Scooter::ParameterInterface* m_interface;
 };
 
 class Bullet
 {
 public:
-	void setInterface( Scooter::Interface* inter )
+	void setInterface( Scooter::ParameterInterface* inter )
 	{
 		m_interface = inter;
 	}
@@ -194,7 +193,7 @@ private:
 	Vec3 m_velocity;
 	Vec3 m_position;
 	double m_time;
-	Scooter::Interface* m_interface;
+	Scooter::ParameterInterface* m_interface;
 	void* m_x;
 	void* m_y;
 	void* m_o;
@@ -204,7 +203,7 @@ class SpaceShip
 {
 public:
 
-	SpaceShip(Scooter::Interface* inter):
+	SpaceShip(Scooter::ParameterInterface* inter):
 		m_interface(inter)
 	{
 		char paramName[50];
@@ -313,14 +312,14 @@ private:
 	void* m_pointsX[6];
 	void* m_pointsY[6];
 	void* m_pointsO[6];
-	Scooter::Interface* m_interface;
+	Scooter::ParameterInterface* m_interface;
 	double m_fireTime = 0;
 };
 
 class Asteroids
 {
 public:
-	Asteroids( Scooter::Interface* inter ) :
+	Asteroids( Scooter::ParameterInterface* inter ) :
 		m_ship( inter ),
 		m_interface(inter)
 	{
@@ -340,7 +339,7 @@ public:
 			m_bullets[i].setParams( x, y, o );
 		}
 
-		for ( size_t i = 0; i < numAsteroids; i++ )
+		for ( int i = 0; i < numAsteroids; i++ )
 		{
 			m_asteroids[i].setInterface( inter );
 			m_asteroids[i].setParams( ( numBullets + 7 ) + i * 20 );
@@ -508,7 +507,7 @@ private:
 	int m_score = 0;
 	int m_highScore = 0;
 	bool m_fireOn = false;
-	Scooter::Interface* m_interface;
+	Scooter::ParameterInterface* m_interface;
 };
 
 static inline void egg( double dt, Asteroids* asteroids, Scooter::Input& input )

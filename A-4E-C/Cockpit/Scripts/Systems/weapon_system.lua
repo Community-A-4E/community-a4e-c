@@ -1,12 +1,21 @@
 local WeaponSystem     = GetSelf()
-dofile(LockOn_Options.common_script_path.."devices_defs.lua")
-dofile(LockOn_Options.script_path.."Systems/stores_config.lua")
-dofile(LockOn_Options.script_path.."command_defs.lua")
-dofile(LockOn_Options.script_path.."Systems/electric_system_api.lua")
-dofile(LockOn_Options.script_path.."APR-25_RWR/rwr_apr-25_api.lua")
-dofile(LockOn_Options.script_path.."utils.lua")
-dofile(LockOn_Options.script_path.."sound_params.lua")
-dofile(LockOn_Options.script_path.."EFM_Data_Bus.lua")
+dofile(LockOn_Options.script_path.."ConfigurePackage.lua")
+
+require(common_scripts .. "devices_defs")
+require("Systems.stores_config")
+require("command_defs")
+require("Systems.electric_system_api")
+require("APR-25_RWR.rwr_apr-25_api")
+require("utils")
+require("sound_params")
+require("EFM_Data_Bus")
+require("Systems.mission")
+
+local units = require('Mission.units')
+
+require("ImGui")
+
+avionics = require_avionics()
 
 local update_rate = 0.006
 make_default_activity(update_rate)
@@ -142,6 +151,61 @@ local GLARE_LABS_ANNUN = get_param_handle("D_GLARE_LABS")
 local glare_labs_annun_state = false
 
 local shrike_armed_param = get_param_handle("SHRIKE_ARMED")
+local shrike_seeker_band_min = get_param_handle("SHRIKE_BAND_MIN")
+local shrike_seeker_band_max = get_param_handle("SHRIKE_BAND_MAX")
+
+local shrike_seeker_type = {
+
+    {
+        name = "MK-22",
+        freq = {4.8, 5.2},
+    },
+    {
+        name = "MK-23",
+        freq = {2, 4},
+    },
+    {
+        name = "MK-24 MOD 5",
+        freq = {2.65, 3.15},
+    },
+    {
+        name = "MK-24 MOD 34",
+        freq = {2.5, 3.5},
+    },
+    {
+        name = "MK-25",
+        freq = {4, 6},
+    },
+    {
+        name = "MK-36",
+        freq = {7.9, 9.6},
+    },
+    {
+        name = "MK-37",
+        freq = {0.8, 1},
+    },
+    {
+        name = "MK-49 Mod 0",
+        freq = {6, 10},
+    },
+    {
+        name = "MK-49 Mod 1",
+        freq = {6, 10},
+    },
+    {
+        name = "MK-50",
+        freq = {2,6}
+    },
+}
+
+local shrike_seekers_armed = {
+    10,
+    10,
+    10,
+    10,
+    10
+}
+
 local jato_armed_and_full_param = get_param_handle("JATO_ARMED_AND_FULL")
 
 local main_rpm = get_param_handle("RPM")
@@ -159,6 +223,44 @@ local geardown = true
 ------------------------------------------------
 ---------  END AIRCRAFT DEFINITION  ------------
 ------------------------------------------------
+
+function CreateSeekerTable()
+
+end
+
+function ImGuiPylons(i)
+    local station_info = WeaponSystem:get_station_info(i-1)
+    ImGui:Text("CLSID: "..station_info.CLSID)
+    ImGui:Text(string.format("Count: %d", station_info.count))
+    ImGui:Text(string.format("Weapon = %s", ImGui.Serialize(station_info.weapon)))
+
+    local seeker = shrike_seekers_armed[i]
+    local seeker_info = shrike_seeker_type[seeker]
+    ImGui:Text(string.format("%s -> {%f, %f}", seeker_info.name, seeker_info.freq[1], seeker_info.freq[2]))
+end
+
+ImGui.AddItem("Systems", "Weapon System", function() 
+    
+    ImGui:Text(ImGui.Serialize(unit_config))
+    
+    ImGui:Header("Keys", function() 
+        local s = ImGui.Serialize(Keys)
+        ImGui:Text(s)
+    end)
+
+    ImGui:Header("Commands", function() 
+        local s = ImGui.Serialize(device_commands)
+        ImGui:Text(s)
+    end)
+
+    ImGui:TabBar("Pylons", function()
+        for i=1,5 do
+            ImGui:TabItem(string.format("Pylon %d", i), function() 
+                ImGuiPylons(i)
+            end)     
+        end
+    end)
+end)
 
 WeaponSystem:listen_command(iCommandPlaneWingtipSmokeOnOff)
 WeaponSystem:listen_command(Keys.JettisonWeapons)
@@ -211,6 +313,11 @@ WeaponSystem:listen_command(device_commands.shrike_selector)
 
 WeaponSystem:listen_command(device_commands.shrike_sidewinder_volume)
 WeaponSystem:listen_command(device_commands.shrike_selector)
+
+WeaponSystem:listen_command(Keys.shrike_seeker_change_1)
+WeaponSystem:listen_command(Keys.shrike_seeker_change_2)
+WeaponSystem:listen_command(Keys.shrike_seeker_change_4)
+WeaponSystem:listen_command(Keys.shrike_seeker_change_5)
 
 WeaponSystem:listen_command(device_commands.AWRS_quantity)
 WeaponSystem:listen_command(device_commands.AWRS_drop_interval)
@@ -276,13 +383,40 @@ loadout_quantity_by_station = {
 }
 
 function post_initialize()
+
+    
+    load_tempmission_file()
+    local own_mission_id = avionics.MissionObjects.getMissionID()
+    ImGui.Log("Mission ID: " .. own_mission_id)
+    --print(own_mission_id)
+    local unit_config = units:get_plane(own_mission_id)
+    --print_message_to_user(tostring(own_mission_id))
+    --avionics.Weapons.SetConfig(unit_config)
+    ImGui.Log(avionics.MissionObjects.VerifyHacks())
+    
+    if unit_config then
+        if unit_config.payload then
+            if unit_config.payload.pylons then
+                for i, v in pairs(unit_config.payload.pylons) do
+                    ImGui.Log(ImGui.Serialize(v))
+                    if v.settings and v.settings.NFP_rfgu_type ~= nil then
+                        
+                        local seeker_type = v.settings.NFP_rfgu_type
+                        if seeker_type < #shrike_seeker_type then
+                            shrike_seekers_armed[i] = v.settings.NFP_rfgu_type
+                        end
+                    end
+                end
+            end
+        end
+    end
     
     update_kneeboard_loadout()
-
+    
     --print_message_to_user(find_lua_device_ptr(WeaponSystem))
 	this_weapon_ptr:set(find_lua_device_ptr(WeaponSystem))
     startup_print("weapon_system: postinit start")
-
+    
     sndhost = create_sound_host("COCKPIT_ARMS","HEADPHONES",0,0,0)
     labs_tone = sndhost:create_sound("Aircrafts/A-4E-C/bombtone") -- refers to sdef file, and sdef file content refers to sound file, see DCSWorld/Sounds/sdef/_example.sdef
     aim9seek = sndhost:create_sound("Aircrafts/A-4E-C/a-4e_aim9_lo")
@@ -445,6 +579,25 @@ function update_labs_annunciator()
     else
         GLARE_LABS_ANNUN:set(0)
     end
+end
+
+function ChangeShrikeSeeker(station)
+
+    if sensor_data.getWOW_LeftMainLandingGear() <= 0 then
+        return
+    end
+
+    local seeker = shrike_seekers_armed[station]
+
+    seeker = seeker + 1
+
+    if seeker > #shrike_seeker_type then
+        seeker = 1
+    end
+
+    shrike_seekers_armed[station] = seeker
+
+    update_kneeboard_loadout()
 end
 
 function update_fuel_tanks()
@@ -621,6 +774,8 @@ end
 
 function update()
 
+    ImGui.Refresh()
+
     WeaponSystem:set_ECM_status(rwr_api:get_ecm())
     --print_message_to_user(tostring(WeaponSystem:get_ECM_status()))
 
@@ -681,6 +836,8 @@ function update()
     local released_weapon = false
 
 	valid_solution = updateComputerSolution()
+
+    update_shrike_band(_master_arm)
 
     if _master_arm and (pickle_engaged or trigger_engaged) and valid_solution then
 	
@@ -1039,6 +1196,52 @@ function check_jato_armed_and_full(_jato_arm)
 	end
 end
 
+function get_next_shrike(_master_arm)
+
+    local station_firing_order = {
+        1,
+        5,
+        2,
+        4
+    }
+
+    if _master_arm then
+        for i,v in ipairs(station_firing_order) do
+            if station_states[v] == STATION_READY then
+                local station = WeaponSystem:get_station_info( v - 1 )
+                if (((station.weapon.level2 == wsType_Missile) and 
+                (station.weapon.level3 == wsType_AS_Missile) and 
+                function_selector == FUNC_BOMBS_GM_ARM)) then
+                    if station.count > 0 then
+                        return v
+                    end
+                end
+            end
+        end
+    end
+
+    return nil
+end
+
+function update_shrike_band(_master_arm)
+    local shrike = get_next_shrike(_master_arm)
+
+    if shrike == nil then
+        shrike_seeker_band_min:set(-1)
+        shrike_seeker_band_max:set(-1)
+        return
+    end
+
+    local seeker_type = shrike_seekers_armed[shrike]
+    local seeker = shrike_seeker_type[seeker_type]
+
+    shrike_seeker_band_min:set(seeker.freq[1])
+    shrike_seeker_band_max:set(seeker.freq[2])
+
+
+    --print_message_to_user("{"..seeker.freq[1]..","..seeker.freq[2].."}")
+end
+
 function check_shrike(_master_arm)
 
     local non_shrike = false
@@ -1079,6 +1282,11 @@ function update_kneeboard_loadout()
         local quantity = "-"
         if loadout_names[station.CLSID] ~= nil then
             name = loadout_names[station.CLSID]
+
+            if shrikes_clsids[station.CLSID] ~= nil then
+                local shrike_seeker_number = shrike_seekers_armed[i]
+                name = name..shrike_seeker_type[shrike_seeker_number].name.." SEEKER"
+            end 
         end
         if station.count ~= nil then
             quantity = station.count
@@ -1547,6 +1755,14 @@ function SetCommand(command,value)
         WeaponSystem:performClickableAction(device_commands.arm_emer_sel, clamp(emer_sel_switch / 10 + 0.1, 0, 0.6), false)
     elseif command == Keys.ArmsEmerSelCCW then
         WeaponSystem:performClickableAction(device_commands.arm_emer_sel, clamp(emer_sel_switch / 10 - 0.1, 0, 0.6), false)
+    elseif command == Keys.shrike_seeker_change_1 then
+        ChangeShrikeSeeker(1)
+    elseif command == Keys.shrike_seeker_change_2 then
+        ChangeShrikeSeeker(2)
+    elseif command == Keys.shrike_seeker_change_4 then
+        ChangeShrikeSeeker(4)
+    elseif command == Keys.shrike_seeker_change_5 then
+        ChangeShrikeSeeker(5)
     end
 end
 

@@ -3,7 +3,7 @@
 
 
 
-Scooter::RadarScope::RadarScope( Interface& inter ) :
+Scooter::RadarScope::RadarScope( ParameterInterface& inter ) :
 	m_interface( inter )
 {
 	m_xParams = new void*[MAX_BLOBS];
