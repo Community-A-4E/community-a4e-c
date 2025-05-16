@@ -3,3 +3,5 @@
 *EFM_Data_Bus.lua text eol=lf
 *Suspension.lua text eol=lf
 *EFM_BETA_1_BUILD_DO_NOT_DISTRIBUTE.lua text eol=lf
+
+A-4E-C/ExternalFM/ext/* linguist-vendored
