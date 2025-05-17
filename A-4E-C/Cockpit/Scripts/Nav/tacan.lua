@@ -350,8 +350,12 @@ function update_tacan()
     update_beacons(matching_beacons)
 
     table.sort(matching_beacons, function(a, b)
-        if a.visible ~= b.visible then
-            return a.visible < b.visible
+        if a.visible ~= b.visible then -- visibility first
+            if a.visible then
+                return true -- a comes first
+            else
+                return false -- b comes first
+            end
         end
         return a.range < b.range
     end)

@@ -46,7 +46,9 @@ local planes = find_tables_on_path(mission, "coalition.[].country.[].plane.group
 local ships = find_tables_on_path(mission, "coalition.[].country.[].ship.group.[].units.[]")
 local vehicles = find_tables_on_path(mission, "coalition.[].country.[].vehicle.group.[].units.[]")
 local all_units = find_tables_on_path(mission, "coalition.[].country.[].[].group.[].units.[]")
-local tasks = find_tables_on_path(mission, "coalition.[].country.[].[].group.[].route.points.[].task.params.tasks.[].params.action")
+
+local groups = find_tables_on_path(mission, "coalition.[].country.[].[].group.[]")
+--local tasks = find_tables_on_path(mission, "coalition.[].country.[].[].group.[].route.points.[].task.params.tasks.[].params.action")
 
 --points.[].params.tasks.[].params.action
 
@@ -63,21 +65,38 @@ add_units(units.ships, ships)
 add_units(units.vehicles, vehicles)
 add_units(units.all_units, all_units)
 
-for i, v in ipairs(tasks) do
-    if v["id"] then
-        if v["id"] == "ActivateICLS" then
-            if v.params and v.params.channel then
-                if units.icls_beacons[v.params.channel] == nil then
-                    units.icls_beacons[v.params.channel] = {}
+for group_idx, group in ipairs(groups) do
+
+    local tasks = find_tables_on_path(group, "route.points.[].task.params.tasks.[].params.action")
+
+    local unit_id = group["units"][1]["unitId"]
+
+    for i,v in ipairs(tasks) do
+        if v["id"] then
+            if v["id"] == "ActivateICLS" then
+                if v.params and v.params.channel then
+                    if units.icls_beacons[v.params.channel] == nil then
+                        units.icls_beacons[v.params.channel] = {}
+                    end
+                    
+                    if v.params["unitId"] == nil then
+                        v.params["unitId"] = unit_id
+                    end
+
+                    table.insert(units.icls_beacons[v.params.channel], v.params)
                 end
-                table.insert(units.icls_beacons[v.params.channel], v.params)
-            end
-        elseif v["id"] == "ActivateBeacon" then
-            if v.params and v.params.channel then
-                if units.tacan_beacons[v.params.channel] == nil then
-                    units.tacan_beacons[v.params.channel] = {}
+            elseif v["id"] == "ActivateBeacon" then
+                if v.params and v.params.channel then
+                    if units.tacan_beacons[v.params.channel] == nil then
+                        units.tacan_beacons[v.params.channel] = {}
+                    end
+
+                    if v.params["unitId"] == nil then
+                        v.params["unitId"] = unit_id
+                    end
+
+                    table.insert(units.tacan_beacons[v.params.channel], v.params)
                 end
-                table.insert(units.tacan_beacons[v.params.channel], v.params)
             end
         end
     end
