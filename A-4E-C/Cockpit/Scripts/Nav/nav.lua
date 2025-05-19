@@ -10,6 +10,7 @@ require("Systems.mission_utils")
 require("Nav.NAV_util")
 require("Nav.ils_utils")
 require("Systems.air_data_computer_api")
+require("ImGui")
 
 avionics = require_avionics()
 
@@ -966,7 +967,9 @@ function asn41_update_range_and_bearing(dest)
 
     --------------------------------------------------------
     -- second, calculate bearing
-    bearing = forward_azimuth_bearing(lat1,lon1,lat2,lon2)
+    local grid_deviation = get_true_deviation_from_grid(point1.x, point1.z)
+    bearing = forward_azimuth_bearing(lat1,lon1,lat2,lon2) - grid_deviation
+    
     asn41_bearing:set( bearing - asn41_magvar_offset )
 
     --------------------------------------------------------
@@ -1708,6 +1711,7 @@ function update()
     end
 
     update_egg()
+    ImGui.Refresh()
 end
 
 local egg = get_param_handle("EGG")
@@ -1729,6 +1733,18 @@ function update_egg()
     end
 
 end
+
+ImGui.AddItem("Systems", "Nav", function()
+
+    ImGui:Text(string.format("MODE: %s", bdhi_mode))
+
+    ImGui:Text(string.format("ASN-41 BEARING: %f", asn41_bearing:get()))
+    ImGui:Text(string.format("ASN-41 TRACK: %f", asn41_track:get()))
+    ImGui:Text(string.format("ASN-41 RANGE: %f", asn41_range:get()))
+    ImGui:Text(string.format("ASN-41 MAGVAR: %f", asn41_magvar_offset))
+
+    ImGui:Text(string.format("BDHI BEARING: %f", bdhi_hdg:get()))
+end)
 
 
 startup_print("nav: load end")
