@@ -23,6 +23,62 @@ function directionVector(pitch,yaw)
   return x,y,z
 end
 
+function cross(a,b)
+  local x = a.y * b.z - a.z * b.y
+	local y = a.z * b.x - a.x * b.z
+	local z = a.x * b.y - a.y * b.x
+  return {
+    x = x,
+    y = y,
+    z = z
+  }
+end
+
+function dot(a,b)
+  return a.x * b.x + a.y * b.y + a.z * b.z
+end
+
+function length_vector(a)
+  return math.sqrt(dot(a,a))
+end
+
+function scale_vector(v, s)
+  return {
+    x = v.x * s,
+    y = v.y * s,
+    z = v.z * s,
+  }
+end
+
+function normalize_vector(v)
+  local length = length_vector(v)
+  if length == 0.0 then
+    return {x=0,y=0,z=0}
+  end
+
+  return scale_vector(v, 1/length)
+end
+
+function subtract_vector(a,b)
+  return {
+    x = a.x - b.x,
+    y = a.y - b.y,
+    z = a.z - b.z,
+  }
+end
+
+function proj_vector(v, n)
+  local scale = dot(v,n) / dot(n,n)
+  n = scale_vector(n, scale)
+  return subtract_vector(v, n)
+end
+
+function pitch_yaw(v)
+  local pitch = math.atan2(v.y, math.sqrt(v.z ^ 2 + v.x ^ 2))
+  local yaw = math.atan2(v.z, v.x)
+  return pitch, yaw
+end
+
 -- rounds the number 'num' to the number of decimal places in 'idp'
 --
 -- print(round(107.75, -1))     : 110.0
@@ -816,6 +872,7 @@ function require_avionics()
       MissionObjects = {
         getObjectBearing = stub,
         getObjectPosition = stub,
+        getObjectIDPosition = stub,
         getMissionID = stub,
       },
     }

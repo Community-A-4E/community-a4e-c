@@ -5,12 +5,16 @@
 -- deploying the AGM-45 Shrike
 ----------------------------------------------------------------
 dofile(LockOn_Options.script_path .. "ConfigurePackage.lua")
+Scooter = require('Scooter')
 require(common_scripts .. "devices_defs")
 require("devices")
 require("Systems.electric_system_api")
 require("command_defs")
 require("utils")
+require("Systems.adi_needles_api")
 require("Systems.rhaw_radars") -- Import the Radars
+
+avionics = require_avionics()
 
 require("ImGui")
 
@@ -21,8 +25,8 @@ device_timer_dt     = 0.02  	--0.2
 
 local sensor_data            = get_base_data()
 
-SHRIKE_HORZ_FOV = 6
-SHRIKE_VERT_FOV = 6
+SHRIKE_HORZ_FOV = 12
+SHRIKE_VERT_FOV = 12
 
 local aircraft_heading_deg = 0
 local aircraft_pitch_deg = 0
@@ -77,6 +81,10 @@ function BandsText(bands)
     return table.concat(s, ", ")
 end
 
+function VectorText(v)
+    return string.format("(%f,%f,%f)", v.x, v.y, v.z)
+end
+
 ImGui.AddItem("Systems", "Shrike", function()
 
     if shrike_band == nil then
@@ -84,8 +92,15 @@ ImGui.AddItem("Systems", "Shrike", function()
     else
         ImGui:Text(string.format("Shrike Band (GHz): { %f -> %f }", shrike_band[1] / 1.0e9, shrike_band[2] / 1.0e9))
     end
+
     
     ImGui:Tree("Contacts", function()
+
+        ImGui:Text(string.format("local v: %s", VectorText(Scooter.ToLocal({x = 1, y=0, z=0}))))
+        --ImGui:Text(string.format("local v: %s", VectorText(Scooter.ToLocal({x = 0.995, y=-0.0995, z=0.0}))))
+        ImGui:Text(string.format("fwd: %s", VectorText(Scooter.GetForward())))
+        ImGui:Text(string.format("up: %s", VectorText(Scooter.GetUp())))
+        ImGui:Text(string.format("right: %s", VectorText(Scooter.GetRight())))
 
         local contacts_tab = {
             { "Time", "Power", "Bands (GHz)"}
@@ -103,6 +118,19 @@ ImGui.AddItem("Systems", "Shrike", function()
     end)
 
     ImGui:Tree("Shrike Target", function() 
+
+        for i,target in pairs(shrike_targets) do
+
+            local x,y,z = sensor_data.getSelfCoordinates()
+            local v = subtract_vector( target.world_position, {x=x,y=y,z=z} )
+            v = normalize_vector(v)
+            v = Scooter.ToLocal(v)
+            local el,az = pitch_yaw(v)
+
+            ImGui:Text(string.format("local v: %s", VectorText(v)))
+            ImGui:Text(string.format("EL: %f, AZ: %f", math.deg(el), math.deg(az)))
+        end
+
         ImGui:Text(ImGui.Serialize(shrike_targets))
     end)
 end)
@@ -171,18 +199,33 @@ function update()
         end
 
         shrike_lock = false
+        local best_world_position = nil
+        local best_strength = 0.0
         -- sort through target list and get deviations
         for i, target in pairs(shrike_targets) do
             -- check contact is still valid based on time last updated.
             if (current_time - target.time_stored) < target_expire_time then
                 if checkShrikeLock(target) then
                     shrike_lock = true
+                    if target.strength > best_strength then
+                        best_world_position = target.world_position
+                        best_strength = target.strength
+                    end
                 end
             end
         end
 
+        if best_world_position then
+            local el,az = Needles(best_world_position)
+            adi_needles_api:setTarget(devices.SHRIKE, el / 3.0, az / 3.0)
+        end
+
+
     end -- check power is available
 
+    if not shrike_lock then
+        adi_needles_api:releaseNeedles(devices.SHRIKE)
+    end
     -- update search volume with deviation
     update_lock_volume()
 
@@ -236,8 +279,19 @@ function updateTargetData(id, contact, current_time, bands)
         ['heading']         = getTargetHeading(math.deg(contact.azimuth_h:get()), aircraft_heading_deg),
         ['elevation']       = getTargetElevation(math.deg(contact.elevation_h:get()), aircraft_pitch_deg),
         ['time_stored']   = current_time,
-        ['bands'] = bands
+        ['bands'] = bands,
+        ['world_position'] = avionics.MissionObjects.getObjectIDPosition(id),
+        ['strength'] = contact.power_h:get()
     }
+end
+
+function Needles(world_position)
+    local x,y,z = sensor_data.getSelfCoordinates()
+    local v = subtract_vector( world_position, {x=x,y=y,z=z} )
+    v = normalize_vector(v)
+    v = Scooter.ToLocal(v)
+    local el,az = pitch_yaw(v)
+    return math.deg(el) + 4.0, math.deg(az)
 end
 
 function checkShrikeLock(target)

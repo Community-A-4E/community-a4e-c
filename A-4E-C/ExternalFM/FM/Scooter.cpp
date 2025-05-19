@@ -477,6 +477,10 @@ void ed_fm_set_current_state
 	direction.y = xy + wz;
 	direction.z = xz - wy;
 
+	Vec3 up;
+	up.x = 2.0 * (x*y - w*z);
+	up.y = 1.0 - 2.0 * (x*x + z*z);
+	up.z = 2.0 * (y*z + w*x);
 	
 
 	s_state->parameter_interface.setWorldAcceleration( Vec3( ax, ay, az ) );
@@ -493,7 +497,7 @@ void ed_fm_set_current_state
 	globalUp.z = yz - wx;
 
 	s_state->state.SetWorldQuaternion( -quaternion_w, -quaternion_x, quaternion_z, quaternion_y );
-	s_state->state.setCurrentStateWorldAxis( Vec3( px, py, pz ), Vec3( vx, vy, vz ), direction, -globalUp );
+	s_state->state.setCurrentStateWorldAxis( Vec3( px, py, pz ), Vec3( vx, vy, vz ), direction, up, -globalUp );
 
 
 	Force f;

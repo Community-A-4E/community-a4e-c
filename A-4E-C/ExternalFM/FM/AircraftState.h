@@ -40,7 +40,7 @@ public:
 	};
 
 	inline void setCurrentStateBodyAxis(double aoa, double beta, const Vec3& angle, const Vec3& omega, const Vec3& omegaDot, const Vec3& speed, const Vec3& airspeed, const Vec3& acceleration);
-	inline void setCurrentStateWorldAxis( const Vec3& worldPosition, const Vec3& worldVelocity, const Vec3& worldDirection, const Vec3& globalDown );
+	inline void setCurrentStateWorldAxis( const Vec3& worldPosition, const Vec3& worldVelocity, const Vec3& worldDirection, const Vec3& worldUp, const Vec3& globalDown );
 	void SetWorldQuaternion( double w, double x, double y, double z )
 	{
 		world_orientation.w = w;
@@ -59,6 +59,8 @@ public:
 	inline const Vec3& getWorldPosition() const;
 	inline const Vec3& getWorldVelocity() const;
 	inline const Vec3& getWorldDirection() const;
+	const Vec3& getWorldUp() const { return m_worldUp; }
+	const Vec3& getWorldRight() const { return m_worldRight; }
 	inline const Vec3& getWorldWind() const;
 	inline const Vec3& getAngle() const;
 	inline const Vec3& getOmega() const;
@@ -97,6 +99,8 @@ private:
 	Vec3 m_worldPosition;
 	Vec3 m_worldVelocity;
 	Vec3 m_worldDirection;
+	Vec3 m_worldUp;
+	Vec3 m_worldRight;
 	Vec3 m_worldWind;
 	Vec3 m_angle;
 	Vec3 m_omega;
@@ -148,13 +152,17 @@ void AircraftState::setCurrentStateWorldAxis(
 	const Vec3& worldPosition,
 	const Vec3& worldVelocity,
 	const Vec3& worldDirection,
+	const Vec3& worldUp,
 	const Vec3& globalDown
 )
 {
 	m_worldPosition = worldPosition;
 	m_worldVelocity = worldVelocity;
 	m_worldDirection = worldDirection;
+	m_worldUp = worldUp;
+	m_worldRight = cross(worldDirection, worldUp);
 	m_globalDownInLocal = globalDown;
+
 }
 
 void AircraftState::setCurrentAtmosphere( 
