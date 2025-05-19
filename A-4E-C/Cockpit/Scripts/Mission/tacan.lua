@@ -1,6 +1,5 @@
 dofile(LockOn_Options.script_path.."ConfigurePackage.lua")
-require('Mission.beacons')
-
+local beacon_data = require('Nav.beacon_data')
 
 local units = require('Mission.units')
 
@@ -11,15 +10,16 @@ local TCN_UNIT_SHIP = 3
 
 
 local tacans = {}
-for i, v in pairs(beacons) do
+for i, v in pairs(beacon_data) do
     -- Source beacons.lua in various maps
-    if v.type == BEACON_TYPE_VORTAC or v.type == BEACON_TYPE_TACAN then
+    if v.ntype == BEACON_TYPE_VORTAC or v.ntype == BEACON_TYPE_TACAN then
+        
         if getTACANFrequency(v.channel, 'X') == v.frequency then --check xray tacan
             if tacans[v.channel] == nil then
                 tacans[v.channel] = {}
             end
             table.insert(tacans[v.channel], {
-                position = { x = v.position[1], y = v.position[2], z = v.position[3] },
+                position = v.position, --{ x = v.position[1], y = v.position[2], z = v.position[3] },
                 callsign = v.callsign,
                 name = v.display_name,
                 bearing = true,

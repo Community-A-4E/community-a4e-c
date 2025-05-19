@@ -158,7 +158,8 @@ function af_homer(afname, homer)
         channel     = homer.channel or tonumber(string.sub(homer.channelTACAN,1,#homer.channelTACAN-1)) or nil,
         position    = homer.position or nil, -- in-game xyz or xz
         direction   = homer.direction or nil,
-        positionGeo = homer.positionGeo or nil, -- lat/long 
+        positionGeo = homer.positionGeo or nil, -- lat/long
+        display_name = homer.display_name
     }
 
     homer_data.position = LL2LO(homer.position, homer.positionGeo)
@@ -215,6 +216,7 @@ function NAV_STATION2(homer)
         position    = tmppos or nil, -- in-game xyz
         direction   = homer.direction or nil,
         positionGeo = homer.positionGeo or nil, -- lat/long
+        display_name = homer.display_name
     }
   
   --homer_data.position = LL2LO(homer.position, homer.positionGeo)
