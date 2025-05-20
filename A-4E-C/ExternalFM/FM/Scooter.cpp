@@ -141,6 +141,7 @@ void init(const char* config)
 
 	if ( g_safeToRun )
 	{
+#ifndef LUA_IMGUI_DISABLED
 		LuaImGui::Create( ImGui::SetCurrentContext, ImGui::SetAllocatorFunctions, ImPlot::SetCurrentContext );
 		LuaImGui::AddItem( "Menu Name", "C++ Test", []()
 			{
@@ -149,6 +150,7 @@ void init(const char* config)
 
 
 		LuaImGui::Log("[Scooter]: Hash Verified");
+#endif
 	}
 
 	srand( 741 );
