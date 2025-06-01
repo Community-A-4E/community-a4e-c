@@ -3,7 +3,7 @@ cdata =
 
 	A4E_AIRCRAFTNAME                  		= _('A-4E-C'),
 
-	A4E_PROJECTPAGE          				= _('https://08jne01.github.io/community-a4e-c/'),
+	A4E_PROJECTPAGE          				= _('https://community-a-4e.github.io'),
 
 	A4E_TRIMSPEED_PITCH_LABEL          		= _('Trim Speed: Elevator (Pitch)'),
 	A4E_TRIMSPEED_ROLL_LABEL           		= _('Trim Speed: Aileron (Roll)'),
