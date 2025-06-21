@@ -105,7 +105,10 @@ local uhf_radio_device = nil
 local arc51_radio_presets = GetRadioChannels()
 
 local some_state = {
-    hello = "world"
+    hello = "world",
+    drag_float = 1.0,
+    input_float = 1.0,
+    selected_option = 1,
 }
 
 -- To draw the imgui you need to add items to the imgui context 
@@ -147,7 +150,28 @@ ImGui.AddItem("Menu Name", "Menu Entry Name", function()
     -- If you don't have the same number of columns as the header the empty ones
     -- will be filled with nil.
 
+    -- Only need to supply the label for the button.
+    -- It will return true below the frame after the button is pressed.
+    if ImGui:Button("Press This!") then
+        -- Code in here is ran every time a button is pressed
+        ImGui.Log("Button was Pressed!")
+    end
 
+    local speed = 0.1
+
+    -- Returns the value if changed, so set the state to it.
+    some_state.drag_float = ImGui:DragFloat("drag float label", some_state.drag_float, speed)
+
+    -- Returns the value if changed, so set the state to it.
+    some_state.input_float = ImGui:InputFloat("input float label", some_state.input_float, speed) 
+
+    local options = {
+        "option-a",
+        "option-b",
+        "option-c",
+    }
+    -- Selected Option Starts at 1 like lua.
+    some_state.selected_option = ImGui:ListBox("list box label", some_state.selected_option, options)
 
     -- Any ImGui functions which control flow will take a function
     -- This is because DCS is multithreaded so LuaImGui has to build
@@ -191,6 +215,22 @@ ImGui.AddItem("Menu Name", "Menu Entry Name", function()
         end)
     end)
 
+    local dx = 1.0                 -- space between points
+    local y_data = { 1, 2, 3, 4, 5, 6, 7, 8, 9 } -- y points
+    local v_lines = { 3.0, 6.0 }   -- x coordinates
+    local h_lines = { 4.0, 8.0 }   -- y coordinates
+
+    ImGui:Tree("Plot", function()
+        -- Plot is required in order to draw lines.
+        ImGui:Plot("Plot Name", "x-axis label", "y-axis label", 800, function()
+            ImGui:PlotHLines("H-Lines", h_lines) -- horizontal lines will be plotted at y values
+            ImGui:PlotVLines("V-Lines", v_lines) -- vertical lines will be plotted at x values
+
+            -- You can have multiple PlotLine
+            ImGui:PlotLine("Line", dx, y_data) -- line will be plotted with y_data with dx spacing between points
+        end)
+    end)
+
     -- note . 
     -- not :
     local s = ImGui.Serialize({
@@ -217,6 +257,13 @@ end
 
 local aoa_table = CreateAoATable()
 local aoa_idx = 1
+local x = 10.0
+local y = 1
+local z = 1
+
+function GetInfo()
+    return debug.getinfo(2)
+end
 
 ImGui.AddItem("Plot", "Test Graph", function() 
     ImGui:Plot("Plot Name", "x-axis label", "y-axis label", 800, function() 
@@ -224,6 +271,9 @@ ImGui.AddItem("Plot", "Test Graph", function()
         ImGui:PlotVLines("V-Lines", { 3.0, 6.0 })
         ImGui:PlotLine("Line", 1.0, {1,2,3,4,5,6,7,8,9})
     end)
+    ImGui:Text(ImGui.Serialize(debug.getinfo(0)))
+    ImGui:Text(ImGui.Serialize(debug.getinfo(1)))
+    ImGui:Text(ImGui.Serialize(GetInfo()))
 end)
 
 -- function ImGui:TextMember(name)

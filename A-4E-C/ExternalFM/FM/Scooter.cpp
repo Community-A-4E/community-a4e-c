@@ -53,7 +53,9 @@ static constexpr bool s_NWSEnabled = false;
 
 void ImGuiLog( const char* c )
 {
+#ifndef LUA_IMGUI_DISABLED
 	LuaImGui::Log( log_buffer );
+#endif
 }
 
 //Courtesy of SilentEagle
@@ -186,16 +188,20 @@ void init(const char* config)
 	s_state->avionics.getComputer().setEjectionVelocity( ejectionVelocity );
 	printf( "Ejection Velocity: %lf\n", ejectionVelocity );
 
+#ifndef LUA_IMGUI_DISABLED
 	LuaImGui::AddItem( "Menu Name", "C++ Test", [state = &s_state.value()]() {
 		ImGui::Text("Mass: %lf", state->airframe.getMass());
 	});
+#endif
 
 	
 }
 
 void cleanup()
 {
+#ifndef LUA_IMGUI_DISABLED
 	LuaImGui::Destroy();
+#endif
 	s_state.reset();
 	s_interface.reset();
 	Scooter::DamageProcessor::Destroy();
