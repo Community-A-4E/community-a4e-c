@@ -19,21 +19,26 @@ set_target_properties(Scooter PROPERTIES MSVC_RUNTIME_LIBRARY "MultiThreadedDLL"
 
 set(LUA_IMGUI_BIN_PATH "${CMAKE_CURRENT_SOURCE_DIR}/bin")
 
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/ExternalFM/Common")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/Cockpit/Scripts/LuaImGui" "${CMAKE_CURRENT_BINARY_DIR}/Cockpit/Scripts/LuaImGui")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/ExternalFM/Avionics" "${CMAKE_CURRENT_BINARY_DIR}/ExternalFM/Avionics")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/build-tools" "${CMAKE_CURRENT_BINARY_DIR}/build-tools")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/ExternalFM/Verify" "${CMAKE_CURRENT_BINARY_DIR}/ExternalFM/Verify")
-
-# target_link_directories( Scooter PRIVATE  )
 set(SCOOTER_LIBS
     "${CMAKE_CURRENT_SOURCE_DIR}/ExternalFM/libs/CockpitBase.lib"
     "${CMAKE_CURRENT_SOURCE_DIR}/Cockpit/Scripts/LuaImGui/ext/dcs-lua/lua.lib"
     Common
     Verify
-    ScooterAvionics
     LuaImGui
 )
+
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/ExternalFM/Common")
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/Cockpit/Scripts/LuaImGui" "${CMAKE_CURRENT_BINARY_DIR}/Cockpit/Scripts/LuaImGui")
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/build-tools" "${CMAKE_CURRENT_BINARY_DIR}/build-tools")
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/ExternalFM/Verify" "${CMAKE_CURRENT_BINARY_DIR}/ExternalFM/Verify")
+
+# scooter hacks
+if ( EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/ExternalFM/Avionics" )
+    add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/ExternalFM/Avionics" "${CMAKE_CURRENT_BINARY_DIR}/ExternalFM/Avionics")
+    list(APPEND SCOOTER_LIBS ScooterAvionics)
+endif()
+
+# target_link_directories( Scooter PRIVATE  )
 
 # 
 # option(SCOOTER_IMGUI_ENABLED "Whether the ImGui is Enabled." true)
