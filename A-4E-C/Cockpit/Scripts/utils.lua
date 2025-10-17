@@ -861,6 +861,7 @@ function require_avionics()
         init = stub,
         setPower = stub,
         pushToTalk = stub,
+        setCurrentCommunicator = stub
       }),
 
       AdvancedWeaponSystem = setmetatable({}, {
