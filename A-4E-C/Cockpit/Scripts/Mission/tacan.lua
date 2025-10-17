@@ -13,8 +13,7 @@ local tacans = {}
 for i, v in pairs(beacon_data) do
     -- Source beacons.lua in various maps
     if v.ntype == BEACON_TYPE_VORTAC or v.ntype == BEACON_TYPE_TACAN then
-        
-        if getTACANFrequency(v.channel, 'X') == v.frequency then --check xray tacan
+        if v.channel then --can't check xray tacan because not all match their frequency weird
             if tacans[v.channel] == nil then
                 tacans[v.channel] = {}
             end
@@ -22,7 +21,7 @@ for i, v in pairs(beacon_data) do
                 position = v.position, --{ x = v.position[1], y = v.position[2], z = v.position[3] },
                 callsign = v.callsign,
                 name = v.display_name,
-                bearing = true,
+                bearing = v.bearing or true,
                 air_to_air = false,
                 unit_type = TCN_UNIT_STATIC,
                 -- unit_id -> nil for static beacons

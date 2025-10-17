@@ -11,6 +11,7 @@ avionics = require_avionics()
 
 local dev = GetSelf()
 
+local beacons = require('Nav.beacon_data')
 local tacan_beacons = require('Mission.tacan')
 local Terrain = require('terrain')
 
@@ -195,6 +196,19 @@ ImGui.AddItem("Systems", "TACAN", function()
             end)
         end
     end)
+
+    ImGui:Tree("Raw Beacons", function()
+        for i,v in pairs(beacons) do
+
+            if v.channel and v.frequency and getTACANFrequency(v.channel, 'X') ~= v.frequency then
+                ImGui:Text(string.format("Desired: %f, Actual: %f", getTACANFrequency(v.channel, 'X'), v.frequency)) 
+                ImGui:Text(ImGui.Serialize(v))
+            end
+
+        end
+        
+    end)
+
 end)
 
 function post_initialize()
