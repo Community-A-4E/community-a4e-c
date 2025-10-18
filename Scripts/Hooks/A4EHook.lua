@@ -32,7 +32,7 @@ end
 --   - No-op on server (server doesn't need to register itself this way).
 --   - On client, finds the local A-4E-C plugin and RPCs its version to the server.
 function a4e_hook.onPlayerConnect()
-	if Sim.isServer() then
+	if DCS.isServer() then
 		return
 	end
 	plugin = get_plugin()
@@ -86,7 +86,7 @@ end
 DCS.setUserCallbacks(a4e_hook)
 
 -- Server-only initialization: capture server's A-4E-C version for comparison.
-if Sim.isServer() then
+if DCS.isServer() then
 	plugin = get_plugin()
 	if plugin then
         a4e_hook.myversion = plugin.version
