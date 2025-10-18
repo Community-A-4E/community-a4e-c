@@ -35,6 +35,7 @@ jobs:
           mkdir -p Community_A-4E-C_${{ env.RELEASE_VERSION }}/Mods/aircraft/
           python get_binaries.py
           cp -R A-4E-C Community_A-4E-C_${{ env.RELEASE_VERSION }}/Mods/aircraft/A-4E-C
+          cp -R Scripts Community_A-4E-C_${{ env.RELEASE_VERSION }}
           cp README.md Community_A-4E-C_${{ env.RELEASE_VERSION }}/README.md
           cp CHANGELOG.md "Community_A-4E-C_${{ env.RELEASE_VERSION }}/CHANGELOG ${{ env.RELEASE_VERSION }}.md"
           cd Community_A-4E-C_${{ env.RELEASE_VERSION }}
