@@ -16,6 +16,10 @@ local RPC   	    = base.require('RPC')
 local a4e_hook 	    = a4e_hook or {}
 local a4e_versions  = {}
 
+if not DCS.isServer() then
+    local MsgWindow	= require('MsgWindow')
+end
+
 -- Returns the plugin descriptor for the A-4E-C mod from the global plugin list.
 -- Output:
 --   table or nil: plugin object with fields shortName, version, etc.
@@ -41,7 +45,7 @@ function a4e_hook.onPlayerConnect()
 	end
     log.write('A4EHook', log.DEBUG, "Version: " .. plugin.version)
 	-- Use pcall to avoid hard failure if RPC fails (e.g., race or connectivity issue).
-	pcall(RPC.sendEvent, net.get_server_id() , "registerA4EVersion", plugin.version)
+	pcall(RPC.sendEvent, net.get_server_id() , "a4e_register_version", plugin.version)
 end
 
 -- Server-side callback: triggered when a player attempts to change to a slot.
@@ -58,7 +62,8 @@ function a4e_hook.onPlayerTryChangeSlot(id, side, slot)
 	log.write('A4EHook', log.DEBUG, "onPlayerTryChangeSlot()")
 	if DCS.getUnitTypeAttribute(DCS.getUnitType(slot), "DisplayName") == 'A-4E-C' then
 		if a4e_versions[id] ~= a4e_hook.myversion then
-			net.send_chat_to("You need to use A-4E-C version " .. a4e_hook.myversion .. " to join this slot.", id)
+		    message = "You need to use A-4E-C version " .. a4e_hook.myversion .. " to join this slot."
+        	pcall(RPC.sendEvent, id , "a4e_deny_version", message)
 			return false
 		else
 			log.write('A4EHook', log.DEBUG, "Version matches, player is allowed to join this slot.")
@@ -77,13 +82,36 @@ end
 -- Params:
 --   id (number): player id (sender)
 --   version (string): player's local A-4E-C plugin version
-function RPC.method.registerA4EVersion(id, version)
+function RPC.method.a4e_register_version(id, version)
+    if DCS.isTrackPlaying() == true then
+        return
+    end
+
 	log.write('A4EHook', log.DEBUG, 'Registering id=' .. id .. ', version=' .. version)
 	a4e_versions[id] = version
 end
 
+-- RPC endpoint on the client: sends a GUI message.
+-- Params:
+--   id (number): server id
+--   message (string): message to display
+function RPC.method.a4e_deny_version(server_id, message)
+    if DCS.isTrackPlaying() == true then
+        return
+    end
+
+	log.write('A4EHook', log.DEBUG, 'wrongA4EVersionMessage()')
+    if DCS.isServer() then
+        return
+    end
+    local handler = MsgWindow.info(message, "A-4E-C version mismatch detected", "OK")
+    handler:show()
+end
+
 -- Register our callbacks with DCS so onPlayerConnect/onPlayerTryChangeSlot are invoked.
-DCS.setUserCallbacks(a4e_hook)
+if DCS.isTrackPlaying() == false then
+    DCS.setUserCallbacks(a4e_hook)
+end
 
 -- Server-only initialization: capture server's A-4E-C version for comparison.
 if DCS.isServer() then
