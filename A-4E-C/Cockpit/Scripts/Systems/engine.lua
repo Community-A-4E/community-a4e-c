@@ -343,6 +343,7 @@ function update_egt()
     local alt = sensor_data.getBarometricAltitude()
     --local thrust = sensor_data.getEngineLeftFuelConsumption()*2.20462*3600
 	local thrust = sensor_data.mod_fuel_flow()*2.20462*3600
+	local throttle = sensor_data.getThrottleLeftPosition()
 
     -- SFC is 20% higher at M0.8 compared to M0.0 at 10,000'
     -- SFC reduces by ~3.7% per 3300m delta from 10,000' at M0.8
@@ -358,14 +359,21 @@ function update_egt()
     thrust = thrust * sfc_mod_mach * sfc_mod_alt
     --print_message_to_user("thrust: "..thrust)
 
+	--print_message_to_user("debug: "..engine_state)	
 
     if thrust > 8400 then
         output_egt = (thrust-8400)*0.0633 + 593
     elseif thrust > 6800 then
         output_egt = (thrust-6800)*0.0481 + 516
-    elseif thrust > 0 then
-        output_egt = thrust*0.0274 + 325
-    else
+
+    --elseif thrust > 0 then
+    --    output_egt = thrust*0.0274 + 325
+ 	elseif thrust > 0 and engine_state==ENGINE_STARTING then --Nov 2025, during engine start EGT greater than at idle 455C max
+        output_egt = thrust*0.0274 + 400    
+	elseif thrust > 0 and throttle_state~=THROTTLE_IGN then --Nov 2025, no EGT when throttle on IGN (no fuel)
+        output_egt = thrust*0.0274 + 325   
+
+	else
         output_egt = 0
     end
 
@@ -498,15 +506,21 @@ end
 -- pressure ratio is essentially thrust
 -- MIL thrust (9310 lbf) is a PR of 2.83 = 4137N
 -- to figure out current thrust, we need to divide fuel consumption by SFC to get force
+-- Nov 2025: however SFC changes with altitude, used manual Fig 11-24 to estimate SFC with altitude
 local pressure_ratio_val=WMA(0.15,0)
 
 function update_pressure_ratio()
     local prt = 1.2
 
+local alt = sensor_data.getBarometricAltitude()
+
     if get_elec_fwd_mon_ac_ok() then -- no power on emergency generator
         --prt = (sensor_data.getEngineLeftFuelConsumption()*3600/0.86) / 4137
-		prt = (sensor_data.mod_fuel_flow()*3600/0.86) / 4137
 		
+		sfc_corr_alt = 0.86 + (-0.000023813 * (alt*3.28) + 0.0442013904) --sfc (0.86 sea level) corrected for altitude
+		
+		--print_message_to_user("debug: "..sfc_corr_alt)
+		prt = (sensor_data.mod_fuel_flow()*3600/sfc_corr_alt) / 4137
 		
         --print_message_to_user("pct max thrust: "..prt)
         prt = (prt*1.83) + 1
