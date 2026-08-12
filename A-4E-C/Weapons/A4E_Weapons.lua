@@ -1675,6 +1675,7 @@ local bomb_data = {
     ["AN-M81"]        = { name = AN_M81.displayName,                                    mass = AN_M81.mass  ,   wstype = AN_M81.wsTypeOfWeapon,     pic = 'an-m81.png',    cx = AN_M81.Cx,      ofs = 0.0,      PictureBlendColor = false, settings = Get_Combined_GUISettings_Preset("MDRN_B_A_GPLD") },
     ["AN-M88"]        = { name = AN_M88.displayName,                                    mass = AN_M88.mass  ,   wstype = AN_M88.wsTypeOfWeapon,     pic = 'an-m88.png',    cx = AN_M88.Cx,      ofs = 0.0,      PictureBlendColor = false, settings = Get_Combined_GUISettings_Preset("MDRN_B_A_GPLD") },
     ["BDU-33"]        = { name = _("BDU-33 - 25lb Practice Bomb LD"),                   mass = 11.3         ,   wstype = {4,5,9,69},                pic = 'bdu-33.png',    cx = 0.00000143,     ofs = 0.0,      PictureBlendColor = false },
+    ["GBU-12"]        = { name = _("GBU-12 - 500lb Laser Guided Bomb"),                 mass = 277          ,   wstype = {4,5,36,38},               pic = 'GBU12.png',     cx = 0.000413,       ofs = 0.0,      PictureBlendColor = false, settings = Get_Combined_GUISettings_Preset("Paveway_II") },
 }
 
 local rack_data = {
@@ -2288,6 +2289,8 @@ declare_loadout(rackme_a4e("Mk-82 Snakeye", 4, 0))          -- {Mk-82 Snakeye_ME
 declare_loadout(rackme_a4e("Mk-82 Snakeye", 3, 0))          -- {Mk-82 Snakeye_TER_3_C}
 declare_loadout(rackme_a4e("Mk-82 Snakeye", 2,-1))          -- {Mk-82 Snakeye_TER_2_L}
 declare_loadout(rackme_a4e("Mk-82 Snakeye", 2, 1))          -- {Mk-82 Snakeye_TER_2_R}
+declare_loadout(rackme_a4e("GBU-12", 2,-1))                  -- {GBU-12_TER_2_L}
+declare_loadout(rackme_a4e("GBU-12", 2, 1))                  -- {GBU-12_TER_2_R}
 declare_loadout(rackme_a4e("BDU-33", 5, -1))                -- {BDU-33_MER_5_L}
 declare_loadout(rackme_a4e("BDU-33", 5, 1))                 -- {BDU-33_MER_5_R}
 declare_loadout(rackme_a4e("BDU-33", 6, 0))                 -- {BDU-33_MER_6_C}

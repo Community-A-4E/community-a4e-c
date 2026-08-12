@@ -112,6 +112,7 @@ local function get_outboard_weapons( side )
         { CLSID = "{MK-81SE}" },                                -- Mk-81 Snakeye
         { CLSID = "{BCE4E030-38E9-423E-98ED-24BE3DA87C32}" },   -- MK-82
         { CLSID = "{Mk82SNAKEYE}" },                            -- MK-82 Snakeye
+        { CLSID = "{DB769D48-67D7-42ED-A2BE-108D566C8B1E}" },   -- GBU-12
         { CLSID = "{mk77mod1}" },                               -- Mk-77mod1 500 lb petroleum oil bomb
         { CLSID = "{AN_M30A1}" },                               -- AN-M30A1 100 lb GP HE (57 lb TNT)
         { CLSID = "{AN_M57}" },                                 -- AN-M57A1 250 lb GP HE (129 lb TNT)
@@ -215,6 +216,7 @@ local function get_inboard_weapons( side )
         { CLSID = "{MK-81SE}" },                              -- Mk-81 Snakeye
         { CLSID = "{BCE4E030-38E9-423E-98ED-24BE3DA87C32}" }, -- MK-82
         { CLSID = "{Mk82SNAKEYE}" },                          -- MK-82 Snakeye
+        { CLSID = "{DB769D48-67D7-42ED-A2BE-108D566C8B1E}" }, -- GBU-12
         { CLSID = "{7A44FF09-527C-4B7E-B42B-3F111CFE50FB}" }, -- MK-83
         { CLSID = "{AB8B8299-F1CC-4359-89B5-2172E0CF4A5A}" }, -- MK-84
         { CLSID = "{00F5DAC4-0466-4122-998F-B1A298E34113}" }, -- M-117
@@ -239,6 +241,7 @@ local function get_inboard_weapons( side )
         { CLSID = "{Mk-81SE_MER_5_"..side.."}" },             -- MER Mk-81 Snakeye x5
         { CLSID = "{Mk-82_TER_2_"..side.."}" },               -- TER Mk-82 x2
         { CLSID = "{Mk-82 Snakeye_TER_2_"..side.."}" },       -- TER Mk-82 Snakeye x2
+        { CLSID = "{GBU-12_TER_2_"..side.."}" },              -- TER GBU-12 x2
         { CLSID = "{AN-M57_MER_5_"..side.."}" },              -- AN-M57A1 x5 250 lb GP HE (129 lb TNT)
         { CLSID = "{AN-M57_TER_2_"..side.."}" },              -- AN-M57A1 x2 250 lb GP HE (129 lb TNT)
         { CLSID = "{AN-M81_MER_5_"..side.."}" },              -- AN-M81 x5 260 lb Fragmentation (34.1 lb Comp B)
@@ -356,6 +359,7 @@ local function get_centerline_weapons( side )
         { CLSID = "{MK-81SE}" },                                -- Mk-81 Snakeye
         { CLSID = "{BCE4E030-38E9-423E-98ED-24BE3DA87C32}" },   -- MK-82
         { CLSID = "{Mk82SNAKEYE}" },                            -- MK-82 Snakeye
+        { CLSID = "{DB769D48-67D7-42ED-A2BE-108D566C8B1E}" },   -- GBU-12
         { CLSID = "{7A44FF09-527C-4B7E-B42B-3F111CFE50FB}" },   -- MK-83
         { CLSID = "{AB8B8299-F1CC-4359-89B5-2172E0CF4A5A}" },   -- MK-84
         { CLSID = "{00F5DAC4-0466-4122-998F-B1A298E34113}" },   -- M117
