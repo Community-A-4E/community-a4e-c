@@ -217,6 +217,7 @@ local function get_inboard_weapons( side )
         { CLSID = "{BCE4E030-38E9-423E-98ED-24BE3DA87C32}" }, -- MK-82
         { CLSID = "{Mk82SNAKEYE}" },                          -- MK-82 Snakeye
         { CLSID = "{DB769D48-67D7-42ED-A2BE-108D566C8B1E}" }, -- GBU-12
+        { CLSID = "{0D33DDAE-524F-4A4E-B5B8-621754FE3ADE}" }, -- GBU-16
         { CLSID = "{7A44FF09-527C-4B7E-B42B-3F111CFE50FB}" }, -- MK-83
         { CLSID = "{AB8B8299-F1CC-4359-89B5-2172E0CF4A5A}" }, -- MK-84
         { CLSID = "{00F5DAC4-0466-4122-998F-B1A298E34113}" }, -- M-117
@@ -360,6 +361,8 @@ local function get_centerline_weapons( side )
         { CLSID = "{BCE4E030-38E9-423E-98ED-24BE3DA87C32}" },   -- MK-82
         { CLSID = "{Mk82SNAKEYE}" },                            -- MK-82 Snakeye
         { CLSID = "{DB769D48-67D7-42ED-A2BE-108D566C8B1E}" },   -- GBU-12
+        { CLSID = "{0D33DDAE-524F-4A4E-B5B8-621754FE3ADE}" },   -- GBU-16
+        { CLSID = "{51F9AAE5-964F-4D21-83FB-502E3BFE5F8A}" },   -- GBU-10
         { CLSID = "{7A44FF09-527C-4B7E-B42B-3F111CFE50FB}" },   -- MK-83
         { CLSID = "{AB8B8299-F1CC-4359-89B5-2172E0CF4A5A}" },   -- MK-84
         { CLSID = "{00F5DAC4-0466-4122-998F-B1A298E34113}" },   -- M117
@@ -383,6 +386,7 @@ local function get_centerline_weapons( side )
         { CLSID = "{Mk-82 Snakeye_MER_6_"..side.."}" },
         { CLSID = "{Mk-82 Snakeye_MER_4_"..side.."}" },
         { CLSID = "{Mk-82 Snakeye_TER_3_"..side.."}" },
+        { CLSID = "{GBU-12_TER_3_"..side.."}" },
         { CLSID = "{Mk-83_TER_3_"..side.."}" },
         { CLSID = "{Mk-83_TER_2_"..side.."}" },
         { CLSID = "{Mk-77 mod 1_TER_2_"..side.."}" },           -- Mk-77 mod 1 (500 lb) x2 petroleum oil bomb
